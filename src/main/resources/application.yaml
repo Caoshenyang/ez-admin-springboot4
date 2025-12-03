@@ -2,9 +2,9 @@ spring:
   application:
     name: ez-admin-springboot4
   datasource:
-    url: jdbc:postgresql://121.5.162.159:3367/ez_admin_db?useUnicode=true&characterEncoding=UTF-8&stringtype=unspecified
-    username: root
-    password: yang@0916
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ez_admin_db}?useUnicode=${DB_USE_UNICODE:true}&characterEncoding=${DB_CHARSET:UTF-8}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
