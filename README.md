@@ -1,5 +1,4 @@
-1
-# EZ-ADMIN
+# EZ-ADMIN-SPRINGBOOT4
 ![Version](https://img.shields.io/badge/version-1.0.0-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![GitHub Stars](https://img.shields.io/github/stars/Caoshenyang/ez-admin-springboot4?style=social)
