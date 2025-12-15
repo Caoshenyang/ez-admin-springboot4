@@ -1,7 +1,7 @@
-package com.ezadimn.modules.system.controller;
+package com.ezadmin.modules.system.controller;
 
-import com.ezadimn.core.response.Result;
-import com.ezadimn.modules.system.service.UserService;
+import com.ezadmin.core.response.Result;
+import com.ezadmin.modules.system.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;

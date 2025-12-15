@@ -1,9 +1,10 @@
-package com.ezadimn.core.auth.security;
+package com.ezadmin.core.auth.security;
 
-import com.ezadimn.modules.system.entity.User;
+import com.ezadmin.modules.system.entity.User;
 import lombok.Data;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -19,7 +20,8 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        // 添加一个默认角色 ROLE_USER
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override

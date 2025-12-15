@@ -1,7 +1,7 @@
-package com.ezadimn.core.auth.security;
+package com.ezadmin.core.auth.security;
 
-import com.ezadimn.modules.system.entity.User;
-import com.ezadimn.modules.system.repository.UserRepository;
+import com.ezadmin.modules.system.entity.User;
+import com.ezadmin.modules.system.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.userdetails.UserDetails;

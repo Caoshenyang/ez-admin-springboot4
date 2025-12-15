@@ -1,8 +1,6 @@
-package com.ezadimn.modules.system.dto;
+package com.ezadmin.modules.system.dto;
 
 import lombok.Data;
-
-import java.io.Serializable;
 
 /**
  * <p>

@@ -1,4 +1,4 @@
-package com.ezadimn.core.response;
+package com.ezadmin.core.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

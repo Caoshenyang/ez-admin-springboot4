@@ -1,9 +1,8 @@
-package com.ezadimn.modules.system.service;
+package com.ezadmin.modules.system.service;
 
-import com.ezadimn.modules.system.entity.User;
-import com.ezadimn.modules.system.repository.UserRepository;
+import com.ezadmin.modules.system.entity.User;
+import com.ezadmin.modules.system.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+//    private final PasswordEncoder passwordEncoder;
 
 
 
@@ -30,7 +29,7 @@ public class UserService {
     public void initUser() {
         User user = new User();
         user.setUsername("admin");
-        user.setPassword(passwordEncoder.encode("123456"));
+//        user.setPassword(passwordEncoder.encode("123456"));
         userRepository.save(user);
     }
 

@@ -1,6 +1,6 @@
-package com.ezadimn.modules.system.repository;
+package com.ezadmin.modules.system.repository;
 
-import com.ezadimn.modules.system.entity.User;
+import com.ezadmin.modules.system.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

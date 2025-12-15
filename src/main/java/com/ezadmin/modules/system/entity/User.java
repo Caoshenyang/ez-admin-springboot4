@@ -1,4 +1,4 @@
-package com.ezadimn.modules.system.entity;
+package com.ezadmin.modules.system.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
