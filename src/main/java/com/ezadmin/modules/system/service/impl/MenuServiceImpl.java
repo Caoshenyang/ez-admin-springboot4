@@ -1,10 +1,13 @@
 package com.ezadmin.modules.system.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ezadmin.model.vo.MenuPermissionVO;
 import com.ezadmin.modules.system.entity.Menu;
 import com.ezadmin.modules.system.mapper.MenuMapper;
 import com.ezadmin.modules.system.service.IMenuService;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,9 +15,18 @@ import org.springframework.stereotype.Service;
  * </p>
  *
  * @author shenyang
- * @since 2025-12-17
+ * @since 2025-12-18
  */
 @Service
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IMenuService {
 
+    @Override
+    public List<MenuPermissionVO> loadMenuPermByRoleIds(List<Long> roleIds) {
+        return baseMapper.loadMenuPermByRoleIds(roleIds);
+    }
+
+    @Override
+    public List<MenuPermissionVO> loadAllMenuPerm() {
+        return baseMapper.loadAllMenuPerm();
+    }
 }

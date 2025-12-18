@@ -1,5 +1,6 @@
 package com.ezadmin.model.vo;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -16,50 +17,22 @@ import java.util.List;
 @Data
 public class UserInfoVO {
 
-    /**
-     * 用户ID
-     */
+    @Schema(description = "主键ID")
     private Long userId;
 
-    /**
-     * 用户名
-     */
+    @Schema(description = "用户名")
     private String username;
 
-    /**
-     * 密码（加密后）- 不返回
-     */
-    private String password;
-
-    /**
-     * 昵称
-     */
+    @Schema(description = "昵称")
     private String nickname;
 
-    /**
-     * 头像
-     */
+    @Schema(description = "头像")
     private String avatar;
 
-    /**
-     * 邮箱
-     */
-    private String email;
-
-    /**
-     * 手机号
-     */
-    private String phone;
-
-    /**
-     * 权限信息
-     */
+    @Schema(description = "权限信息")
     private List<String> permissions;
 
-    /**
-     * 路由信息
-     */
+    @Schema(description = "路由信息")
     private List<MenuTreeVO> menus;
-
 
 }

@@ -9,7 +9,7 @@ import com.ezadmin.modules.system.entity.RoleDeptRelation;
  * </p>
  *
  * @author shenyang
- * @since 2025-12-17
+ * @since 2025-12-18
  */
 public interface IRoleDeptRelationService extends IService<RoleDeptRelation> {
 

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * @author 曹申阳
  * @since 2025-12-16 15:23:25
  */
-@Tag(name = "认证接口", description = "认证接口")
+@Tag(name = "登录模块", description = "登录模块")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -29,7 +29,7 @@ public class AuthController {
     @GetMapping("/init")
     public Result<Void> initAdmin() {
         authService.initAdmin();
-        return Result.success("初始化管理员账号成功:admin/123456,请及时修改密码");
+        return Result.success("初始化完成，管理员账号/密码: admin/123456, 首次登录后请及时更改密码！");
     }
 
     @Operation(summary = "用户登录", description = "用户登录")

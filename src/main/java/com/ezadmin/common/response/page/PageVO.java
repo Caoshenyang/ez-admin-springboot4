@@ -1,16 +1,14 @@
 package com.ezadmin.common.response.page;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -55,9 +53,7 @@ public class PageVO<V> implements Serializable {
             return empty(page);
         }
         // 将原始数据转换为目标数据 这里我使用了 hutool 的 BeanUtil，可以根据需要自行替换
-        // todo 待优化
-//        List<V> vs = BeanUtils.copyToList(records, targetClass);
-        List<V> vs =  new ArrayList<>();
+        List<V> vs = BeanUtil.copyToList(records, targetClass);
         return new PageVO<>(page.getTotal(), page.getPages(), vs);
     }
 

@@ -11,7 +11,7 @@ import java.util.List;
  * </p>
  *
  * @author shenyang
- * @since 2025-12-17
+ * @since 2025-12-18
  */
 public interface RoleMapper extends BaseMapper<Role> {
 

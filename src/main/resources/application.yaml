@@ -48,18 +48,24 @@ mybatis-plus:
 
 ############## Sa-Token 配置 (文档: https://sa-token.cc) ##############
 sa-token:
+  # token前缀
+  token-prefix: Bearer
+  # 指定 Cookie 模式下自动填充 token 提交前缀
+  cookie-auto-fill-prefix: true
   # token 名称（同时也是 cookie 名称）
-  token-name: satoken
+  token-name: ${SA_TOKEN_TOKEN_NAME:ezadmin}
+  # jwt秘钥
+  jwt-secret-key: ${SA_TOKEN_JWT_SECRET_KEY:suibianshudianshenme}
+  # 如果你想交给前端控制，前端拿到 token 自行处理，这里可以设置成false
+  is-read-cookie: ${SA_TOKEN_IS_READ_COOKIE:true}
   # token 有效期（单位：秒） 默认30天，-1 代表永久有效
-  timeout: 2592000
+  timeout: ${SA_TOKEN_TIMEOUT:2592000}
   # token 最低活跃频率（单位：秒），如果 token 超过此时间没有访问系统就会被冻结，默认-1 代表不限制，永不冻结
-  active-timeout: -1
+  active-timeout: ${SA_TOKEN_ACTIVE_TIMEOUT:-1}
   # 是否允许同一账号多地同时登录 （为 true 时允许一起登录, 为 false 时新登录挤掉旧登录）
-  is-concurrent: true
+  is-concurrent: ${SA_TOKEN_IS_CONCURRENT:true}
   # 在多人登录同一账号时，是否共用一个 token （为 true 时所有登录共用一个 token, 为 false 时每次登录新建一个 token）
-  is-share: false
-  # token 风格（默认可取值：uuid、simple-uuid、random-32、random-64、random-128、tik）
-  token-style: uuid
+  is-share: ${SA_TOKEN_IS_SHARE:false}
   # 是否输出操作日志
   is-log: true
   # Cookie 相关配置

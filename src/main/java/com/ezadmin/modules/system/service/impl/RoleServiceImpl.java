@@ -14,7 +14,7 @@ import java.util.List;
  * </p>
  *
  * @author shenyang
- * @since 2025-12-17
+ * @since 2025-12-18
  */
 @Service
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IRoleService {
@@ -22,5 +22,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     @Override
     public List<Role> selectRoleListByUserId(Long userId) {
         return baseMapper.selectRoleListByUserId(userId);
+    }
+
+    @Override
+    public List<Role> loadAllRoles() {
+        return lambdaQuery().list();
     }
 }

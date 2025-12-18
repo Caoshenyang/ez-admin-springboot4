@@ -11,15 +11,20 @@ import java.util.List;
  * </p>
  *
  * @author shenyang
- * @since 2025-12-17
+ * @since 2025-12-18
  */
 public interface IRoleService extends IService<Role> {
 
     /**
      * 根据用户ID查询角色列表
-     *
      * @param userId 用户ID
      * @return 角色列表
      */
     List<Role> selectRoleListByUserId(Long userId);
+
+    /**
+     * 加载所有角色
+     * @return 角色列表
+     */
+    List<Role> loadAllRoles();
 }

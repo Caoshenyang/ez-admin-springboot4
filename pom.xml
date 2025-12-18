@@ -95,6 +95,14 @@
             <version>1.44.0</version>
         </dependency>
 
+        <!-- Sa-Token 整合 jwt -->
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-jwt</artifactId>
+            <version>1.44.0</version>
+        </dependency>
+
+
         <!-- 降低 Jackson 版本，解决 Sa-Token 与 Spring Boot 4 不兼容问题 -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

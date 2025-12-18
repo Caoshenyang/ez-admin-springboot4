@@ -1,88 +1,65 @@
 package com.ezadmin.model.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
 
 /**
  * <p>
- * 菜单权限VO
+ * MenuPermissionVO
  * </p>
  *
- * @author 曹申阳
- * @since 2025-12-17 17:09:58
+ * @author shenyang
+ * @since 2024-10-24 14:43:21
  */
 @Data
-public class MenuPermissionVO {
-    /**
-     * 菜单ID
-     */
+public class MenuPermissionVO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    @Schema(description = "角色ID")
+    private Long roleId;
+
+    @Schema(description = "主键ID")
     private Long menuId;
 
-    /**
-     * 父菜单ID，0表示根菜单
-     */
-    private Long parentId;
-
-    /**
-     * 菜单名称
-     */
+    @Schema(description = "菜单名称")
     private String menuName;
 
-    /**
-     * 路由路径
-     */
-    private String path;
+    @Schema(description = "菜单图标")
+    private String menuIcon;
 
-    /**
-     * 组件路径
-     */
-    private String component;
+    @Schema(description = "路由地址")
+    private String routePath;
 
-    /**
-     * 菜单图标
-     */
-    private String icon;
+    @Schema(description = "路由名称")
+    private String routeName;
 
-    /**
-     * 菜单类型：0目录，1菜单，2按钮
-     */
-    private Integer type;
+    @Schema(description = "组件路径")
+    private String componentPath;
 
-    /**
-     * 权限标识
-     */
-    private String permission;
+    @Schema(description = "菜单权限")
+    private String menuPerm;
 
-    /**
-     * 排序
-     */
-    private Integer sort;
+    @Schema(description = "父级菜单ID")
+    private Long parentId;
 
-    /**
-     * 是否隐藏：0显示，1隐藏
-     */
-    private Integer hidden;
+    @Schema(description = "菜单类型【1 目录 2 菜单 3 按钮】")
+    private Integer menuType;
 
-    /**
-     * 重定向地址
-     */
-    private String redirect;
+    @Schema(description = "排序字段")
+    private Integer menuSort;
 
-    /**
-     * 状态：0禁用，1启用
-     */
-    private Integer status;
+    @Schema(description = "描述")
+    private String description;
 
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
+    @Schema(description = "是否显示【0 否 1 是】")
+    private Integer visible;
 
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updateTime;
+    @Schema(description = "触发事件名称【当为类型为按钮时】")
+    private String buttonEvent;
+
+    @Schema(description = "按钮样式【'primary' | 'success' | 'warning' | 'danger' | 'info'】")
+    private String buttonStyle;
+
 }
