@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 用户信息表
+ * 角色信息表
  * </p>
  *
  * @author shenyang
@@ -20,84 +20,48 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-@TableName("ez_admin_user")
-@Schema(name = "User", description = "用户信息表")
-public class User implements Serializable {
+@TableName("ez_admin_role")
+@Schema(name = "Role", description = "角色信息表")
+public class Role implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * 用户ID
+     * 角色ID
      */
-    @Schema(description = "用户ID")
-    @TableId(value = "user_id", type = IdType.ASSIGN_ID)
-    private Long userId;
+    @Schema(description = "角色ID")
+    @TableId(value = "role_id", type = IdType.ASSIGN_ID)
+    private Long roleId;
 
     /**
-     * 部门ID
+     * 角色名称
      */
-    @Schema(description = "部门ID")
-    private Long deptId;
+    @Schema(description = "角色名称")
+    private String roleName;
 
     /**
-     * 用户账号
+     * 角色权限字符标识
      */
-    @Schema(description = "用户账号")
-    private String username;
+    @Schema(description = "角色权限字符标识")
+    private String roleLabel;
 
     /**
-     * 密码
+     * 排序
      */
-    @Schema(description = "密码")
-    private String password;
+    @Schema(description = "排序")
+    private Integer roleSort;
 
     /**
-     * 用户昵称
+     * 数据范围【1 仅本人数据权限 2 本部门数据权限 3 本部门及以下数据权限 4 自定义数据权限 5 全部数据权限】
      */
-    @Schema(description = "用户昵称")
-    private String nickname;
+    @Schema(description = "数据范围【1 仅本人数据权限 2 本部门数据权限 3 本部门及以下数据权限 4 自定义数据权限 5 全部数据权限】")
+    private Integer dataScope;
 
     /**
-     * 用户邮箱
+     * 角色状态【0 停用 1 正常】
      */
-    @Schema(description = "用户邮箱")
-    private String email;
-
-    /**
-     * 用户手机号码
-     */
-    @Schema(description = "用户手机号码")
-    private String phoneNumber;
-
-    /**
-     * 性别【0 保密 1 男 2 女】
-     */
-    @Schema(description = "性别【0 保密 1 男 2 女】")
-    private Integer gender;
-
-    /**
-     * 用户头像
-     */
-    @Schema(description = "用户头像")
-    private String avatar;
-
-    /**
-     * 用户状态【0 禁用 1 正常】
-     */
-    @Schema(description = "用户状态【0 禁用 1 正常】")
+    @Schema(description = "角色状态【0 停用 1 正常】")
     private Integer status;
-
-    /**
-     * 最后登录IP
-     */
-    @Schema(description = "最后登录IP")
-    private String loginIp;
-
-    /**
-     * 最后登录时间
-     */
-    @Schema(description = "最后登录时间")
-    private LocalDateTime loginDate;
 
     /**
      * 创建者

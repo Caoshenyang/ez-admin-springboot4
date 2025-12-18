@@ -1,11 +1,22 @@
+app:
+  info:
+    name: ez-admin-springboot4
+    version: 1.0.0
+    author: shenyang
+
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /dev-api
+
 spring:
   application:
     name: ez-admin-springboot4
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ez_admin_db}?useUnicode=${DB_USE_UNICODE:true}&characterEncoding=${DB_CHARSET:UTF-8}
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:postgres}
-    driver-class-name: org.postgresql.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:ez_admin}?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
   data:
     redis:
       host: ${REDIS_HOST:localhost}
@@ -21,17 +32,56 @@ spring:
           min-idle: 5  # 连接池最小空闲连接数5
           max-wait: 2000ms  # 连接池最大等待时间2秒
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
-    open-in-view: true  # 显式启用 OpenEntityManagerInView（消除警告）
+# MyBatis-Plus 配置
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: is_deleted # 全局逻辑删除字段名
+      logic-delete-value: 1 # 逻辑已删除值
+      logic-not-delete-value: 0 # 逻辑未删除值
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: com.ezadmin.modules.*.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 
-logging:
-  level:
-    org.springframework.security: DEBUG
+############## Sa-Token 配置 (文档: https://sa-token.cc) ##############
+sa-token:
+  # token 名称（同时也是 cookie 名称）
+  token-name: satoken
+  # token 有效期（单位：秒） 默认30天，-1 代表永久有效
+  timeout: 2592000
+  # token 最低活跃频率（单位：秒），如果 token 超过此时间没有访问系统就会被冻结，默认-1 代表不限制，永不冻结
+  active-timeout: -1
+  # 是否允许同一账号多地同时登录 （为 true 时允许一起登录, 为 false 时新登录挤掉旧登录）
+  is-concurrent: true
+  # 在多人登录同一账号时，是否共用一个 token （为 true 时所有登录共用一个 token, 为 false 时每次登录新建一个 token）
+  is-share: false
+  # token 风格（默认可取值：uuid、simple-uuid、random-32、random-64、random-128、tik）
+  token-style: uuid
+  # 是否输出操作日志
+  is-log: true
+  # Cookie 相关配置
+  cookie:
+    # 基础属性
+    domain: 127.0.0.1
+    path: /
+    secure: false
+    httpOnly: true
+    sameSite: Lax
+
+
+# springdoc-openapi项目配置
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: 'ezadmin'
+      paths-to-match: '/**'
+      packages-to-scan: com.ezadmin.api # 扫描接口所在的包
+
