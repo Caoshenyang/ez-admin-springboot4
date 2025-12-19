@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -35,6 +36,24 @@ public class AdminCache {
      */
     public void cacheUserRoles(Long userId, List<String> roleLabels) {
         redisCache.setCacheObject(RedisKey.USER_ROLE + userId, roleLabels, EXPIRE_TIME, TimeUnit.SECONDS);
+    }
+
+    /**
+     * 获取用户角色标识
+     *
+     * @param userId 用户ID
+     * @return 角色标识集合
+     */
+    public List<String> getUserRoles(Long userId) {
+        List<String> roles = redisCache.getCacheObject(RedisKey.USER_ROLE + userId);
+        if (roles == null) {
+            return List.of();
+        }
+        return roles.stream()
+            .filter(Objects::nonNull)
+            .filter(org.springframework.util.StringUtils::hasText)
+            .distinct()
+            .toList();
     }
 
 
