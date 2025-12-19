@@ -1,4 +1,4 @@
-package com.ezadmin.config;
+package com.ezadmin.common.auth;
 
 import cn.dev33.satoken.interceptor.SaInterceptor;
 import cn.dev33.satoken.router.SaRouter;
@@ -31,6 +31,7 @@ public class SaTokenMvcConfig implements WebMvcConfigurer {
             "/swagger-ui.html",
             "/swagger-ui/**",
             "/v3/api-docs/**",
+            "/favicon.ico",
             "/auth/**");
     }
 

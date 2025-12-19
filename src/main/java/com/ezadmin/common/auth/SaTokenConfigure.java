@@ -1,9 +1,9 @@
-package com.ezadmin.config;
+package com.ezadmin.common.auth;
 
 import cn.dev33.satoken.jwt.StpLogicJwtForSimple;
 import cn.dev33.satoken.stp.StpInterface;
 import cn.dev33.satoken.stp.StpLogic;
-import com.ezadmin.common.auth.StpInterfaceImpl;
+
 import com.ezadmin.common.component.RedisCache;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

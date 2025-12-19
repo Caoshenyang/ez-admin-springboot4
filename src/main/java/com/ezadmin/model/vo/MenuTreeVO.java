@@ -96,6 +96,6 @@ public class MenuTreeVO extends TreeNode {
 
     @Override
     public Long getParentId() {
-        return 0L;
+        return parentId;
     }
 }
