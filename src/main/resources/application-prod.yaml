@@ -1,0 +1,12 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+sa-token:
+  is-log: false
+
+logging:
+  level:
+    root: warn
+    com.ezadmin: info

@@ -4,6 +4,9 @@ app:
     version: 1.0.0
     author: shenyang
 
+security:
+  extra-ignore-paths: []
+
 server:
   port: ${SERVER_PORT:8080}
   servlet:
@@ -12,6 +15,10 @@ server:
 spring:
   application:
     name: ez-admin-springboot4
+  config:
+    import: optional:file:.env[.properties],optional:classpath:.env[.properties]
+  profiles:
+    active: dev
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:ez_admin}?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
@@ -43,7 +50,6 @@ mybatis-plus:
   type-aliases-package: com.ezadmin.modules.*.entity
   configuration:
     map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 
 ############## Sa-Token 配置 (文档: https://sa-token.cc) ##############
@@ -66,8 +72,6 @@ sa-token:
   is-concurrent: ${SA_TOKEN_IS_CONCURRENT:true}
   # 在多人登录同一账号时，是否共用一个 token （为 true 时所有登录共用一个 token, 为 false 时每次登录新建一个 token）
   is-share: ${SA_TOKEN_IS_SHARE:false}
-  # 是否输出操作日志
-  is-log: true
   # Cookie 相关配置
   cookie:
     # 基础属性

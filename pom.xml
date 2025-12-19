@@ -8,7 +8,7 @@
         <version>4.0.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.ezadimn</groupId>
+    <groupId>com.ezadmin</groupId>
     <artifactId>ez-admin-springboot4</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>ez-admin-springboot4</name>
@@ -41,6 +41,7 @@
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-generator</artifactId>
             <version>${mybatis-plus.version}</version>
+            <scope>provided</scope>
         </dependency>
         <!-- mybatis-plus 分页插件 -->
         <dependency>
@@ -52,6 +53,7 @@
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- SpringDoc OpenAPI 依赖  -->
@@ -134,12 +136,6 @@
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <!-- 读取.env文件依赖 -->
-        <dependency>
-            <groupId>io.github.cdimascio</groupId>
-            <artifactId>dotenv-java</artifactId>
-            <version>3.0.2</version>
         </dependency>
     </dependencies>
 

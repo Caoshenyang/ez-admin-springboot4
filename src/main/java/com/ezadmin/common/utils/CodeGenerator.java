@@ -7,27 +7,33 @@ import com.baomidou.mybatisplus.generator.config.OutputFile;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import com.baomidou.mybatisplus.generator.fill.Column;
-import io.github.cdimascio.dotenv.Dotenv;
 import org.apache.ibatis.type.JdbcType;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class CodeGenerator {
 
-    // 从.env文件读取配置
-    private static final Dotenv dotenv = Dotenv.configure()
-        .directory("src/main/resources")
-        .load();
-
-    private static final String DB_HOST = dotenv.get("DB_HOST", "localhost");
-    private static final String DB_PORT = dotenv.get("DB_PORT", "3306");
-    private static final String DB_NAME = dotenv.get("DB_NAME", "ez_admin");
-    private static final String USERNAME = dotenv.get("DB_USERNAME", "root");
-    private static final String PASSWORD = dotenv.get("DB_PASSWORD", "");
-    private static final String DB_URL = String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&tinyInt1isBit=false",
+    /**
+     * 读取数据库配置，优先级：系统环境变量 > JVM 启动参数 > .env 文件 > 默认值。
+     * 这样生成器可以在 CI、IDE 或本地直接使用，无需额外依赖。
+     */
+    private static final Map<String, String> DOT_ENV = loadDotEnv();
+    private static final String DB_HOST = env("DB_HOST", "localhost");
+    private static final String DB_PORT = env("DB_PORT", "3306");
+    private static final String DB_NAME = env("DB_NAME", "ez_admin");
+    private static final String USERNAME = env("DB_USERNAME", "root");
+    private static final String PASSWORD = env("DB_PASSWORD", "");
+    private static final String DB_URL = String.format(
+        "jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&tinyInt1isBit=false",
         DB_HOST, DB_PORT, DB_NAME);
 
     public static void main(String[] args) {
@@ -90,5 +96,62 @@ public class CodeGenerator {
      */
     protected static List<String> getTables(String tables) {
         return "all".equalsIgnoreCase(tables) ? Collections.emptyList() : Arrays.asList(tables.split(","));
+    }
+
+    private static String env(String key, String defaultValue) {
+        String value = firstNonBlank(System.getenv(key), System.getProperty(key), DOT_ENV.get(key));
+        return value == null ? defaultValue : value;
+    }
+
+    private static String firstNonBlank(String... values) {
+        if (values == null) {
+            return null;
+        }
+        for (String value : values) {
+            if (value != null && !value.isBlank()) {
+                return value;
+            }
+        }
+        return null;
+    }
+
+    private static Map<String, String> loadDotEnv() {
+        Map<String, String> result = new LinkedHashMap<>();
+        List<Path> candidates = Arrays.asList(
+            Paths.get(".env"),
+            Paths.get("src/main/resources/.env")
+        );
+        for (Path path : candidates) {
+            if (!Files.exists(path)) {
+                continue;
+            }
+            try {
+                Files.lines(path)
+                    .map(String::trim)
+                    .filter(line -> !line.isEmpty() && !line.startsWith("#"))
+                    .forEach(line -> {
+                        int idx = line.indexOf("=");
+                        if (idx > 0) {
+                            String key = line.substring(0, idx).trim();
+                            String value = line.substring(idx + 1).trim();
+                            result.putIfAbsent(key, stripQuotes(value));
+                        }
+                    });
+                break; // 命中一个即停止
+            } catch (IOException ignored) {
+                // 读取失败则跳过，使用默认值
+            }
+        }
+        return result;
+    }
+
+    private static String stripQuotes(String value) {
+        if (value == null || value.length() < 2) {
+            return value;
+        }
+        if ((value.startsWith("\"") && value.endsWith("\"")) || (value.startsWith("'") && value.endsWith("'"))) {
+            return value.substring(1, value.length() - 1);
+        }
+        return value;
     }
 }
