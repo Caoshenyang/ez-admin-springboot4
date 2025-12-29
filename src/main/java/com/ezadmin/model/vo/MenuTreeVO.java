@@ -36,32 +36,32 @@ public class MenuTreeVO extends TreeNode {
     /**
      * 路由路径
      */
-    private String path;
+    private String routePath;
 
     /**
      * 组件路径
      */
-    private String component;
+    private String componentPath;
 
     /**
      * 菜单图标
      */
-    private String icon;
+    private String menuIcon;
 
     /**
      * 菜单类型：0目录，1菜单，2按钮
      */
-    private Integer type;
+    private Integer menuType;
 
     /**
      * 权限标识
      */
-    private String permission;
+    private String menuPerm;
 
     /**
      * 排序
      */
-    private Integer sort;
+    private Integer menuSort;
 
     /**
      * 是否隐藏：0显示，1隐藏

@@ -78,12 +78,12 @@ public class MenuManagementService {
         vo.setMenuId(menu.getMenuId());
         vo.setParentId(menu.getParentId());
         vo.setMenuName(menu.getMenuName());
-        vo.setPath(menu.getRoutePath());
-        vo.setComponent(menu.getComponentPath());
-        vo.setIcon(menu.getMenuIcon());
-        vo.setType(menu.getMenuType());
-        vo.setPermission(menu.getMenuPerm());
-        vo.setSort(menu.getMenuSort());
+        vo.setRoutePath(menu.getRoutePath());
+        vo.setComponentPath(menu.getComponentPath());
+        vo.setMenuIcon(menu.getMenuIcon());
+        vo.setMenuType(menu.getMenuType());
+        vo.setMenuPerm(menu.getMenuPerm());
+        vo.setMenuSort(menu.getMenuSort());
         vo.setHidden(menu.getStatus() != null && menu.getStatus() == 0 ? 1 : 0);
         vo.setRedirect(null);
         vo.setStatus(menu.getStatus());

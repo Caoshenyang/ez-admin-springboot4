@@ -114,6 +114,18 @@ public class AuthService {
         adminCache.cacheUserRoles(user.getUserId(), roleLabels);
     }
 
+    /**
+     * 用户登出
+     */
+    public void logout() {
+        // 获取当前登录用户ID
+        long loginId = StpUtil.getLoginIdAsLong();
+        // 清除用户角色缓存
+        adminCache.clearUserRoles(loginId);
+        // 执行登出
+        StpUtil.logout();
+    }
+
     public UserInfoVO getUserInfo() {
         // 获取当前登录用户信息
         long loginId = StpUtil.getLoginIdAsLong();

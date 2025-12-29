@@ -14,6 +14,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * <p>
  * 用户接口
@@ -49,6 +51,13 @@ public class UserController {
     public Result<Void> deleteUser(@PathVariable("userId") Long userId) {
         userManagementService.deleteUser(userId);
         return Result.success("删除成功");
+    }
+
+    @Operation(summary = "批量删除用户")
+    @DeleteMapping("/batch-delete")
+    public Result<Void> batchDeleteUsers(@RequestBody List<Long> userIds) {
+        userManagementService.deleteUsers(userIds);
+        return Result.success("批量删除成功");
     }
 
 

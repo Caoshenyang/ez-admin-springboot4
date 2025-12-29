@@ -56,6 +56,15 @@ public class AdminCache {
             .toList();
     }
 
+    /**
+     * 清除用户角色缓存
+     *
+     * @param userId 用户ID
+     */
+    public void clearUserRoles(Long userId) {
+        redisCache.deleteObject(RedisKey.USER_ROLE + userId);
+    }
+
 
 
     /**
@@ -93,6 +102,10 @@ public class AdminCache {
 
     public List<MenuPermissionVO> getMenuByRoleLabel(String roleLabel) {
         String roleKey = RedisKey.ROLE_MENU + roleLabel;
-        return redisCache.getCacheObject(roleKey);
+        List<MenuPermissionVO> menuPermissions = redisCache.getCacheObject(roleKey);
+        if (menuPermissions == null) {
+            return new ArrayList<>();
+        }
+        return menuPermissions;
     }
 }

@@ -7,4 +7,4 @@
 |_______| /________|     /__/     \__\ |_______/ |__|  |__| |__| |__| \__|
 
 | springboot.version: ${spring-boot.version} | name: ${app.info.name} | version: ${app.info.version} | author: ${app.info.author} |
-| swagger 文档地址：http://localhost:${server.port}${server.servlet.context-path}/doc.html |
+| swagger 文档地址：http://localhost:${server.port}/swagger-ui.html |

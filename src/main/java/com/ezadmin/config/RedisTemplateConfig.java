@@ -7,7 +7,14 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
+
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+
+import tools.jackson.databind.DefaultTyping;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationConfig;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.jsontype.PolymorphicTypeValidator;
 
 /**
  * <p>
@@ -19,10 +26,9 @@ import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
  */
 @Configuration
 public class RedisTemplateConfig {
-
     @Bean
     @Primary
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory, JacksonJsonHttpMessageConverter jacksonJsonHttpMessageConverter) {
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
 
@@ -30,7 +36,7 @@ public class RedisTemplateConfig {
         template.setKeySerializer(new StringRedisSerializer());
 
         // 使用GenericJackson2JsonRedisSerializer来序列化和反序列化redis的value值
-        GenericJacksonJsonRedisSerializer serializer = new GenericJacksonJsonRedisSerializer(jacksonJsonHttpMessageConverter.getMapper());
+        GenericJacksonJsonRedisSerializer serializer = getGenericJackson2JsonRedisSerializer();
         template.setValueSerializer(serializer);
         template.setHashKeySerializer(new StringRedisSerializer());
         template.setHashValueSerializer(serializer);
@@ -38,5 +44,11 @@ public class RedisTemplateConfig {
         return template;
     }
 
+    private static GenericJacksonJsonRedisSerializer getGenericJackson2JsonRedisSerializer() {
+        GenericJacksonJsonRedisSerializer serializer = GenericJacksonJsonRedisSerializer.builder()
+                .enableUnsafeDefaultTyping()
+                .build(); 
+        return serializer;
+    }
 
 }

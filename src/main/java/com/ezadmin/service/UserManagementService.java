@@ -73,6 +73,15 @@ public class UserManagementService {
     }
 
     /**
+     * 批量删除用户
+     *
+     * @param userIds 用户ID列表
+     */
+    public void deleteUsers(List<Long> userIds) {
+        userService.removeByIds(userIds);
+    }
+
+    /**
      * 根据ID查询用户
      *
      * @param userId userId

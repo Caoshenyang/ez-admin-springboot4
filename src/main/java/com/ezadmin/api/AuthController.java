@@ -39,6 +39,12 @@ public class AuthController {
         return Result.success("登录成功");
     }
 
+    @Operation(summary = "用户登出", description = "用户登出")
+    @PostMapping("/logout")
+    public Result<Void> logout() {
+        authService.logout();
+        return Result.success("登出成功");
+    }
 
     @Operation(summary = "获取当前用户信息", description = "获取当前用户信息")
     @GetMapping("/user-info")
