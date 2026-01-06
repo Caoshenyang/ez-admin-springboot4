@@ -1,8 +1,6 @@
 package com.ezadmin.api;
 
 import com.ezadmin.common.response.Result;
-import com.ezadmin.common.response.page.PageQuery;
-import com.ezadmin.common.response.page.PageVO;
 import com.ezadmin.model.dto.DeptCreateDTO;
 import com.ezadmin.model.dto.DeptUpdateDTO;
 import com.ezadmin.model.query.DeptQuery;
@@ -26,12 +24,6 @@ import java.util.List;
 public class DeptController {
 
     private final DeptManagementService deptManagementService;
-
-    @Operation(summary = "部门分页查询")
-    @PostMapping("/page")
-    public Result<PageVO<Dept>> page(@RequestBody PageQuery<DeptQuery> query) {
-        return Result.success(deptManagementService.page(query));
-    }
 
     @Operation(summary = "部门树查询")
     @PostMapping("/tree")
@@ -64,11 +56,5 @@ public class DeptController {
     public Result<Void> delete(@PathVariable Long deptId) {
         deptManagementService.delete(deptId);
         return Result.success("删除成功");
-    }
-
-    @Operation(summary = "全部部门列表")
-    @GetMapping("/list")
-    public Result<List<Dept>> listAll() {
-        return Result.success(deptManagementService.listAll());
     }
 }

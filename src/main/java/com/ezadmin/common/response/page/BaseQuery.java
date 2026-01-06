@@ -21,7 +21,7 @@ public abstract class BaseQuery<T> implements Serializable {
     /**
      * 模糊查询关键词
      */
-    private String keyword;
+    private String keywords;
 
 //    /**
 //     * 精确筛选条件（字段 -> 值）
@@ -46,8 +46,10 @@ public abstract class BaseQuery<T> implements Serializable {
     public LambdaQueryWrapper<T> buildWrapper() {
         LambdaQueryWrapper<T> wrapper = new LambdaQueryWrapper<>();
 
-        // 1. 模糊查询
-        buildKeywordCondition(wrapper);
+        // 1. 模糊查询（如果子类实现了搜索字段）
+        if (getKeywordSearchFields() != null && !getKeywordSearchFields().isEmpty()) {
+            buildKeywordCondition(wrapper);
+        }
 
 //        // 2. 精确筛选
 //        exactFilters.forEach(wrapper::eq);
@@ -71,14 +73,14 @@ public abstract class BaseQuery<T> implements Serializable {
      * @param wrapper LambdaQueryWrapper
      */
     private void buildKeywordCondition(LambdaQueryWrapper<T> wrapper) {
-        if (StringUtils.isBlank(keyword)) return;
+        if (StringUtils.isBlank(keywords)) return;
 
         List<SFunction<T, String>> fields = getKeywordSearchFields();
         if (fields.isEmpty()) return;
 
         wrapper.and(w -> {
             for (SFunction<T, String> field : fields) {
-                w.or().like(field, keyword);
+                w.or().like(field, keywords);
             }
         });
     }

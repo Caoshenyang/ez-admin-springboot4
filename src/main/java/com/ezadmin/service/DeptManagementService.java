@@ -2,9 +2,6 @@ package com.ezadmin.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ezadmin.common.response.page.PageQuery;
-import com.ezadmin.common.response.page.PageVO;
 import com.ezadmin.common.response.tree.TreeBuilder;
 import com.ezadmin.model.dto.DeptCreateDTO;
 import com.ezadmin.model.dto.DeptUpdateDTO;
@@ -28,32 +25,12 @@ public class DeptManagementService {
     private final IDeptService deptService;
 
     /**
-     * 部门分页
-     */
-    public PageVO<Dept> page(PageQuery<DeptQuery> query) {
-        Page<Dept> page = query.toMpPage();
-        LambdaQueryWrapper<Dept> wrapper = new LambdaQueryWrapper<>();
-        DeptQuery search = query.getSearch();
-        if (search != null) {
-            wrapper = search.buildWrapper();
-            if (search.getStatus() != null) {
-                wrapper.eq(Dept::getStatus, search.getStatus());
-            }
-        }
-        deptService.page(page, wrapper);
-        return PageVO.of(page, Dept.class);
-    }
-
-    /**
      * 部门树
      */
     public List<DeptTreeVO> tree(DeptQuery query) {
         LambdaQueryWrapper<Dept> wrapper = new LambdaQueryWrapper<>();
         if (query != null) {
             wrapper = query.buildWrapper();
-            if (query.getStatus() != null) {
-                wrapper.eq(Dept::getStatus, query.getStatus());
-            }
         }
         wrapper.orderByAsc(Dept::getDeptSort);
         List<Dept> depts = deptService.list(wrapper);
@@ -86,10 +63,6 @@ public class DeptManagementService {
             throw new IllegalStateException("请先删除子部门");
         }
         deptService.removeById(deptId);
-    }
-
-    public List<Dept> listAll() {
-        return deptService.lambdaQuery().orderByAsc(Dept::getDeptSort).list();
     }
 
     private DeptTreeVO toTreeVO(Dept dept) {
