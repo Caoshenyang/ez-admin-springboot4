@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 用户信息表
+ * 菜单信息表
  * </p>
  *
  * @author shenyang
@@ -20,84 +20,84 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-@TableName("ez_admin_user")
-@Schema(name = "User", description = "用户信息表")
-public class User implements Serializable {
+@TableName("ez_admin_menu")
+@Schema(name = "Menu", description = "菜单信息表")
+public class Menu implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * 用户ID
+     * 菜单ID
      */
-    @Schema(description = "用户ID")
-    @TableId(value = "user_id", type = IdType.ASSIGN_ID)
-    private Long userId;
+    @Schema(description = "菜单ID")
+    @TableId(value = "menu_id", type = IdType.ASSIGN_ID)
+    private Long menuId;
 
     /**
-     * 部门ID
+     * 菜单名称
      */
-    @Schema(description = "部门ID")
-    private Long deptId;
+    @Schema(description = "菜单名称")
+    private String menuName;
 
     /**
-     * 用户账号
+     * 菜单图标
      */
-    @Schema(description = "用户账号")
-    private String username;
+    @Schema(description = "菜单图标")
+    private String menuIcon;
 
     /**
-     * 密码
+     * 菜单标识
      */
-    @Schema(description = "密码")
-    private String password;
+    @Schema(description = "菜单标识")
+    private String menuLabel;
 
     /**
-     * 用户昵称
+     * 父级菜单ID
      */
-    @Schema(description = "用户昵称")
-    private String nickname;
+    @Schema(description = "父级菜单ID")
+    private Long parentId;
 
     /**
-     * 用户邮箱
+     * 菜单排序
      */
-    @Schema(description = "用户邮箱")
-    private String email;
+    @Schema(description = "菜单排序")
+    private Integer menuSort;
 
     /**
-     * 用户手机号码
+     * 菜单类型【1 目录 2 菜单 3 按钮】
      */
-    @Schema(description = "用户手机号码")
-    private String phoneNumber;
+    @Schema(description = "菜单类型【1 目录 2 菜单 3 按钮】")
+    private Integer menuType;
 
     /**
-     * 性别【0 保密 1 男 2 女】
+     * 权限标识
      */
-    @Schema(description = "性别【0 保密 1 男 2 女】")
-    private Integer gender;
+    @Schema(description = "权限标识")
+    private String menuPerm;
 
     /**
-     * 用户头像
+     * 路由地址
      */
-    @Schema(description = "用户头像")
-    private String avatar;
+    @Schema(description = "路由地址")
+    private String routePath;
 
     /**
-     * 用户状态【0 禁用 1 正常】
+     * 路由名称
      */
-    @Schema(description = "用户状态【0 禁用 1 正常】")
+    @Schema(description = "路由名称")
+    private String routeName;
+
+    /**
+     * 组件路径
+     */
+    @Schema(description = "组件路径")
+    private String componentPath;
+
+    /**
+     * 菜单状态【0 停用 1 正常】
+     */
+    @Schema(description = "菜单状态【0 停用 1 正常】")
     private Integer status;
-
-    /**
-     * 最后登录IP
-     */
-    @Schema(description = "最后登录IP")
-    private String loginIp;
-
-    /**
-     * 最后登录时间
-     */
-    @Schema(description = "最后登录时间")
-    private LocalDateTime loginDate;
 
     /**
      * 创建者

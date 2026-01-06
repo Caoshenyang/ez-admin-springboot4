@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ezadmin.modules.system.mapper.MenuMapper">
+
+    <select id="loadMenuPermByRoleIds" resultType="com.ezadmin.model.vo.MenuPermissionVO">
+        SELECT
+        t1.role_id,
+        t2.*
+        FROM
+        ez_admin_role_menu_relation AS t1
+        INNER JOIN ez_admin_menu AS t2 ON t1.menu_id = t2.menu_id
+        WHERE t1.role_id IN
+        <foreach collection="list" item="roleId" separator="," open="(" close=")">
+            #{roleId}
+        </foreach>
+        AND t2.is_deleted = 0
+    </select>
+    <select id="loadAllMenuPerm" resultType="com.ezadmin.model.vo.MenuPermissionVO">
+        SELECT
+            null as role_id,
+            t.*
+        FROM
+            ez_admin_menu AS t
+        WHERE t.is_deleted = 0
+    </select>
+</mapper>
