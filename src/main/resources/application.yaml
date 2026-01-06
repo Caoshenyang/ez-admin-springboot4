@@ -75,7 +75,7 @@ sa-token:
   # Cookie 相关配置
   cookie:
     # 基础属性
-    domain: 127.0.0.1
+    # domain: 127.0.0.1  # 注释掉，只允许本地访问
     path: /
     secure: false
     httpOnly: true
