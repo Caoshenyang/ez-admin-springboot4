@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ezadmin.common.response.tree.TreeBuilder;
 import com.ezadmin.model.dto.DeptCreateDTO;
+import com.ezadmin.model.dto.DeptParentTreeDTO;
 import com.ezadmin.model.dto.DeptUpdateDTO;
 import com.ezadmin.model.query.DeptQuery;
 import com.ezadmin.model.vo.DeptTreeVO;
@@ -33,6 +34,28 @@ public class DeptManagementService {
             wrapper = query.buildWrapper();
         }
         wrapper.orderByAsc(Dept::getDeptSort);
+        List<Dept> depts = deptService.list(wrapper);
+        List<DeptTreeVO> nodes = depts.stream()
+            .map(this::toTreeVO)
+            .toList();
+        return TreeBuilder.buildTree(nodes);
+    }
+
+    /**
+     * 获取父节点树形结构（用于表单上级部门选择）
+     */
+    public List<DeptTreeVO> parentTree(DeptParentTreeDTO dto) {
+        LambdaQueryWrapper<Dept> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByAsc(Dept::getDeptSort);
+
+        // 如果指定了排除ID，则排除该部门及其所有子节点
+        if (dto != null && dto.getExcludeId() != null) {
+            // 排除自己：dept_id != excludeId
+            wrapper.ne(Dept::getDeptId, dto.getExcludeId());
+            // 排除子节点：ancestors 不包含 /excludeId/
+            wrapper.notLike(Dept::getAncestors, "/" + dto.getExcludeId() + "/");
+        }
+
         List<Dept> depts = deptService.list(wrapper);
         List<DeptTreeVO> nodes = depts.stream()
             .map(this::toTreeVO)
