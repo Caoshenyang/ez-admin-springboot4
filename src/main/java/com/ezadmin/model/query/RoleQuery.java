@@ -1,5 +1,6 @@
 package com.ezadmin.model.query;
 
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.ezadmin.common.response.page.BaseQuery;
 import com.ezadmin.modules.system.entity.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,7 +20,7 @@ public class RoleQuery extends BaseQuery<Role> {
     private Integer status;
 
     @Override
-    public List<com.baomidou.mybatisplus.core.toolkit.support.SFunction<Role, String>> getKeywordSearchFields() {
+    public List<SFunction<Role, String>> getKeywordSearchFields() {
         return List.of(Role::getRoleName, Role::getRoleLabel, Role::getDescription);
     }
 }

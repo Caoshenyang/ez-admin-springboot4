@@ -1,9 +1,8 @@
 package com.ezadmin.api;
 
 import com.ezadmin.common.response.Result;
-import com.ezadmin.common.response.page.PageQuery;
-import com.ezadmin.common.response.page.PageVO;
 import com.ezadmin.model.dto.DeptCreateDTO;
+import com.ezadmin.model.dto.DeptParentTreeDTO;
 import com.ezadmin.model.dto.DeptUpdateDTO;
 import com.ezadmin.model.query.DeptQuery;
 import com.ezadmin.model.vo.DeptTreeVO;
@@ -27,16 +26,16 @@ public class DeptController {
 
     private final DeptManagementService deptManagementService;
 
-    @Operation(summary = "部门分页查询")
-    @PostMapping("/page")
-    public Result<PageVO<Dept>> page(@RequestBody PageQuery<DeptQuery> query) {
-        return Result.success(deptManagementService.page(query));
-    }
-
     @Operation(summary = "部门树查询")
     @PostMapping("/tree")
     public Result<List<DeptTreeVO>> tree(@RequestBody(required = false) DeptQuery query) {
         return Result.success(deptManagementService.tree(query));
+    }
+
+    @Operation(summary = "获取父节点树形结构（用于表单上级部门选择）")
+    @PostMapping("/parent-tree")
+    public Result<List<DeptTreeVO>> parentTree(@RequestBody(required = false) DeptParentTreeDTO dto) {
+        return Result.success(deptManagementService.parentTree(dto));
     }
 
     @Operation(summary = "部门详情")
@@ -64,11 +63,5 @@ public class DeptController {
     public Result<Void> delete(@PathVariable Long deptId) {
         deptManagementService.delete(deptId);
         return Result.success("删除成功");
-    }
-
-    @Operation(summary = "全部部门列表")
-    @GetMapping("/list")
-    public Result<List<Dept>> listAll() {
-        return Result.success(deptManagementService.listAll());
     }
 }

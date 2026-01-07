@@ -1,5 +1,6 @@
 package com.ezadmin.model.query;
 
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.ezadmin.common.response.page.BaseQuery;
 import com.ezadmin.modules.system.entity.DictType;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,7 +20,7 @@ public class DictTypeQuery extends BaseQuery<DictType> {
     private Integer status;
 
     @Override
-    public List<com.baomidou.mybatisplus.core.toolkit.support.SFunction<DictType, String>> getKeywordSearchFields() {
+    public List<SFunction<DictType, String>> getKeywordSearchFields() {
         return List.of(DictType::getDictName, DictType::getDictType, DictType::getDescription);
     }
 }

@@ -1,5 +1,6 @@
 package com.ezadmin.model.query;
 
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.ezadmin.common.response.page.BaseQuery;
 import com.ezadmin.modules.system.entity.Menu;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,7 +20,7 @@ public class MenuQuery extends BaseQuery<Menu> {
     private Integer status;
 
     @Override
-    public List<com.baomidou.mybatisplus.core.toolkit.support.SFunction<Menu, String>> getKeywordSearchFields() {
+    public List<SFunction<Menu, String>> getKeywordSearchFields() {
         return List.of(Menu::getMenuName, Menu::getMenuLabel, Menu::getMenuPerm, Menu::getRouteName);
     }
 }
