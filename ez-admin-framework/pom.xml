@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.ez.admin</groupId>
+        <artifactId>ez-admin-springboot4</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>ez-admin-framework</artifactId>
+    <packaging>jar</packaging>
+    <name>ez-admin-framework</name>
+    <description>框架核心模块：Security配置、Token校验、拦截器、Redis配置</description>
+
+</project>

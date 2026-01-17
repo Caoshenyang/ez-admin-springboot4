@@ -1,145 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
+    <!-- 父项目：继承 Spring Boot Starter Parent，用于管理 Spring Boot 生态系统的依赖版本 -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.0</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>4.0.1</version>
+        <relativePath/>
     </parent>
-    <groupId>com.ezadmin</groupId>
+
+    <!-- 项目基本信息 -->
+    <groupId>com.ez.admin</groupId>
     <artifactId>ez-admin-springboot4</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
     <name>ez-admin-springboot4</name>
-    <description>一款简单易用的后台管理系统</description>
-    <url/>
+    <description>EZ Admin SpringBoot 4.x Base Parent</description>
+
+    <!-- 子模块声明 -->
+    <modules>
+        <module>ez-admin-common</module>
+        <module>ez-admin-framework</module>
+        <module>ez-admin-generator</module>
+        <module>ez-admin-modules</module>
+    </modules>
+
+    <!-- 全局属性配置 -->
     <properties>
-        <java.version>21</java.version> <!-- Java版本 -->
-        <lombok.version>1.18.30</lombok.version> <!-- Lombok版本 -->
-        <sa-token.version>1.44.0</sa-token.version> <!-- Sa-Token权限认证框架版本 -->
-        <jackson.version>2.20.1</jackson.version> <!-- Jackson JSON处理库版本，用于解决Sa-Token与Spring Boot 4兼容问题 -->
-        <mybatis-plus.version>3.5.15</mybatis-plus.version> <!-- MyBatis-Plus版本 -->
-        <org.mapstruct.version>1.6.3</org.mapstruct.version> <!-- 简化 Java bean 之间的转换过程 -->
-        <knife4j.version>4.5.0</knife4j.version> <!-- knife4j 接口文档 -->
+        <java.version>21</java.version> <!-- Java 版本：JDK 21（Spring Boot 4.0 最低要求） -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> <!-- 项目源码编码 -->
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding> <!-- 项目报告输出编码 -->
     </properties>
 
+    <!-- 全局依赖：所有子模块默认继承 -->
     <dependencies>
-        <!--  webmvc 依赖 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc</artifactId>
-        </dependency>
-        <!-- MyBatis-Plus 依赖 -->
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
-            <version>${mybatis-plus.version}</version>
-        </dependency>
-        <!-- 代码生成器 -->
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-generator</artifactId>
-            <version>${mybatis-plus.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- mybatis-plus 分页插件 -->
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-jsqlparser</artifactId>
-            <version>${mybatis-plus.version}</version>
-        </dependency>
-        <!-- 模板引擎 -->
-        <dependency>
-            <groupId>org.freemarker</groupId>
-            <artifactId>freemarker</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- SpringDoc OpenAPI 依赖  -->
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>3.0.0</version>
-        </dependency>
-
-
-        <!-- 数据库驱动相关依赖 -->
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!--  redis 依赖 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-
-        <!--  Apache Commons Pool 2 依赖，用于 Redis 连接池 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-pool2</artifactId>
-        </dependency>
-
-        <!-- Sa-Token 权限认证，在线文档：https://sa-token.cc -->
-        <dependency>
-            <groupId>cn.dev33</groupId>
-            <artifactId>sa-token-spring-boot3-starter</artifactId>
-            <version>${sa-token.version}</version>
-        </dependency>
-
-        <!-- Sa-Token 整合 RedisTemplate -->
-        <dependency>
-            <groupId>cn.dev33</groupId>
-            <artifactId>sa-token-redis-template</artifactId>
-            <version>1.44.0</version>
-        </dependency>
-
-        <!-- Sa-Token 整合 jwt -->
-        <dependency>
-            <groupId>cn.dev33</groupId>
-            <artifactId>sa-token-jwt</artifactId>
-            <version>1.44.0</version>
-        </dependency>
-
-
-        <!-- 降低 Jackson 版本，解决 Sa-Token 与 Spring Boot 4 不兼容问题 -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-
-        <!-- 密码加密依赖 -->
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-crypto</artifactId>
-        </dependency>
-
-        <!--  实体间转换工具类       -->
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>${org.mapstruct.version}</version>
-        </dependency>
-
-        <!--  lombok 依赖 -->
+        <!-- Lombok：通过注解简化 Java 代码（getter/setter/构造器等） -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
-    <!--  阿里云 maven 镜像仓库  -->
+    <!-- 依赖版本管理：统一管理第三方依赖版本，子模块引用时无需指定版本 -->
+    <dependencyManagement>
+    </dependencyManagement>
+
+    <!-- 依赖仓库：使用阿里云镜像加速依赖下载 -->
     <repositories>
         <repository>
             <id>public</id>
@@ -151,7 +60,7 @@
         </repository>
     </repositories>
 
-    <!--  阿里云 maven 镜像仓库  -->
+    <!-- 插件仓库：存放 Maven 构建插件的 JAR 包 -->
     <pluginRepositories>
         <pluginRepository>
             <id>public</id>
@@ -166,36 +75,27 @@
         </pluginRepository>
     </pluginRepositories>
 
-    <!--  编译插件  -->
+    <!-- 构建配置 -->
     <build>
-        <plugins>
-            <!--  编译插件  -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version>
-                        </path>
-                        <path>
-                            <groupId>org.mapstruct</groupId>
-                            <artifactId>mapstruct-processor</artifactId>
-                            <version>${org.mapstruct.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
-            <!--  打包插件  -->
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
+        <!-- 插件版本管理：统一管理插件版本，子模块引用时无需指定版本 -->
+        <pluginManagement>
+            <plugins>
+                <!-- Spring Boot Maven 插件：用于打包可执行的 JAR/WAR 文件 -->
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <configuration>
+                        <!-- 排除 Lombok：构建时不会将 Lombok 打入最终包，因为它只在编译时生效 -->
+                        <excludes>
+                            <exclude>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
 </project>
