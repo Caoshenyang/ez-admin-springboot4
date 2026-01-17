@@ -11,14 +11,13 @@
 5. **同步更新进度 (Mandatory)**: 每一项子任务完成后，**必须立即修改并保存 `CLAUDE.md` 文件**。将对应任务标记为 `[x]`，并在末尾标注完成时间。
 
 ## 项目概述
-EZ-ADMIN-SPRINGBOOT4：基于 Spring Boot 4.0 + JDK 21 的高效率 RBAC 后台管理系统。
+EZ-ADMIN-SPRINGBOOT4：基于 Spring Boot 4.0 + JDK 21 的高效率 Rren wBAC 后台管理系统。
 
 ## 技术栈规范
 - **命名规范 (Strict)**:
   - 严禁使用模糊命名（如 `BaseReq`, `Handle.java`）。
   - 必须使用明确的语义化命名：`UserQueryDTO`, `RoleResponseVO`, `MenuTreeService`。
 - **代码注释 (Mandatory)**: 必须在 Controller 接口、Service 复杂逻辑处编写清晰注释。注释需解释“为什么这么做”以及核心业务逻辑。
-- **认证授权**: 强制使用 Sa-Token 注解（如 `@SaCheckPermission`），严禁在业务代码中硬编码权限校验。
 - **对象转换**: 强制使用 MapStruct。若遇到转换逻辑复杂，请在 `model/mapstruct/` 下定义转换器接口。
 
 ## 常用开发命令

@@ -10,23 +10,32 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ez-admin-framework</artifactId>
+    <artifactId>ez-admin-starter</artifactId>
     <packaging>jar</packaging>
-    <name>ez-admin-framework</name>
-    <description>框架核心模块：Security配置、Token校验、拦截器、Redis配置</description>
+    <name>ez-admin-starter</name>
+    <description>应用启动模块：统一的入口类，集成所有业务模块</description>
 
     <dependencies>
-        <!-- 内部模块依赖 -->
+        <!-- 引入所有子模块 -->
         <dependency>
             <groupId>com.ez.admin</groupId>
             <artifactId>ez-admin-common</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-        <!-- Spring Boot Web MVC -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc</artifactId>
+            <groupId>com.ez.admin</groupId>
+            <artifactId>ez-admin-framework</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

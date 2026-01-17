@@ -19,12 +19,13 @@
     <name>ez-admin-springboot4</name>
     <description>EZ Admin SpringBoot 4.x Base Parent</description>
 
-    <!-- 子模块声明 -->
+    <!-- 子模块声明（按依赖关系自底向上排列） -->
     <modules>
-        <module>ez-admin-common</module>
-        <module>ez-admin-framework</module>
-        <module>ez-admin-generator</module>
-        <module>ez-admin-modules</module>
+        <module>ez-admin-common</module>         <!-- 无依赖，基础层 -->
+        <module>ez-admin-framework</module>      <!-- 框架层 -->
+        <module>ez-admin-generator</module>      <!-- 工具层 -->
+        <module>ez-admin-modules</module>        <!-- 业务聚合层 -->
+        <module>ez-admin-starter</module>        <!-- 启动层，依赖所有 -->
     </modules>
 
     <!-- 全局属性配置 -->
