@@ -13,6 +13,6 @@
     <artifactId>ez-admin-common</artifactId>
     <packaging>jar</packaging>
     <name>ez-admin-common</name>
-    <description>全局通用模块：工具类、异常处理、BaseEntity</description>
+    <description>全局通用模块：工具类、异常处理</description>
 
 </project>

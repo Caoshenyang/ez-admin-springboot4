@@ -21,3 +21,6 @@ logs/
 *.bak
 *.swp
 *~
+
+# Claude Code CLI
+.claude/
