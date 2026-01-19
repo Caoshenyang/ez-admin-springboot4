@@ -1,34 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
+    <!-- 父项目：继承 ez-admin-system -->
     <parent>
         <groupId>com.ez.admin</groupId>
-        <artifactId>ez-admin-application</artifactId>
+        <artifactId>ez-admin-system</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ez-admin-application-system</artifactId>
-    <name>ez-admin-application-system</name>
-    <description>系统模块应用层 - Controller、聚合服务、DTO</description>
+    <!-- 模块信息 -->
+    <artifactId>ez-admin-system-core</artifactId>
+    <packaging>jar</packaging>
+    <name>ez-admin-system-core</name>
+    <description>系统管理核心实现层（Controller、聚合服务、MapStruct）</description>
 
+    <!-- 依赖配置 -->
     <dependencies>
         <!-- ========== 内部依赖 ========== -->
 
-        <!-- ez-admin-domain-system：领域层实体、Mapper、原子服务 -->
+        <!-- system-api：实现对外接口 -->
         <dependency>
             <groupId>com.ez.admin</groupId>
-            <artifactId>ez-admin-domain-system</artifactId>
+            <artifactId>ez-admin-system-api</artifactId>
         </dependency>
 
-        <!-- ez-admin-auth-api：认证授权接口 -->
+        <!-- auth-api：认证授权接口 -->
         <dependency>
             <groupId>com.ez.admin</groupId>
             <artifactId>ez-admin-auth-api</artifactId>
         </dependency>
 
-        <!-- ez-admin-framework：Web、Security、Redis、MyBatis 通用能力 -->
+        <!-- domain-system：领域层实体、Mapper、原子服务 -->
+        <dependency>
+            <groupId>com.ez.admin</groupId>
+            <artifactId>ez-admin-domain-system</artifactId>
+        </dependency>
+
+        <!-- framework：Web、Security、Redis、MyBatis 通用能力 -->
         <dependency>
             <groupId>com.ez.admin</groupId>
             <artifactId>ez-admin-framework</artifactId>

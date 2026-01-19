@@ -16,10 +16,16 @@
     <description>应用启动模块：统一的入口类，集成所有业务模块</description>
 
     <dependencies>
-        <!-- 引入所有子模块 -->
+        <!-- 认证聚合服务 -->
         <dependency>
             <groupId>com.ez.admin</groupId>
-            <artifactId>ez-admin-application-system</artifactId>
+            <artifactId>ez-admin-auth-core</artifactId>
+        </dependency>
+
+        <!-- 系统管理聚合服务 -->
+        <dependency>
+            <groupId>com.ez.admin</groupId>
+            <artifactId>ez-admin-system-core</artifactId>
         </dependency>
     </dependencies>
 
