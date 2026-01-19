@@ -43,6 +43,9 @@
         <!-- JWT 认证 -->
         <jjwt.version>0.12.6</jjwt.version> <!-- JJWT 版本 -->
 
+        <!-- API 文档 -->
+        <springdoc.version>2.7.0</springdoc.version> <!-- SpringDoc OpenAPI 版本 -->
+
         <!-- 模板引擎 -->
         <freemarker.version>2.3.32</freemarker.version> <!-- FreeMarker 版本 -->
 
@@ -206,6 +209,15 @@
                 <artifactId>jjwt-jackson</artifactId>
                 <version>${jjwt.version}</version>
                 <scope>runtime</scope>
+            </dependency>
+
+            <!-- ========== API 文档 ========== -->
+
+            <!-- SpringDoc OpenAPI：API 文档生成 -->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc.version}</version>
             </dependency>
 
             <!-- ========== 模板引擎 ========== -->

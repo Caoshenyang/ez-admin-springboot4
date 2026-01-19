@@ -93,6 +93,14 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- ========== API 文档依赖 ========== -->
+
+        <!-- SpringDoc OpenAPI：API 文档生成 -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </dependency>
+
         <!-- ========== 测试依赖 ========== -->
 
         <dependency>

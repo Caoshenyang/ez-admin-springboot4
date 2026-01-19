@@ -73,7 +73,7 @@ public class CodeGenerator {
 
                     builder.author("ez-admin")
                             .disableOpenDir() // 生成完毕后不自动打开资源管理器
-                            // .enableSpringdoc() // 如果想用 swagger，生成 springdoc 规范注解把这個放开
+                            .enableSpringdoc() // 启用 SpringDoc OpenAPI 注解，生成 @Schema 注解
                             .outputDir(outputDir);
                 })
                 // 数据源配置（PostgreSQL 类型转换处理）
