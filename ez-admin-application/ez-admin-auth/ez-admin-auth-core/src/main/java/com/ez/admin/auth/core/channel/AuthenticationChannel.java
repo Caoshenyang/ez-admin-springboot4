@@ -1,7 +1,7 @@
-package com.ez.admin.auth.api.channel;
+package com.ez.admin.auth.core.channel;
 
 import com.ez.admin.auth.api.dto.LoginRequest;
-import com.ez.admin.auth.api.enums.ChannelType;
+import com.ez.admin.auth.core.enums.ChannelType;
 
 /**
  * 认证渠道适配器接口
@@ -24,12 +24,12 @@ public interface AuthenticationChannel {
     /**
      * 认证并返回用户ID
      * <p>
-     * 认证成功返回用户ID，认证失败抛出 AuthenticationException
+     * 认证成功返回用户ID，认证失败抛出异常
      * </p>
      *
      * @param request 登录请求
      * @return 用户ID
-     * @throws com.ez.admin.auth.api.exception.AuthenticationException 认证失败时抛出
+     * @throws com.ez.admin.common.exception.EzBusinessException 认证失败时抛出
      */
     String authenticate(LoginRequest request);
 

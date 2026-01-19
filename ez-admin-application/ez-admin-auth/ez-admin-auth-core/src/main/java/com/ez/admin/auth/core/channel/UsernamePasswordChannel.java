@@ -1,10 +1,9 @@
 package com.ez.admin.auth.core.channel;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.ez.admin.auth.api.channel.AuthenticationChannel;
 import com.ez.admin.auth.api.dto.LoginRequest;
-import com.ez.admin.auth.api.enums.ChannelType;
-import com.ez.admin.auth.api.exception.AuthenticationException;
+import com.ez.admin.auth.core.enums.ChannelType;
+import com.ez.admin.common.exception.EzBusinessException;
 import com.ez.admin.domain.system.entity.User;
 import com.ez.admin.domain.system.service.IUserService;
 import com.ez.admin.framework.security.config.SecurityConfig;
@@ -55,19 +54,19 @@ public class UsernamePasswordChannel implements AuthenticationChannel {
 
         if (user == null) {
             log.warn("账号密码登录失败：用户不存在 - {}", username);
-            throw new AuthenticationException("用户名或密码错误");
+            throw new EzBusinessException("用户名或密码错误");
         }
 
         // 验证密码
         if (!securityConfig.passwordEncoder().matches(password, user.getPassword())) {
             log.warn("账号密码登录失败：密码错误 - {}", username);
-            throw new AuthenticationException("用户名或密码错误");
+            throw new EzBusinessException("用户名或密码错误");
         }
 
         // 检查用户状态
         if (user.getStatus() == null || user.getStatus() != 1) {
             log.warn("账号密码登录失败：用户已被禁用 - {}", username);
-            throw new AuthenticationException("账号已被禁用");
+            throw new EzBusinessException("账号已被禁用");
         }
 
         log.info("账号密码登录成功 - username: {}, userId: {}", username, user.getUserId());

@@ -1,10 +1,9 @@
 package com.ez.admin.auth.core.channel;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.ez.admin.auth.api.channel.AuthenticationChannel;
 import com.ez.admin.auth.api.dto.LoginRequest;
-import com.ez.admin.auth.api.enums.ChannelType;
-import com.ez.admin.auth.api.exception.AuthenticationException;
+import com.ez.admin.auth.core.enums.ChannelType;
+import com.ez.admin.common.exception.EzBusinessException;
 import com.ez.admin.domain.system.entity.User;
 import com.ez.admin.domain.system.service.IUserService;
 import lombok.RequiredArgsConstructor;
@@ -59,13 +58,13 @@ public class SmsCodeChannel implements AuthenticationChannel {
 
         if (user == null) {
             log.warn("手机验证码登录失败：手机号未注册 - {}", phone);
-            throw new AuthenticationException("手机号未注册");
+            throw new EzBusinessException("手机号未注册");
         }
 
         // 检查用户状态
         if (user.getStatus() == null || user.getStatus() != 1) {
             log.warn("手机验证码登录失败：用户已被禁用 - {}", phone);
-            throw new AuthenticationException("账号已被禁用");
+            throw new EzBusinessException("账号已被禁用");
         }
 
         // 验证短信验证码
@@ -74,12 +73,12 @@ public class SmsCodeChannel implements AuthenticationChannel {
 
         if (cachedCode == null) {
             log.warn("手机验证码登录失败：验证码不存在或已过期 - {}", phone);
-            throw new AuthenticationException("验证码不存在或已过期");
+            throw new EzBusinessException("验证码不存在或已过期");
         }
 
         if (!cachedCode.equals(smsCode)) {
             log.warn("手机验证码登录失败：验证码错误 - {}", phone);
-            throw new AuthenticationException("验证码错误");
+            throw new EzBusinessException("验证码错误");
         }
 
         // 验证成功后删除验证码（一次性使用）

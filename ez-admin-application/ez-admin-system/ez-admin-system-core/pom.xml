@@ -16,7 +16,7 @@
     <artifactId>ez-admin-system-core</artifactId>
     <packaging>jar</packaging>
     <name>ez-admin-system-core</name>
-    <description>系统管理核心实现层（Controller、聚合服务、MapStruct）</description>
+    <description>系统管理核心实现层（聚合服务、MapStruct）</description>
 
     <!-- 依赖配置 -->
     <dependencies>

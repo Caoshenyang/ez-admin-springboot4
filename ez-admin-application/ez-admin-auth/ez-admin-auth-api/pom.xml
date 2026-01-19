@@ -16,10 +16,24 @@
     <artifactId>ez-admin-auth-api</artifactId>
     <packaging>jar</packaging>
     <name>ez-admin-auth-api</name>
-    <description>认证授权接口层（对外暴露的DTO、注解、接口定义）</description>
+    <description>认证授权接口层（对外暴露的 REST Controller + DTO）</description>
 
     <!-- 依赖配置 -->
     <dependencies>
+        <!-- ========== 内部依赖 ========== -->
+
+        <!-- auth-core：获取服务接口 -->
+        <dependency>
+            <groupId>com.ez.admin</groupId>
+            <artifactId>ez-admin-auth-core</artifactId>
+        </dependency>
+
+        <!-- common：获取统一返回体 ApiResponse -->
+        <dependency>
+            <groupId>com.ez.admin</groupId>
+            <artifactId>ez-admin-common</artifactId>
+        </dependency>
+
         <!-- ========== Spring 注解支持 ========== -->
 
         <!-- Spring Web（轻量级）：提供必要的注解支持 -->

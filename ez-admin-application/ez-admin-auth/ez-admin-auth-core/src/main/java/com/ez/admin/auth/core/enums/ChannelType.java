@@ -1,4 +1,4 @@
-package com.ez.admin.auth.api.enums;
+package com.ez.admin.auth.core.enums;
 
 /**
  * 登录渠道枚举
@@ -34,7 +34,17 @@ public enum ChannelType {
     /**
      * PC 客户端
      */
-    PC_CLIENT("PC_CLIENT", "PC客户端");
+    PC_CLIENT("PC_CLIENT", "PC客户端"),
+
+    /**
+     * 手机验证码登录
+     */
+    SMS_CODE("SMS_CODE", "手机验证码登录"),
+
+    /**
+     * 账号密码登录
+     */
+    USERNAME_PASSWORD("USERNAME_PASSWORD", "账号密码登录");
 
     /**
      * 渠道代码

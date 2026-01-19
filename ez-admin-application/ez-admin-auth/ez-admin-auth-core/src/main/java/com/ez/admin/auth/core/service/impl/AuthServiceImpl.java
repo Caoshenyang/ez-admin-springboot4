@@ -1,15 +1,15 @@
 package com.ez.admin.auth.core.service.impl;
 
-import com.ez.admin.auth.api.channel.AuthenticationChannel;
 import com.ez.admin.auth.api.dto.LoginRequest;
 import com.ez.admin.auth.api.dto.TokenResponse;
-import com.ez.admin.auth.api.enums.ChannelType;
-import com.ez.admin.auth.api.enums.TokenType;
-import com.ez.admin.auth.api.exception.AuthenticationException;
-import com.ez.admin.auth.api.service.IAuthService;
+import com.ez.admin.auth.core.channel.AuthenticationChannel;
+import com.ez.admin.auth.core.enums.ChannelType;
+import com.ez.admin.auth.core.enums.TokenType;
 import com.ez.admin.auth.core.model.DeviceInfo;
 import com.ez.admin.auth.core.service.DeviceService;
+import com.ez.admin.auth.core.service.IAuthService;
 import com.ez.admin.auth.core.service.TokenService;
+import com.ez.admin.common.exception.EzBusinessException;
 import com.ez.admin.framework.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,8 +52,8 @@ public class AuthServiceImpl implements IAuthService {
             channelType = ChannelType.valueOf(request.getChannelType());
         } catch (IllegalArgumentException e) {
             log.warn("不支持的登录渠道: {}", request.getChannelType());
-            throw new AuthenticationException(
-                    AuthenticationException.ErrorCodes.INVALID_CHANNEL,
+            throw new EzBusinessException(
+                    400,
                     "不支持的登录渠道: " + request.getChannelType()
             );
         }
@@ -62,8 +62,8 @@ public class AuthServiceImpl implements IAuthService {
         AuthenticationChannel channel = getChannel(channelType);
         if (channel == null) {
             log.warn("认证渠道适配器未实现: {}", channelType);
-            throw new AuthenticationException(
-                    AuthenticationException.ErrorCodes.INVALID_CHANNEL,
+            throw new EzBusinessException(
+                    400,
                     "认证渠道适配器未实现: " + channelType
             );
         }
@@ -71,8 +71,8 @@ public class AuthServiceImpl implements IAuthService {
         // 3. 验证请求凭证
         if (!channel.validateCredentials(request)) {
             log.warn("登录凭证不完整: channel={}", channelType);
-            throw new AuthenticationException(
-                    AuthenticationException.ErrorCodes.INVALID_CREDENTIALS,
+            throw new EzBusinessException(
+                    400,
                     "登录凭证不完整"
             );
         }
@@ -81,12 +81,12 @@ public class AuthServiceImpl implements IAuthService {
         String userIdStr;
         try {
             userIdStr = channel.authenticate(request);
-        } catch (AuthenticationException e) {
+        } catch (EzBusinessException e) {
             throw e;
         } catch (Exception e) {
             log.error("认证失败: channel={}, error={}", channelType, e.getMessage(), e);
-            throw new AuthenticationException(
-                    AuthenticationException.ErrorCodes.AUTHENTICATION_FAILED,
+            throw new EzBusinessException(
+                    401,
                     "认证失败"
             );
         }
@@ -143,8 +143,8 @@ public class AuthServiceImpl implements IAuthService {
         // 1. 验证 Refresh Token 是否有效
         if (!tokenService.validateToken(refreshToken)) {
             log.warn("Refresh Token 无效或已过期");
-            throw new AuthenticationException(
-                    AuthenticationException.ErrorCodes.REFRESH_TOKEN_INVALID,
+            throw new EzBusinessException(
+                    401,
                     "Refresh Token 无效或已过期"
             );
         }
@@ -153,8 +153,8 @@ public class AuthServiceImpl implements IAuthService {
         Long userId = tokenService.getUserIdFromToken(refreshToken);
         if (userId == null) {
             log.warn("无法从 Refresh Token 中解析用户ID");
-            throw new AuthenticationException(
-                    AuthenticationException.ErrorCodes.REFRESH_TOKEN_INVALID,
+            throw new EzBusinessException(
+                    401,
                     "Refresh Token 无效"
             );
         }
@@ -162,8 +162,8 @@ public class AuthServiceImpl implements IAuthService {
         // 3. 验证设备是否有效
         if (!deviceService.isDeviceValid(userId, deviceId)) {
             log.warn("设备无效或已被踢出: userId={}, deviceId={}", userId, deviceId);
-            throw new AuthenticationException(
-                    AuthenticationException.ErrorCodes.DEVICE_NOT_AUTHORIZED,
+            throw new EzBusinessException(
+                    403,
                     "设备无效或已被踢出"
             );
         }
@@ -171,8 +171,8 @@ public class AuthServiceImpl implements IAuthService {
         // 4. 验证 Refresh Token 是否匹配该设备
         if (!deviceService.validateRefreshToken(refreshToken, userId, deviceId)) {
             log.warn("Refresh Token 与设备不匹配: userId={}, deviceId={}", userId, deviceId);
-            throw new AuthenticationException(
-                    AuthenticationException.ErrorCodes.REFRESH_TOKEN_INVALID,
+            throw new EzBusinessException(
+                    401,
                     "Refresh Token 无效"
             );
         }

@@ -48,8 +48,16 @@ EZ-ADMIN-SPRINGBOOT4：基于 Spring Boot 4.0 + JDK 21 的高效率 RBAC 后台�
 **模块职责**：
 - `ez-admin-application`: 应用层父模块，管理所有业务线的聚合服务
 - `ez-admin-auth` (api + core): 认证聚合服务，实现登录/登出/Token管理/设备管理
+  - `api`: 对外暴露层（REST Controller + DTO）
+  - `core`: 内部实现层（Service 接口 + 实现 + 枚举 + 异常 + 策略）
 - `ez-admin-system` (api + core): 系统管理聚合服务，实现用户/角色/菜单/部门管理
+  - `api`: 对外暴露层（REST Controller + DTO + VO）
+  - `core`: 内部实现层（聚合服务 + MapStruct）
 - `ez-admin-domain-system`: 系统领域层，提供基础的 CRUD 能力
+
+**通用模块**：
+- `ez-admin-common`: 公共模块（ApiResponse、ErrorCode、EzBusinessException）
+- `ez-admin-framework`: 框架层（Security、Redis、Web、全局异常处理）
 
 **命名规则**：
 | 层级 | 命名模式 | 示例 |
@@ -83,6 +91,8 @@ EZ-ADMIN-SPRINGBOOT4：基于 Spring Boot 4.0 + JDK 21 的高效率 RBAC 后台�
 - [x] 调整 auth-core 依赖（依赖 framework 而非直接依赖 Security） - 2026-01-19
 - [x] 实现双Token机制（Access Token + Refresh Token） - 2026-01-19
 - [x] 实现设备管理核心功能（Redis存储设备列表） - 2026-01-19
+- [x] 重构聚合服务架构（Controller 移至 api 模块） - 2026-01-19
+- [x] 优化聚合服务模块划分（api 仅放 Controller+DTO，使用 common/framework） - 2026-01-19
 - [ ] 实现多渠道认证适配器（策略模式）
 - [ ] 集成Spring Security 7配置和过滤器链
 - [ ] 实现微信小程序登录渠道

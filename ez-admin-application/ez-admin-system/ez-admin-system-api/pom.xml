@@ -16,7 +16,7 @@
     <artifactId>ez-admin-system-api</artifactId>
     <packaging>jar</packaging>
     <name>ez-admin-system-api</name>
-    <description>系统管理接口层（对外暴露的DTO、VO、接口定义）</description>
+    <description>系统管理接口层（对外暴露的 REST API、DTO、VO、接口定义）</description>
 
     <!-- 依赖配置 -->
     <dependencies>

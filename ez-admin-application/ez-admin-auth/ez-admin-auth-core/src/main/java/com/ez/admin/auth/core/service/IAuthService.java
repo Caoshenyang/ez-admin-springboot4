@@ -1,4 +1,4 @@
-package com.ez.admin.auth.api.service;
+package com.ez.admin.auth.core.service;
 
 import com.ez.admin.auth.api.dto.LoginRequest;
 import com.ez.admin.auth.api.dto.TokenResponse;
@@ -22,7 +22,7 @@ public interface IAuthService {
      *
      * @param request 登录请求
      * @return Token 响应
-     * @throws com.ez.admin.auth.api.exception.AuthenticationException 认证失败时抛出
+     * @throws com.ez.admin.common.exception.EzBusinessException 认证失败时抛出
      */
     TokenResponse login(LoginRequest request);
 
@@ -35,7 +35,7 @@ public interface IAuthService {
      * @param refreshToken 刷新令牌
      * @param deviceId     设备 ID
      * @return 新的 Token 响应
-     * @throws com.ez.admin.auth.api.exception.AuthenticationException 刷新失败时抛出
+     * @throws com.ez.admin.common.exception.EzBusinessException 刷新失败时抛出
      */
     TokenResponse refreshToken(String refreshToken, String deviceId);
 

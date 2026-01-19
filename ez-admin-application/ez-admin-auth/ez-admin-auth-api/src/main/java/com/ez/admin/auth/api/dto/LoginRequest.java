@@ -1,6 +1,5 @@
 package com.ez.admin.auth.api.dto;
 
-import com.ez.admin.auth.api.enums.ChannelType;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 

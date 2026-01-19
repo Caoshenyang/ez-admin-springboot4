@@ -16,16 +16,22 @@
     <artifactId>ez-admin-auth-core</artifactId>
     <packaging>jar</packaging>
     <name>ez-admin-auth-core</name>
-    <description>认证授权核心实现层（Controller、Service、Security、Channel）</description>
+    <description>认证授权核心实现层（Service、Security、Channel）</description>
 
     <!-- 依赖配置 -->
     <dependencies>
         <!-- ========== 内部依赖 ========== -->
 
-        <!-- auth-api：实现对外接口 -->
+        <!-- auth-api：获取 DTO -->
         <dependency>
             <groupId>com.ez.admin</groupId>
             <artifactId>ez-admin-auth-api</artifactId>
+        </dependency>
+
+        <!-- common：获取统一异常类 EzBusinessException -->
+        <dependency>
+            <groupId>com.ez.admin</groupId>
+            <artifactId>ez-admin-common</artifactId>
         </dependency>
 
         <!-- framework：获取 Security、Redis、JWT 等通用能力 -->

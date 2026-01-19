@@ -1,14 +1,14 @@
-package com.ez.admin.auth.core.controller;
+package com.ez.admin.auth.api.controller;
 
 import com.ez.admin.auth.api.dto.LoginRequest;
 import com.ez.admin.auth.api.dto.TokenResponse;
-import com.ez.admin.auth.api.service.IAuthService;
+import com.ez.admin.auth.core.service.IAuthService;
+import com.ez.admin.common.model.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -38,13 +38,13 @@ public class AuthController {
      * @return Token 响应
      */
     @PostMapping("/login")
-    public TokenResponse login(@RequestBody LoginRequest request) {
+    public ApiResponse<TokenResponse> login(@RequestBody LoginRequest request) {
         log.info("用户登录: channelType={}, deviceId={}", request.getChannelType(), request.getDeviceId());
 
         TokenResponse response = authService.login(request);
 
         log.info("登录成功: userId={}, deviceId={}", response.getUserId(), request.getDeviceId());
-        return response;
+        return ApiResponse.success(response);
     }
 
     /**
@@ -57,7 +57,7 @@ public class AuthController {
      * @return 新的 Token 响应
      */
     @PostMapping("/refresh")
-    public TokenResponse refreshToken(@RequestBody Map<String, String> requestBody) {
+    public ApiResponse<TokenResponse> refreshToken(@RequestBody Map<String, String> requestBody) {
         String refreshToken = requestBody.get("refreshToken");
         String deviceId = requestBody.get("deviceId");
 
@@ -66,7 +66,7 @@ public class AuthController {
         TokenResponse response = authService.refreshToken(refreshToken, deviceId);
 
         log.info("Token 刷新成功: userId={}, deviceId={}", response.getUserId(), deviceId);
-        return response;
+        return ApiResponse.success(response);
     }
 
     /**
@@ -79,7 +79,7 @@ public class AuthController {
      * @return 操作结果
      */
     @PostMapping("/logout")
-    public Map<String, Object> logout(@RequestBody Map<String, String> requestBody) {
+    public ApiResponse<Void> logout(@RequestBody Map<String, String> requestBody) {
         Long userId = Long.parseLong(requestBody.get("userId"));
         String deviceId = requestBody.get("deviceId");
 
@@ -87,11 +87,7 @@ public class AuthController {
 
         authService.logout(userId, deviceId);
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("code", 200);
-        result.put("message", "登出成功");
-
-        return result;
+        return ApiResponse.success("登出成功", null);
     }
 
     /**
@@ -104,7 +100,7 @@ public class AuthController {
      * @return 操作结果
      */
     @PostMapping("/kickout")
-    public Map<String, Object> kickOutDevice(@RequestBody Map<String, String> requestBody) {
+    public ApiResponse<Void> kickOutDevice(@RequestBody Map<String, String> requestBody) {
         Long userId = Long.parseLong(requestBody.get("userId"));
         String deviceId = requestBody.get("deviceId");
 
@@ -112,11 +108,7 @@ public class AuthController {
 
         authService.kickOutDevice(userId, deviceId);
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("code", 200);
-        result.put("message", "设备已踢出");
-
-        return result;
+        return ApiResponse.success("设备已踢出", null);
     }
 
     /**
@@ -129,21 +121,17 @@ public class AuthController {
      * @return 验证结果
      */
     @GetMapping("/validate")
-    public Map<String, Object> validateToken(HttpServletRequest request) {
+    public ApiResponse<Map<String, Object>> validateToken(HttpServletRequest request) {
         String token = extractTokenFromRequest(request);
 
         boolean isValid = authService.validateToken(token);
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("code", 200);
-        result.put("valid", isValid);
-
         if (isValid) {
             Long userId = authService.getUserIdFromToken(token);
-            result.put("userId", userId);
+            return ApiResponse.success(Map.of("valid", true, "userId", userId));
         }
 
-        return result;
+        return ApiResponse.success(Map.of("valid", false));
     }
 
     /**
@@ -156,24 +144,16 @@ public class AuthController {
      * @return 用户信息
      */
     @GetMapping("/userinfo")
-    public Map<String, Object> getUserInfo(HttpServletRequest request) {
+    public ApiResponse<Map<String, Object>> getUserInfo(HttpServletRequest request) {
         String token = extractTokenFromRequest(request);
 
         if (!authService.validateToken(token)) {
-            Map<String, Object> result = new HashMap<>();
-            result.put("code", 401);
-            result.put("message", "Token 无效");
-
-            return result;
+            return ApiResponse.error(401, "Token 无效");
         }
 
         Long userId = authService.getUserIdFromToken(token);
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("code", 200);
-        result.put("userId", userId);
-
-        return result;
+        return ApiResponse.success(Map.of("userId", userId));
     }
 
     // =============================  私有方法  =============================
