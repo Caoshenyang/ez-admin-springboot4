@@ -24,17 +24,35 @@
         <module>ez-admin-common</module>         <!-- 无依赖，基础层 -->
         <module>ez-admin-framework</module>      <!-- 框架层 -->
         <module>ez-admin-generator</module>      <!-- 工具层 -->
-        <module>ez-admin-modules</module>        <!-- 业务聚合层 -->
+        <module>ez-admin-domain</module>         <!-- 领域层，代码生成器生成 -->
+        <module>ez-admin-auth</module>           <!-- 认证层，独立认证中心 -->
+        <module>ez-admin-application</module>    <!-- 应用层，手写业务逻辑 -->
         <module>ez-admin-starter</module>        <!-- 启动层，依赖所有 -->
     </modules>
 
     <!-- 全局属性配置 -->
     <properties>
+        <!-- 基础配置 -->
         <java.version>21</java.version> <!-- Java 版本：JDK 21（Spring Boot 4.0 最低要求） -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> <!-- 项目源码编码 -->
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding> <!-- 项目报告输出编码 -->
+
+        <!-- 数据库相关 -->
         <mybatis-plus.version>3.5.15</mybatis-plus.version> <!-- MyBatis-Plus 版本 -->
         <postgresql.version>42.7.9</postgresql.version> <!-- PostgreSQL 驱动版本 -->
+
+        <!-- JWT 认证 -->
+        <jjwt.version>0.12.6</jjwt.version> <!-- JJWT 版本 -->
+
+        <!-- 模板引擎 -->
+        <freemarker.version>2.3.32</freemarker.version> <!-- FreeMarker 版本 -->
+
+        <!-- 工具类 -->
+        <hutool.version>5.8.29</hutool.version> <!-- Hutool 版本 -->
+        <mapstruct.version>1.6.3</mapstruct.version> <!-- MapStruct 版本 -->
+
+        <!-- 测试 -->
+        <junit.version>5.10.0</junit.version> <!-- JUnit 版本 -->
     </properties>
 
     <!-- 全局依赖：所有子模块默认继承 -->
@@ -50,36 +68,168 @@
     <!-- 依赖版本管理：统一管理第三方依赖版本，子模块引用时无需指定版本 -->
     <dependencyManagement>
         <dependencies>
-            <!-- MyBatis-Plus：增强版 MyBatis，简化数据库操作 -->
+            <!-- ========== 内部模块依赖 ========== -->
+
+            <!-- ez-admin-common -->
+            <dependency>
+                <groupId>com.ez.admin</groupId>
+                <artifactId>ez-admin-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- ez-admin-framework -->
+            <dependency>
+                <groupId>com.ez.admin</groupId>
+                <artifactId>ez-admin-framework</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- ez-admin-generator -->
+            <dependency>
+                <groupId>com.ez.admin</groupId>
+                <artifactId>ez-admin-generator</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- ez-admin-domain -->
+            <dependency>
+                <groupId>com.ez.admin</groupId>
+                <artifactId>ez-admin-domain</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- ez-admin-domain-system -->
+            <dependency>
+                <groupId>com.ez.admin</groupId>
+                <artifactId>ez-admin-domain-system</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- ez-admin-auth -->
+            <dependency>
+                <groupId>com.ez.admin</groupId>
+                <artifactId>ez-admin-auth</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- ez-admin-auth-api -->
+            <dependency>
+                <groupId>com.ez.admin</groupId>
+                <artifactId>ez-admin-auth-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- ez-admin-auth-core -->
+            <dependency>
+                <groupId>com.ez.admin</groupId>
+                <artifactId>ez-admin-auth-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- ez-admin-application -->
+            <dependency>
+                <groupId>com.ez.admin</groupId>
+                <artifactId>ez-admin-application</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- ez-admin-application-system -->
+            <dependency>
+                <groupId>com.ez.admin</groupId>
+                <artifactId>ez-admin-application-system</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- ========== 数据库相关 ========== -->
+
+            <!-- MyBatis-Plus Spring Boot 4.x Starter -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
-            <!-- MyBatis-Plus JSQLParser：用于支持 JSQLParser 功能（如分页、条件构造器等） -->
+
+            <!-- MyBatis-Plus JSQLParser：支持分页、条件构造器等 -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-jsqlparser</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
+
             <!-- MyBatis-Plus 代码生成器 -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-generator</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
-            <!-- PostgreSQL 驱动：用于连接 PostgreSQL 数据库 -->
+
+            <!-- PostgreSQL 驱动 -->
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>${postgresql.version}</version>
             </dependency>
+
+            <!-- ========== JWT 认证 ========== -->
+
+            <!-- JJWT API -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+
+            <!-- JJWT Impl -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <!-- JJWT Jackson -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <!-- ========== 模板引擎 ========== -->
+
             <!-- FreeMarker 模板引擎 -->
             <dependency>
                 <groupId>org.freemarker</groupId>
                 <artifactId>freemarker</artifactId>
-                <version>2.3.32</version>
+                <version>${freemarker.version}</version>
             </dependency>
+
+            <!-- ========== 工具类 ========== -->
+
+            <!-- Hutool：Java 工具类库 -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <!-- MapStruct：对象映射 -->
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${mapstruct.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${mapstruct.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- ========== 测试依赖 ========== -->
+
+            <!-- Spring Boot Test 和 Spring Security Test 由 Spring Boot BOM 管理，无需在此声明版本 -->
         </dependencies>
     </dependencyManagement>
 
@@ -115,6 +265,27 @@
         <!-- 插件版本管理：统一管理插件版本，子模块引用时无需指定版本 -->
         <pluginManagement>
             <plugins>
+                <!--  编译插件  -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.mapstruct</groupId>
+                                <artifactId>mapstruct-processor</artifactId>
+                                <version>${mapstruct.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
                 <!-- Spring Boot Maven 插件：用于打包可执行的 JAR/WAR 文件 -->
                 <plugin>
                     <groupId>org.springframework.boot</groupId>

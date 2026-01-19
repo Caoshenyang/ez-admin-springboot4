@@ -3,29 +3,23 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>com.ez.admin</groupId>
-        <artifactId>ez-admin-springboot4</artifactId>
+        <artifactId>ez-admin-domain</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ez-admin-modules</artifactId>
-    <packaging>pom</packaging>
-    <name>ez-admin-modules</name>
-    <description>业务模块聚合层</description>
+    <artifactId>ez-admin-domain-system</artifactId>
+    <name>ez-admin-domain-system</name>
+    <description>系统模块领域层 - 实体、Mapper、原子服务</description>
 
-    <modules>
-        <module>ez-admin-system</module>
-    </modules>
-
-    <!-- 业务模块通用依赖：所有子模块自动继承 -->
     <dependencies>
-        <!-- Framework 框架层：包含全局异常处理、配置等基础设施 -->
+        <!-- ========== 框架依赖 ========== -->
+
+        <!-- ez-admin-framework：获取 Security、Redis、MyBatis 通用能力 -->
         <dependency>
             <groupId>com.ez.admin</groupId>
             <artifactId>ez-admin-framework</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

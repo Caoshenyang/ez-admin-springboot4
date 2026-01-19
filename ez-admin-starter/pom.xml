@@ -19,13 +19,7 @@
         <!-- 引入所有子模块 -->
         <dependency>
             <groupId>com.ez.admin</groupId>
-            <artifactId>ez-admin-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.ez.admin</groupId>
-            <artifactId>ez-admin-framework</artifactId>
-            <version>${project.version}</version>
+            <artifactId>ez-admin-application-system</artifactId>
         </dependency>
     </dependencies>
 

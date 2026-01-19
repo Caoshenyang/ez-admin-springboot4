@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.ez.admin</groupId>
+        <artifactId>ez-admin-application</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>ez-admin-application-system</artifactId>
+    <name>ez-admin-application-system</name>
+    <description>系统模块应用层 - Controller、聚合服务、DTO</description>
+
+    <dependencies>
+        <!-- ========== 内部依赖 ========== -->
+
+        <!-- ez-admin-domain-system：领域层实体、Mapper、原子服务 -->
+        <dependency>
+            <groupId>com.ez.admin</groupId>
+            <artifactId>ez-admin-domain-system</artifactId>
+        </dependency>
+
+        <!-- ez-admin-auth-api：认证授权接口 -->
+        <dependency>
+            <groupId>com.ez.admin</groupId>
+            <artifactId>ez-admin-auth-api</artifactId>
+        </dependency>
+
+        <!-- ez-admin-framework：Web、Security、Redis、MyBatis 通用能力 -->
+        <dependency>
+            <groupId>com.ez.admin</groupId>
+            <artifactId>ez-admin-framework</artifactId>
+        </dependency>
+
+        <!-- ========== 对象映射 ========== -->
+
+        <!-- MapStruct：对象转换 -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 父项目：继承 ez-admin-auth -->
+    <parent>
+        <groupId>com.ez.admin</groupId>
+        <artifactId>ez-admin-auth</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <!-- 模块信息 -->
+    <artifactId>ez-admin-auth-core</artifactId>
+    <packaging>jar</packaging>
+    <name>ez-admin-auth-core</name>
+    <description>认证授权核心实现层（Controller、Service、Security、Channel）</description>
+
+    <!-- 依赖配置 -->
+    <dependencies>
+        <!-- ========== 内部依赖 ========== -->
+
+        <!-- auth-api：实现对外接口 -->
+        <dependency>
+            <groupId>com.ez.admin</groupId>
+            <artifactId>ez-admin-auth-api</artifactId>
+        </dependency>
+
+        <!-- framework：获取 Security、Redis、JWT 等通用能力 -->
+        <dependency>
+            <groupId>com.ez.admin</groupId>
+            <artifactId>ez-admin-framework</artifactId>
+        </dependency>
+
+        <!-- domain-system：获取 User、Role 等实体 -->
+        <dependency>
+            <groupId>com.ez.admin</groupId>
+            <artifactId>ez-admin-domain-system</artifactId>
+        </dependency>
+
+        <!-- ========== 测试依赖 ========== -->
+
+        <!-- Spring Boot Test：单元测试 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Spring Security Test：安全测试 -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

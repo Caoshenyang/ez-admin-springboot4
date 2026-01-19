@@ -13,37 +13,98 @@
     <artifactId>ez-admin-framework</artifactId>
     <packaging>jar</packaging>
     <name>ez-admin-framework</name>
-    <description>框架核心模块：Security配置、Token校验、拦截器、Redis配置</description>
+    <description>框架核心模块：Security、Redis、Web、MyBatis 通用配置</description>
 
     <dependencies>
-        <!-- 内部模块依赖 -->
+        <!-- ========== 内部依赖 ========== -->
+
+        <!-- ez-admin-common：通用模块 -->
         <dependency>
             <groupId>com.ez.admin</groupId>
             <artifactId>ez-admin-common</artifactId>
             <version>${project.version}</version>
         </dependency>
 
-        <!-- Spring Boot Web MVC -->
+        <!-- ========== Spring Boot 框架依赖 ========== -->
+
+        <!-- Spring Web：提供 Web MVC 支持 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
 
-        <!-- MyBatis-Plus：增强版 MyBatis，简化数据库操作 -->
+        <!-- Spring Security 7：安全框架 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- Redis：缓存和分布式存储 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- Validation：参数校验 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- ========== 数据库依赖 ========== -->
+
+        <!-- MyBatis-Plus：增强版 MyBatis -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
         </dependency>
-        <!-- MyBatis-Plus JSQLParser：支持分页、条件构造器等功能 -->
+
+        <!-- MyBatis-Plus JSQLParser：支持分页、条件构造器 -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-jsqlparser</artifactId>
         </dependency>
 
-        <!-- PostgreSQL 驱动：用于连接 PostgreSQL 数据库 -->
+        <!-- PostgreSQL 驱动 -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+        </dependency>
+
+        <!-- ========== JWT 依赖 ========== -->
+
+        <!-- JJWT API：JWT 接口定义 -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+        </dependency>
+
+        <!-- JJWT Impl：JWT 实现 -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- JJWT Jackson：JSON 序列化 -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- ========== 测试依赖 ========== -->
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

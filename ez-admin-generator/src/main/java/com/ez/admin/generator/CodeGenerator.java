@@ -65,11 +65,11 @@ public class CodeGenerator {
                 .globalConfig((scanner, builder) -> {
                     moduleShortName.set(scanner.apply("请输入模块名称（如：system）："));
 
-                    // 自动拼接完整模块名：ez-admin-system
-                    String moduleName = "ez-admin-" + moduleShortName.get();
+                    // 自动拼接完整模块名：ez-admin-domain-system
+                    String domainModuleName = "ez-admin-domain-" + moduleShortName.get();
 
-                    // 设置输出目录：ez-admin-modules/ez-admin-system/src/main/java
-                    String outputDir = projectRoot + "/ez-admin-modules/" + moduleName + "/src/main/java";
+                    // 设置输出目录：ez-admin-domain/ez-admin-domain-system/src/main/java
+                    String outputDir = projectRoot + "/ez-admin-domain/" + domainModuleName + "/src/main/java";
 
                     builder.author("ez-admin")
                             .disableOpenDir() // 生成完毕后不自动打开资源管理器
@@ -89,18 +89,18 @@ public class CodeGenerator {
                 )
                 // 包配置
                 .packageConfig((scanner, builder) -> {
-                    // 自动拼接完整模块名：ez-admin-system
-                    String moduleName = "ez-admin-" + moduleShortName.get();
+                    // 自动拼接完整模块名：ez-admin-domain-system
+                    String domainModuleName = "ez-admin-domain-" + moduleShortName.get();
 
-                    builder.parent("com.ez.admin." + moduleShortName.get()) // 包名：com.ez.admin.system
+                    builder.parent("com.ez.admin.domain." + moduleShortName.get()) // 包名：com.ez.admin.domain.system
                             .service("service")
                             .serviceImpl("service.impl")
                             .mapper("mapper")
                             .entity("entity")
                             .controller("controller")
-                            // 设置 mapperXml 生成路径：ez-admin-modules/ez-admin-system/src/main/resources/mapper
+                            // 设置 mapperXml 生成路径：ez-admin-domain/ez-admin-domain-system/src/main/resources/mapper
                             .pathInfo(Collections.singletonMap(OutputFile.xml,
-                                    projectRoot + "/ez-admin-modules/" + moduleName + "/src/main/resources/mapper"));
+                                    projectRoot + "/ez-admin-domain/" + domainModuleName + "/src/main/resources/mapper"));
                 })
                 // 策略配置
                 .strategyConfig((scanner, builder) -> {

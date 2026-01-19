@@ -3,16 +3,19 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>com.ez.admin</groupId>
-        <artifactId>ez-admin-modules</artifactId>
+        <artifactId>ez-admin-springboot4</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ez-admin-system</artifactId>
-    <packaging>jar</packaging>
-    <name>ez-admin-system</name>
-    <description>后台管理模块：用户、角色、权限、日志</description>
+    <artifactId>ez-admin-domain</artifactId>
+    <packaging>pom</packaging>
+    <name>ez-admin-domain</name>
+    <description>领域层模块 - 代码生成器生成，可安全覆盖</description>
+
+    <modules>
+        <module>ez-admin-domain-system</module>
+    </modules>
 
 </project>
