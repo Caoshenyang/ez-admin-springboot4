@@ -26,23 +26,14 @@ public class UserRoleRelation implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键ID
-     */
     @Schema(description = "主键ID", example = "1")
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
-    /**
-     * 用户ID
-     */
     @Schema(description = "用户ID", example = "1")
     @TableField("user_id")
     private Long userId;
 
-    /**
-     * 角色ID
-     */
     @Schema(description = "角色ID", example = "1")
     @TableField("role_id")
     private Long roleId;
