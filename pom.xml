@@ -34,7 +34,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> <!-- 项目源码编码 -->
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding> <!-- 项目报告输出编码 -->
         <mybatis-plus.version>3.5.15</mybatis-plus.version> <!-- MyBatis-Plus 版本 -->
-        <mysql.version>9.1.0</mysql.version> <!-- MySQL 驱动版本 -->
+        <postgresql.version>42.7.9</postgresql.version> <!-- PostgreSQL 驱动版本 -->
     </properties>
 
     <!-- 全局依赖：所有子模块默认继承 -->
@@ -62,11 +62,23 @@
                 <artifactId>mybatis-plus-jsqlparser</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
-            <!-- MySQL 驱动：用于连接 MySQL 数据库 -->
+            <!-- MyBatis-Plus 代码生成器 -->
             <dependency>
-                <groupId>com.mysql</groupId>
-                <artifactId>mysql-connector-j</artifactId>
-                <version>${mysql.version}</version>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-generator</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <!-- PostgreSQL 驱动：用于连接 PostgreSQL 数据库 -->
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgresql.version}</version>
+            </dependency>
+            <!-- FreeMarker 模板引擎 -->
+            <dependency>
+                <groupId>org.freemarker</groupId>
+                <artifactId>freemarker</artifactId>
+                <version>2.3.32</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

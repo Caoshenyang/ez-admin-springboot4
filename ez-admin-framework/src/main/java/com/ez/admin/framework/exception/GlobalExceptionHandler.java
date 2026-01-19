@@ -54,8 +54,7 @@ public class GlobalExceptionHandler {
      * 处理请求参数校验异常（@Valid 注解触发）
      * <p>
      * 捕获 {@link MethodArgumentNotValidException}，通常在 Controller 方法参数使用
-     * {@link org.springframework.validation.annotation.Validated} 或 {@link jakarta.validation.Valid}
-     * 注解时触发。提取所有字段校验错误信息并拼接返回。
+     * {@link org.springframework.validation.annotation.Validated}
      * </p>
      *
      * @param ex 参数校验异常

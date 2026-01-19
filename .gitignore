@@ -24,3 +24,6 @@ logs/
 
 # Claude Code CLI
 .claude/
+
+# 环境变量文件
+.env

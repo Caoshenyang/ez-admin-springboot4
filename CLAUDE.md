@@ -24,13 +24,7 @@ EZ-ADMIN-SPRINGBOOT4：基于 Spring Boot 4.0 + JDK 21 的高效率 Rren wBAC �
 - **运行项目**: `mvn spring-boot:run` (由用户执行)
 - **跳过测试打包**: `mvn clean package -DskipTests` (由用户执行)
 
-## 任务清单 (Todo List)
-
-- [x] 自定义业务异常和全局异常处理器
-  - ErrorCode.java: 错误码枚举（含通用/用户/角色/菜单/部门/字典/文件等错误码）
-  - EzBusinessException.java: 自定义业务异常类
-  - GlobalExceptionHandler.java: 全局异常处理器（拦截业务异常、参数校验、HTTP异常等）
-  - 完成时间: 2025-01-18
+## 任务清单 (Todo List) 
 
 ---
 *注：每次执行完代码修改后，请确认已勾选上述清单，并告知用户下一项任务是什么。*

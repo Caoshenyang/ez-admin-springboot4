@@ -4,5 +4,7 @@ server:
 spring:
   application:
     name: ez-admin
+  config:
+    import: optional:file:.env[.env],optional:classpath:.env[.env]
   profiles:
     active: dev

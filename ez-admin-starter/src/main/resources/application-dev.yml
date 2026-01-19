@@ -1,1 +1,30 @@
 # 开发环境配置
+spring:
+  # 数据源配置
+  datasource:
+    # PostgreSQL 数据库驱动类
+    driver-class-name: org.postgresql.Driver
+    # 数据库连接 URL（格式：jdbc:postgresql://主机:端口/数据库名）
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ez-admin}
+    # 数据库用户名
+    username: ${DB_USERNAME:postgres}
+    # 数据库密码
+    password: ${DB_PASSWORD:postgres}
+    # HikariCP 连接池配置（Spring Boot 4.x 默认连接池）
+    hikari:
+      # 连接池最小空闲连接数
+      minimum-idle: 5
+      # 连接池最大连接数
+      maximum-pool-size: 20
+      # 连接超时时间（毫秒）
+      connection-timeout: 30000
+      # 空闲连接存活最大时间（毫秒，10分钟）
+      idle-timeout: 600000
+      # 连接最大存活时间（毫秒，30分钟）
+      max-lifetime: 1800000
+
+  # SQL 初始化配置（可选）
+  sql:
+    init:
+      # 模式：从不自动初始化（建议使用 Flyway 或 Liquibase 进行版本管理）
+      mode: never
