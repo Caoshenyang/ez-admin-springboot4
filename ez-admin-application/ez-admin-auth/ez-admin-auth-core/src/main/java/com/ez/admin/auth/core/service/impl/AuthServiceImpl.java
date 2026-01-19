@@ -1,7 +1,9 @@
 package com.ez.admin.auth.core.service.impl;
 
+import com.ez.admin.auth.api.channel.AuthenticationChannel;
 import com.ez.admin.auth.api.dto.LoginRequest;
 import com.ez.admin.auth.api.dto.TokenResponse;
+import com.ez.admin.auth.api.enums.ChannelType;
 import com.ez.admin.auth.api.enums.TokenType;
 import com.ez.admin.auth.api.exception.AuthenticationException;
 import com.ez.admin.auth.api.service.IAuthService;
@@ -9,9 +11,14 @@ import com.ez.admin.auth.core.model.DeviceInfo;
 import com.ez.admin.auth.core.service.DeviceService;
 import com.ez.admin.auth.core.service.TokenService;
 import com.ez.admin.framework.security.jwt.JwtTokenProvider;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 认证服务实现类
@@ -24,27 +31,109 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements IAuthService {
 
-    @Autowired
-    private TokenService tokenService;
+    private final TokenService tokenService;
+    private final DeviceService deviceService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final List<AuthenticationChannel> authenticationChannels;
 
-    @Autowired
-    private DeviceService deviceService;
-
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    /**
+     * 渠道适配器缓存（按渠道类型索引）
+     */
+    private Map<ChannelType, AuthenticationChannel> channelMap;
 
     @Override
     public TokenResponse login(LoginRequest request) {
-        // TODO: 这个方法需要结合多渠道认证适配器实现
-        // 目前先返回异常，等实现渠道适配器后再完善
+        // 1. 解析渠道类型
+        ChannelType channelType;
+        try {
+            channelType = ChannelType.valueOf(request.getChannelType());
+        } catch (IllegalArgumentException e) {
+            log.warn("不支持的登录渠道: {}", request.getChannelType());
+            throw new AuthenticationException(
+                    AuthenticationException.ErrorCodes.INVALID_CHANNEL,
+                    "不支持的登录渠道: " + request.getChannelType()
+            );
+        }
 
-        log.warn("登录功能暂未实现，需要先实现多渠道认证适配器");
-        throw new AuthenticationException(
-                AuthenticationException.ErrorCodes.INVALID_CHANNEL,
-                "登录功能暂未实现"
-        );
+        // 2. 获取对应的认证渠道适配器
+        AuthenticationChannel channel = getChannel(channelType);
+        if (channel == null) {
+            log.warn("认证渠道适配器未实现: {}", channelType);
+            throw new AuthenticationException(
+                    AuthenticationException.ErrorCodes.INVALID_CHANNEL,
+                    "认证渠道适配器未实现: " + channelType
+            );
+        }
+
+        // 3. 验证请求凭证
+        if (!channel.validateCredentials(request)) {
+            log.warn("登录凭证不完整: channel={}", channelType);
+            throw new AuthenticationException(
+                    AuthenticationException.ErrorCodes.INVALID_CREDENTIALS,
+                    "登录凭证不完整"
+            );
+        }
+
+        // 4. 执行认证
+        String userIdStr;
+        try {
+            userIdStr = channel.authenticate(request);
+        } catch (AuthenticationException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("认证失败: channel={}, error={}", channelType, e.getMessage(), e);
+            throw new AuthenticationException(
+                    AuthenticationException.ErrorCodes.AUTHENTICATION_FAILED,
+                    "认证失败"
+            );
+        }
+
+        Long userId = Long.valueOf(userIdStr);
+
+        // 5. 生成 Token
+        TokenResponse response;
+        if (Boolean.TRUE.equals(request.getRememberMe())) {
+            // 记住登录：生成 Device Token（30天有效期）
+            response = generateTokensWithDevice(userId, request.getDeviceId(), null);
+        } else {
+            // 普通登录：生成 Access Token + Refresh Token
+            response = generateTokens(userId, request.getDeviceId(), null);
+        }
+
+        // 6. 注册/更新设备信息
+        DeviceInfo deviceInfo = DeviceInfo.builder()
+                .userId(userId)
+                .deviceId(request.getDeviceId())
+                .deviceName(request.getDeviceName() != null ? request.getDeviceName() : "Unknown Device")
+                .refreshToken(response.getRefreshToken())
+                .deviceToken(response.getDeviceToken())
+                .build();
+
+        deviceService.registerDevice(deviceInfo);
+
+        log.info("登录成功: channel={}, userId={}, deviceId={}", channelType, userId, request.getDeviceId());
+        return response;
+    }
+
+    /**
+     * 获取认证渠道适配器
+     *
+     * @param channelType 渠道类型
+     * @return 渠道适配器，如果不存在则返回 null
+     */
+    private AuthenticationChannel getChannel(ChannelType channelType) {
+        if (channelMap == null) {
+            // 懒加载：第一次访问时构建缓存
+            channelMap = authenticationChannels.stream()
+                    .collect(Collectors.toMap(
+                            AuthenticationChannel::getSupportedChannel,
+                            Function.identity()
+                    ));
+        }
+        return channelMap.get(channelType);
     }
 
     @Override
