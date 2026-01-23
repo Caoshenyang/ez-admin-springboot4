@@ -18,28 +18,18 @@
     <description>EZ Admin SpringBoot 4.x - 轻量级 RBAC 后台管理系统</description>
 
     <properties>
-        <java.version>21</java.version>
-        <mybatis-plus.version>3.5.15</mybatis-plus.version>
-        <postgresql.version>42.7.9</postgresql.version>
-        <springdoc.version>2.7.0</springdoc.version>
-        <freemarker.version>2.3.32</freemarker.version>
-        <mapstruct.version>1.6.3</mapstruct.version>
+        <java.version>21</java.version> <!-- Java 版本 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> <!-- 源码编码 -->
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding> <!-- 报告编码 -->
+        <mybatis-plus.version>3.5.15</mybatis-plus.version> <!-- MyBatis-Plus 版本 -->
+        <postgresql.version>42.7.9</postgresql.version> <!-- PostgreSQL 驱动版本 -->
+        <springdoc.version>2.7.0</springdoc.version> <!-- SpringDoc OpenAPI 版本 -->
+        <freemarker.version>2.3.32</freemarker.version> <!-- FreeMarker 模板引擎版本 -->
+        <mapstruct.version>1.6.3</mapstruct.version> <!-- MapStruct 版本 -->
+        <lombok.version>1.18.34</lombok.version> <!-- Lombok 版本 -->
     </properties>
 
     <dependencies>
-        <!-- Lombok & MapStruct -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>${mapstruct.version}</version>
-            <optional>true</optional>
-        </dependency>
-
         <!-- Spring Boot Starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -93,6 +83,19 @@
             <version>${freemarker.version}</version>
             <optional>true</optional>
         </dependency>
+
+        <!-- Lombok & MapStruct -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${mapstruct.version}</version>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <repositories>
@@ -114,6 +117,28 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>1.8</source> <!-- depending on your project -->
+                    <target>1.8</target> <!-- depending on your project -->
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
+                        <!-- other annotation processors -->
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
         </plugins>
