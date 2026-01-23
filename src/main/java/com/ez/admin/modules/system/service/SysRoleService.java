@@ -1,7 +1,7 @@
-package com.ez.admin.modules.admin.service;
+package com.ez.admin.modules.system.service;
 
-import com.ez.admin.modules.admin.entity.SysRole;
-import com.ez.admin.modules.admin.mapper.SysRoleMapper;
+import com.ez.admin.modules.system.entity.SysRole;
+import com.ez.admin.modules.system.mapper.SysRoleMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 

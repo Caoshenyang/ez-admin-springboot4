@@ -1,7 +1,7 @@
-package com.ez.admin.modules.admin.service;
+package com.ez.admin.modules.system.service;
 
-import com.ez.admin.modules.admin.entity.SysDept;
-import com.ez.admin.modules.admin.mapper.SysDeptMapper;
+import com.ez.admin.modules.system.entity.SysDept;
+import com.ez.admin.modules.system.mapper.SysDeptMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 

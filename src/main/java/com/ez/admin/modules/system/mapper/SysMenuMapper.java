@@ -1,7 +1,7 @@
-package com.ez.admin.modules.admin.mapper;
+package com.ez.admin.modules.system.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.ez.admin.modules.admin.entity.SysMenu;
+import com.ez.admin.modules.system.entity.SysMenu;
 
 /**
  * <p>

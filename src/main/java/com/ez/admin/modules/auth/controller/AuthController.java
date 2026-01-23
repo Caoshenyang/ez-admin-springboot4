@@ -1,0 +1,54 @@
+package com.ez.admin.modules.auth.controller;
+
+import com.ez.admin.common.model.R;
+import com.ez.admin.modules.auth.dto.LoginRequest;
+import com.ez.admin.modules.auth.dto.LoginResponse;
+import com.ez.admin.modules.auth.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+
+/**
+ * 认证控制器
+ *
+ * @author ez-admin
+ * @since 2026-01-23
+ */
+@Slf4j
+@RestController
+@RequestMapping("/auth")
+@RequiredArgsConstructor
+@Tag(name = "认证接口", description = "用户登录、登出等认证相关接口")
+public class AuthController {
+
+    private final AuthService authService;
+
+    /**
+     * 用户登录
+     *
+     * @param request 登录请求
+     * @return 登录响应（包含 token）
+     */
+    @PostMapping("/login")
+    @Operation(summary = "用户登录", description = "使用用户名和密码登录，成功后返回 token")
+    public R<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        log.info("用户登录请求：{}", request.getUsername());
+        LoginResponse response = authService.login(request);
+        return R.success("登录成功", response);
+    }
+
+    /**
+     * 用户登出
+     *
+     * @return 成功响应
+     */
+    @PostMapping("/logout")
+    @Operation(summary = "用户登出", description = "退出当前登录状态")
+    public R<Void> logout() {
+        authService.logout();
+        return R.success("登出成功");
+    }
+}

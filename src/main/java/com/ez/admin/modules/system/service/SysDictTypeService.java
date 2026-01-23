@@ -1,7 +1,7 @@
-package com.ez.admin.modules.admin.service;
+package com.ez.admin.modules.system.service;
 
-import com.ez.admin.modules.admin.entity.SysDictType;
-import com.ez.admin.modules.admin.mapper.SysDictTypeMapper;
+import com.ez.admin.modules.system.entity.SysDictType;
+import com.ez.admin.modules.system.mapper.SysDictTypeMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
