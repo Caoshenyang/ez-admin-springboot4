@@ -47,7 +47,7 @@ public class AuthController {
      */
     @PostMapping("/logout")
     @Operation(summary = "用户登出", description = "退出当前登录状态")
-    public R<Void> logout() {
+    public R<String> logout() {
         authService.logout();
         return R.success("登出成功");
     }

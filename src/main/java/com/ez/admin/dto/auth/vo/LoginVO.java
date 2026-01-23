@@ -1,8 +1,8 @@
 package com.ez.admin.dto.auth.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * 登录响应对象（视图对象）
@@ -11,7 +11,7 @@ import lombok.Setter;
  * @since 2026-01-23
  */
 @Getter
-@Setter
+@Builder
 @Schema(name = "LoginVO", description = "登录响应")
 public class LoginVO {
 

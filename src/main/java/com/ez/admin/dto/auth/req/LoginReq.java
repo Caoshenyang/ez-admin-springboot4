@@ -2,8 +2,7 @@ package com.ez.admin.dto.auth.req;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 /**
  * 登录请求对象
@@ -11,8 +10,7 @@ import lombok.Setter;
  * @author ez-admin
  * @since 2026-01-23
  */
-@Getter
-@Setter
+@Data
 @Schema(name = "LoginReq", description = "登录请求")
 public class LoginReq {
 

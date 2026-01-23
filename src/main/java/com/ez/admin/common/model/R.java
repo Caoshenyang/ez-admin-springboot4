@@ -100,6 +100,17 @@ public class R<T> implements Serializable {
     }
 
     /**
+     * 成功响应（自定义消息）
+     *
+     * @param message 成功提示消息
+     * @param <T>     数据泛型类型
+     * @return 包含成功状态码（0）的响应对象
+     */
+    public static <T> R<T> success(String message) {
+        return new R<>(0, message, null);
+    }
+
+    /**
      * 成功响应（自定义消息和数据）
      *
      * @param message 成功提示消息
@@ -109,6 +120,16 @@ public class R<T> implements Serializable {
      */
     public static <T> R<T> success(String message, T data) {
         return new R<>(0, message, data);
+    }
+
+    /**
+     * 失败响应（默认错误）
+     *
+     * @param <T> 数据泛型类型
+     * @return 包含错误码的响应对象
+     */
+    public static <T> R<T> error() {
+        return new R<>(10500, "操作失败", null);
     }
 
     /**

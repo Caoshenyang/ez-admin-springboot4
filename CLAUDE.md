@@ -34,12 +34,18 @@ EZ-ADMIN-SPRINGBOOT4：基于 Spring Boot 4.0 + JDK 21 的轻量级 RBAC 后台�
 │  │  ├── modules/           (原子服务层)        │      │
 │  │  │   └── system/        # 系统原子服务     │      │
 │  │  │       ├── entity/    # 实体            │      │
-│  │  │       └── mapper/    # 数据访问         │      │
+│  │  │       ├── mapper/    # 数据访问         │      │
+│  │  │       └── service/   # 原子服务(代码生成)│     │
 │  │  │                                        │      │
 │  │  ├── dto/               (数据传输对象)       │      │
 │  │  │   └── auth/          # 认证 DTO        │      │
 │  │  │                                        │      │
 │  │  ├── common/            (通用代码)          │      │
+│  │  │   ├── exception/    # 异常处理          │      │
+│  │  │   ├── model/        # 通用模型          │      │
+│  │  │   ├── redis/        # Redis工具         │      │
+│  │  │   └── web/          # Web配置           │      │
+│  │  │                                        │      │
 │  │  ├── utils/            (工具类)            │      │
 │  │  │   └── generator/    (代码生成器)        │      │
 │  │  └── config/           (配置类)            │      │
@@ -55,20 +61,30 @@ ez-admin-springboot4/
 │   │   ├── java/com/ez/admin/
 │   │   │   ├── EzAdminApplication.java
 │   │   │   ├── api/                    # 所有 REST 接口
-│   │   │   │   └── auth/
-│   │   │   ├── service/                # 业务服务聚合层
-│   │   │   │   └── auth/
-│   │   │   ├── modules/                # 原子服务（仅数据库操作）
-│   │   │   │   └── system/             # 系统模块实体+Mapper
-│   │   │   │       ├── entity/
-│   │   │   │       └── mapper/
+│   │   │   │   └── auth/               # 认证接口
+│   │   │   ├── service/                # 业务服务聚合层（手动编写）
+│   │   │   │   └── auth/               # 认证业务聚合
+│   │   │   ├── modules/                # 原子服务层（代码生成）
+│   │   │   │   └── system/             # 系统管理模块
+│   │   │   │       ├── entity/         # 实体类（10个）
+│   │   │   │       ├── mapper/         # 数据访问层（10个）
+│   │   │   │       └── service/        # 原子服务（10个）
 │   │   │   ├── dto/                    # 所有 DTO
-│   │   │   │   └── auth/
-│   │   │   ├── common/                 # 通用代码
+│   │   │   │   └── auth/               # 认证 DTO
+│   │   │   │       ├── req/            # 请求对象
+│   │   │   │       └── vo/             # 响应对象
+│   │   │   ├── common/                 # 通用模块
+│   │   │   │   ├── exception/          # 异常处理
+│   │   │   │   ├── model/              # 统一响应体
+│   │   │   │   ├── redis/              # Redis工具
+│   │   │   │   └── web/                # Web配置
 │   │   │   ├── utils/                  # 工具类
-│   │   │   │   └── generator/
-│   │   │   └── config/                 # 配置类
+│   │   │   │   └── generator/          # 代码生成器
+│   │   │   └── config/                 # 配置类（预留）
 │   │   └── resources/
+│   │       ├── mapper/                 # MyBatis XML
+│   │       ├── application.yml
+│   │       └── application-*.yml
 │   └── test/
 ├── doc/                              # 文档
 ├── pom.xml                           # 唯一 POM 文件
@@ -76,16 +92,21 @@ ez-admin-springboot4/
 ```
 
 **包结构规则**：
+
 | 包路径 | 代码来源 | 职责 | 说明 |
 |--------|----------|------|------|
-| `com.ez.admin.api` | 手动编写 | 接口层 | 所有 REST Controller，接收请求 |
-| `com.ez.admin.service` | 手动编写 | 业务聚合层 | 组合原子服务，实现业务逻辑 |
-| `com.ez.admin.modules` | 代码生成 | 原子服务层 | 实体+Mapper，仅提供数据库操作能力 |
+| `com.ez.admin.api` | 手动编写 | 接口层 | 所有 REST Controller，接收请求、参数校验、返回响应 |
+| `com.ez.admin.service` | 手动编写 | 业务聚合层 | 组合原子服务，实现复杂业务逻辑（如认证、权限判断） |
+| `com.ez.admin.modules.system.entity` | 代码生成 | 实体层 | 数据库实体类（SysUser、SysRole、SysMenu 等 10 个） |
+| `com.ez.admin.modules.system.mapper` | 代码生成 | 数据访问层 | MyBatis Mapper 接口，仅提供 CRUD 能力 |
+| `com.ez.admin.modules.system.service` | 代码生成 | 原子服务层 | 单表 CRUD 服务（SysUserService、SysRoleService 等 10 个） |
 | `com.ez.admin.dto.{module}.req` | 手动编写 | 请求对象 | xxxReq（如 LoginReq、UserCreateReq） |
 | `com.ez.admin.dto.{module}.vo` | 手动编写 | 响应对象 | xxxVO（如 LoginVO、UserInfoVO） |
-| `com.ez.admin.common` | 手动编写 | 通用代码 | 异常、响应、Redis、Web 配置 |
-| `com.ez.admin.utils.generator` | 手动编写 | 代码生成器工具类 |
-| `com.ez.admin.config` | 手动编写 | Spring 配置类 |
+| `com.ez.admin.common.exception` | 手动编写 | 异常处理 | ErrorCode、EzBusinessException、GlobalExceptionHandler |
+| `com.ez.admin.common.model` | 手动编写 | 通用模型 | 统一响应体 R |
+| `com.ez.admin.common.redis` | 手动编写 | Redis 工具 | RedisCache、RedisTemplateConfig |
+| `com.ez.admin.common.web` | 手动编写 | Web 配置 | OpenApiConfig、PasswordEncoderConfig |
+| `com.ez.admin.utils.generator` | 手动编写 | 代码生成器 | 生成 modules/system 下的实体、Mapper、Service |
 
 **分层架构原则**：
 
@@ -93,15 +114,21 @@ ez-admin-springboot4/
    - 所有 Controller 放在此处
    - 只负责接收请求、参数校验、返回响应
    - 调用 service 层完成业务逻辑
+   - 不直接访问 modules 层
 
 2. **service（业务聚合层）**
-   - 业务服务的聚合层，组合原子服务
-   - 实现复杂业务逻辑
+   - 业务服务的聚合层，组合原子服务实现复杂业务逻辑
+   - 例如：AuthService（认证）、UserService（用户管理聚合）
    - 依赖 modules 的 Mapper 和 Entity
+   - 可以调用 modules/system/service/ 下的原子服务
+   - **禁止使用接口层**：直接使用实现类（如 `AuthService`），不创建 `IAuthService` 接口
+   - **命名规范**：Service 类直接命名为 `xxxService`（如 `AuthService`），禁止使用 `xxxServiceImpl` 命名
 
 3. **modules（原子服务层）**
-   - 仅提供数据库操作能力
-   - Entity + Mapper，无业务逻辑
+   - **modules/system/entity/**：数据库实体类，对应数据库表
+   - **modules/system/mapper/**：MyBatis Mapper 接口，仅提供数据访问能力
+   - **modules/system/service/**：代码生成的单表 CRUD 服务（SysUserService、SysRoleService 等）
+   - 仅提供基础的增删改查能力，无复杂业务逻辑
    - 可被 service 层复用
 
 4. **dto（数据传输对象）**
@@ -116,8 +143,10 @@ ez-admin-springboot4/
 **设计理念**：
 - **零模块**：项目根目录即代码根目录，无任何模块嵌套
 - **三层分离**：api → service → modules，职责清晰
-- **原子服务**：modules 仅提供数据库操作，无业务逻辑
-- **业务聚合**：service 层组合原子服务，实现业务逻辑
+- **原子服务**：modules 仅提供数据库操作和单表 CRUD，无复杂业务逻辑
+- **业务聚合**：service 层组合原子服务，实现复杂业务逻辑
+- **代码生成**：modules/system/ 下的代码由代码生成器生成，包含完整 CRUD
+- **手动编写**：api、service、dto 层的代码手动编写，实现业务逻辑
 - **适合个人项目**：极简配置，开箱即用
 
 ## 技术栈规范
@@ -132,6 +161,248 @@ ez-admin-springboot4/
 
 ### 对象转换
 - 强制使用 MapStruct。若遇到转换逻辑复杂，请在 `common/mapstruct/` 下定义转换器接口。
+
+### 对象构造规范 (Strict)
+
+根据对象用途区分注解组合：
+
+#### 1. DTO (Req) - 请求对象（使用 @Data）
+- **注解组合**：`@Data` + `@Schema`
+- **使用 @Data 的原因**：
+  - DTO 通常由框架从 JSON 反序列化而来，很少手动构造
+  - `@Data` 提供了所有必要的方法：getter、setter、toString、equals、hashCode
+  - 注解简洁，只需 2 个
+  - `@Data` 包含无参构造器，Jackson 反序列化无障碍
+
+**示例**：
+```java
+// ✅ 正确 - DTO (Req)
+@Data
+@Schema(name = "LoginReq", description = "登录请求")
+public class LoginReq {
+    @NotBlank(message = "用户名不能为空")
+    private String username;
+
+    @NotBlank(message = "密码不能为空")
+    private String password;
+}
+
+// 使用 - 框架自动从 JSON 反序列化
+// POST /auth/login
+// Request Body: {"username": "admin", "password": "123456"}
+```
+
+```java
+// ❌ 不推荐 - DTO 不需要 Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder  // ❌ DTO 很少手动构造，不需要 Builder
+@Schema(name = "LoginReq", description = "登录请求")
+public class LoginReq {
+    private String username;
+    private String password;
+}
+```
+
+#### 2. VO - 响应对象（使用 @Builder）
+- **注解组合**：`@Getter` + `@Builder` + `@Schema`
+- **使用 Builder 的原因**：
+  - 响应对象构造后不应被修改（不可变性）
+  - MapStruct 1.6.3 完全支持 Builder 模式
+  - 手动构造时代码可读性强
+  - 移除 `@Setter`，强制对象不可变
+
+**示例**：
+```java
+// ✅ 正确 - VO
+@Getter
+@Builder
+@Schema(name = "LoginVO", description = "登录响应")
+public class LoginVO {
+    private String token;
+    private Long userId;
+    private String username;
+    private String nickname;
+    private String avatar;
+}
+
+// 使用
+LoginVO response = LoginVO.builder()
+    .token(StpUtil.getTokenValue())
+    .userId(user.getUserId())
+    .username(user.getUsername())
+    .nickname(user.getNickname())
+    .avatar(user.getAvatar())
+    .build();
+```
+
+```java
+// ❌ 错误 - VO 不应有 setter
+@Getter
+@Setter  // ❌ VO 不应该有 setter
+@Builder
+public class LoginVO {
+    private String token;
+    private Long userId;
+}
+
+// ❌ 错误 - 不应使用 new + setter
+LoginVO response = new LoginVO();
+response.setToken(StpUtil.getTokenValue());
+response.setUserId(user.getUserId());
+```
+
+#### 3. Entity 对象 - 保持默认方式
+- **注解组合**：`@Data`（自动生成 getter/setter）
+- **原因**：
+  - MyBatis-Plus 反射需要无参构造器和 setter
+  - 框架需要将数据库数据映射到对象
+
+**示例**：
+```java
+// ✅ 正确 - Entity 使用 @Data
+@Data
+@TableName("sys_user")
+public class SysUser {
+    @TableId
+    private Long userId;
+    private String username;
+    private String password;
+    // ... @Data 自动生成 getter/setter
+}
+```
+
+**规范总结**：
+| 对象类型 | 推荐注解 | 注解数量 | 构造方式 | 理由 |
+|---------|---------|---------|---------|------|
+| **DTO (Req)** | `@Data` + `@Schema` | **2 个** | 框架自动反序列化 | 框架自动构造，很少手动构造 |
+| **VO** | `@Getter` + `@Builder` + `@Schema` | **3 个** | `Xxx.builder().field(value).build()` | 不可变性、MapStruct 支持 |
+| **Entity** | `@Data` + `@TableName` | 2 个 | `new Xxx()` + setter | MyBatis-Plus 反射需要 |
+
+**MapStruct + Builder 集成说明**：
+- MapStruct 1.3.0+ 自动识别 `@Builder` 注解
+- 本项目使用 MapStruct 1.6.3，**完全支持** Builder 模式
+- 无需额外配置，MapStruct 自动使用 builder 构造 VO 对象
+- 示例见下文"MapStruct 使用示例"
+
+### MapStruct 使用示例
+
+#### 1. 定义 VO（使用 @Builder）
+
+```java
+@Getter
+@Builder
+@Schema(name = "LoginVO", description = "登录响应")
+public class LoginVO {
+    private String token;
+    private Long userId;
+    private String username;
+    private String nickname;
+    private String avatar;
+}
+```
+
+#### 2. 定义 Converter 接口
+
+```java
+@Mapper(componentModel = "spring")
+public interface UserConverter {
+    UserConverter INSTANCE = Mappers.getMapper(UserConverter.class);
+
+    // MapStruct 自动识别 @Builder，生成 builder 模式代码
+    LoginVO toLoginVO(SysUser user);
+
+    // 支持多参数
+    @Mapping(source = "token", target = "token")
+    LoginVO toLoginVOWithToken(SysUser user, String token);
+}
+```
+
+#### 3. MapStruct 生成的实现类（自动）
+
+```java
+@Component
+public class UserConverterImpl implements UserConverter {
+
+    @Override
+    public LoginVO toLoginVO(SysUser user) {
+        if (user == null) {
+            return null;
+        }
+
+        // ✅ MapStruct 自动使用 builder
+        return LoginVO.builder()
+                .userId(user.getUserId())
+                .username(user.getUsername())
+                .nickname(user.getNickname())
+                .avatar(user.getAvatar())
+                .build();
+    }
+
+    @Override
+    public LoginVO toLoginVOWithToken(SysUser user, String token) {
+        if (user == null) {
+            return null;
+        }
+
+        return LoginVO.builder()
+                .token(token)  // 额外参数
+                .userId(user.getUserId())
+                .username(user.getUsername())
+                .nickname(user.getNickname())
+                .avatar(user.getAvatar())
+                .build();
+    }
+}
+```
+
+#### 4. 使用 Converter
+
+```java
+@Service
+@RequiredArgsConstructor
+public class AuthService {
+    private final UserConverter userConverter;  // 注入
+
+    public LoginVO login(LoginReq request) {
+        SysUser user = userMapper.selectByUsername(request.getUsername());
+
+        // 方式1：手动 builder（当前使用）
+        LoginVO response = LoginVO.builder()
+                .token(StpUtil.getTokenValue())
+                .userId(user.getUserId())
+                .username(user.getUsername())
+                .build();
+
+        // 方式2：使用 MapStruct（推荐用于复杂转换）
+        LoginVO response = userConverter.toLoginVOWithToken(user, StpUtil.getTokenValue());
+
+        return response;
+    }
+}
+```
+
+#### 5. 高级用法
+
+**字段映射**：
+```java
+@Mapping(source = "userId", target = "id")  // 字段名不同
+@Mapping(source = "nickname", target = "nickName")
+UserVO toVO(SysUser user);
+```
+
+**嵌套对象**：
+```java
+// MapStruct 会递归使用 builder
+UserDetailVO toDetailVO(SysUser user);  // UserDetailVO 中包含 DeptVO、List<RoleVO>
+```
+
+**集合映射**：
+```java
+List<UserVO> toVOList(List<SysUser> users);  // 自动批量转换
+```
 
 ### MyBatis-Plus 使用规范 (核心架构原则)
 
