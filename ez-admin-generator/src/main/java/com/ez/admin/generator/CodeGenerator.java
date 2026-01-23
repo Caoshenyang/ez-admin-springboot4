@@ -14,11 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Types;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -26,8 +22,17 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * <p>运行时通过控制台交互式输入配置信息：
  * <ul>
- *   <li>模块名称</li>
+ *   <li>业务模块名称（如：user、role、menu、dept、dict）</li>
  *   <li>表名（支持逗号分隔多个表，或输入 all 生成所有表）</li>
+ * </ul>
+ *
+ * <p>生成规则：
+ * <ul>
+ *   <li>输入模块名：如 "user"，生成包名 "com.ez.admin.system.modules.user"</li>
+ *   <li>输入模块名：如 "admin"，生成包名 "com.ez.admin.system.modules.admin"</li>
+ *   <li>所有代码统一生成到 ez-admin-system 模块</li>
+ *   <li>Java 代码路径：ez-admin-system/src/main/java/com/ez/admin/system/modules/{模块}/</li>
+ *   <li>Mapper XML 路径：ez-admin-system/src/main/resources/mapper/{模块}/</li>
  * </ul>
  *
  * <p>数据库配置优先级：系统环境变量 > JVM 启动参数 > .env 文件 > 默认值
@@ -57,24 +62,21 @@ public class CodeGenerator {
     public static void main(String[] args) {
         AtomicReference<String> moduleShortName = new AtomicReference<>("");
 
-        // 获取当前路径
+        // 获取项目根路径
         String projectRoot = System.getProperty("user.dir");
 
         FastAutoGenerator.create(DB_URL, USERNAME, PASSWORD)
                 // 全局配置
                 .globalConfig((scanner, builder) -> {
-                    moduleShortName.set(scanner.apply("请输入模块名称（如：system）："));
+                    moduleShortName.set(scanner.apply("请输入业务模块名（如：admin、blog、order）："));
 
-                    // 自动拼接完整模块名：ez-admin-domain-system
-                    String domainModuleName = "ez-admin-domain-" + moduleShortName.get();
-
-                    // 设置输出目录：ez-admin-domain/ez-admin-domain-system/src/main/java
-                    String outputDir = projectRoot + "/ez-admin-domain/" + domainModuleName + "/src/main/java";
+                    // 所有代码统一生成到 ez-admin-system 模块
+                    String javaOutputDir = projectRoot + "/ez-admin-system/src/main/java";
 
                     builder.author("ez-admin")
                             .disableOpenDir() // 生成完毕后不自动打开资源管理器
                             .enableSpringdoc() // 启用 SpringDoc OpenAPI 注解，生成 @Schema 注解
-                            .outputDir(outputDir);
+                            .outputDir(javaOutputDir);
                 })
                 // 数据源配置（PostgreSQL 类型转换处理）
                 .dataSourceConfig(builder ->
@@ -89,23 +91,25 @@ public class CodeGenerator {
                 )
                 // 包配置
                 .packageConfig((scanner, builder) -> {
-                    // 自动拼接完整模块名：ez-admin-domain-system
-                    String domainModuleName = "ez-admin-domain-" + moduleShortName.get();
+                    // 包名：com.ez.admin.system.modules.{module}
+                    // 例如：输入 user → com.ez.admin.system.modules.user
+                    //      输入 admin → com.ez.admin.system.modules.admin
+                    String packageName = "com.ez.admin.system.modules." + moduleShortName.get();
 
-                    builder.parent("com.ez.admin.domain." + moduleShortName.get()) // 包名：com.ez.admin.domain.system
-                            .service("service")
-                            .serviceImpl("service.impl")
-                            .mapper("mapper")
+                    // Mapper XML 生成路径：ez-admin-system/src/main/resources/mapper/{module}/
+                    String mapperXmlPath = projectRoot + "/ez-admin-system/src/main/resources/mapper/" + moduleShortName.get();
+
+                    builder.parent(packageName)
                             .entity("entity")
+                            .mapper("mapper")
+                            .serviceImpl("service")
                             .controller("controller")
-                            // 设置 mapperXml 生成路径：ez-admin-domain/ez-admin-domain-system/src/main/resources/mapper
-                            .pathInfo(Collections.singletonMap(OutputFile.xml,
-                                    projectRoot + "/ez-admin-domain/" + domainModuleName + "/src/main/resources/mapper"));
+                            .pathInfo(Collections.singletonMap(OutputFile.xml, mapperXmlPath));
                 })
                 // 策略配置
                 .strategyConfig((scanner, builder) -> {
                     // 设置需要生成的表名
-                    builder.addInclude(getTables(scanner.apply("请输入表名，多个英文逗号分隔？所有输入 all")))
+                    builder.addInclude(getTables(scanner.apply("请输入表名，多个英文逗号分隔（输入 all 生成所有表）：")))
                             .addTablePrefix("ez_admin_") // 设置过滤表前缀
                             .entityBuilder() // 设置 entity 生成规则
                             .addTableFills(new Column("create_time", FieldFill.INSERT))
@@ -116,10 +120,14 @@ public class CodeGenerator {
                             .idType(IdType.ASSIGN_ID) // 使用雪花算法生成主键
                             .enableLombok() // lombok 注解
                             .enableTableFieldAnnotation() // 启用字段注解
+                            .fieldUseJavaDoc(false) // 禁用字段 JavaDoc 注释
                             .mapperBuilder() // 设置 mapper 生成规则
                             .serviceBuilder() // 设置 service 生成规则
+                            .disableService() // 禁用 Service 接口层生成
+                            .formatServiceImplFileName("%sService") // 格式化 ServiceImpl 类名，去掉后缀 "Impl"
+                            .mapperBuilder() // 设置 mapper 生成规则
                             .controllerBuilder() // 设置 controller 生成规则
-                            .disable(); // 禁用生成 @RestController 控制器（根据业务需求手动创建）
+                            .disable();// 禁用生成 @RestController 控制器（根据业务需求手动创建）
                 })
                 .templateEngine(new FreemarkerTemplateEngine()) // 使用 FreeMarker 引擎模板
                 .execute();

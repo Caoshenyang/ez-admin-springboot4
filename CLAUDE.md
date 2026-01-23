@@ -47,10 +47,31 @@ EZ-ADMIN-SPRINGBOOT4：基于 Spring Boot 4.0 + JDK 21 的轻量级 RBAC 后台�
 
 **模块职责**：
 - `ez-admin-starter`: 启动模块，包含 Application 主类和配置文件
-- `ez-admin-system`: 后台管理模块，按包结构区分功能：
-  - `com.ez.admin.system.auth` - 认证功能（登录/登出/Token管理/设备管理）
-  - `com.ez.admin.system.system` - 系统管理（用户/角色/菜单/部门/字典）
-  - `com.ez.admin.system.common` - 后台管理通用代码（VO、MapStruct等）
+- `ez-admin-system`: 后台管理模块，**按业务模块分层**：
+  ```
+  com.ez.admin.system
+  ├── auth/              # 认证模块（手动编写）
+  │   ├── controller/    # 登录、登出、Token 刷新
+  │   ├── service/       # 认证服务
+  │   ├── dto/           # 认证相关 DTO
+  │   └── enums/         # 认证相关枚举
+  │
+  ├── user/              # 用户模块（代码生成）
+  │   ├── entity/        # User 实体
+  │   ├── mapper/        # UserMapper
+  │   ├── service/       # UserService + Impl
+  │   └── controller/    # UserController（可选）
+  │
+  ├── role/              # 角色模块（代码生成）
+  ├── menu/              # 菜单模块（代码生成）
+  ├── dept/              # 部门模块（代码生成）
+  ├── dict/              # 字典模块（代码生成）
+  │
+  └── common/            # 通用代码
+      ├── vo/            # 通用视图对象
+      ├── dto/           # 通用数据传输对象
+      └── mapstruct/     # 对象转换器
+  ```
 - `ez-admin-common`: 公共模块，包含：
   - 统一响应体（ApiResponse）
   - 异常处理（ErrorCode、EzBusinessException、GlobalExceptionHandler）
@@ -61,12 +82,25 @@ EZ-ADMIN-SPRINGBOOT4：基于 Spring Boot 4.0 + JDK 21 的轻量级 RBAC 后台�
 **工具模块**：
 - `ez-admin-generator`: 代码生成器（独立使用，不参与业务依赖）
 
-**包结构规则**：
-| 模块 | 包路径 | 说明 |
-|------|--------|------|
-| system | `com.ez.admin.system.auth` | 认证相关 |
-| system | `com.ez.admin.system.system` | 系统管理相关 |
-| system | `com.ez.admin.system.common` | 通用代码 |
+**System 模块包结构规则**：
+| 模块类型 | 包路径 | 代码来源 | 说明 |
+|---------|--------|----------|------|
+| 核心认证 | `system.auth` | 手动编写 | 登录、Token、设备管理 |
+| 业务模块 | `system.{user,role,menu,dept,dict}` | 代码生成 | CRUD 操作 |
+| 通用代码 | `system.common` | 手动编写 | 跨模块使用的 VO/DTO/Converter |
+
+**代码生成器配置示例**：
+```java
+// 生成用户模块
+gc.setEntityPackage("com.ez.admin.system.user.entity");
+gc.setMapperPackage("com.ez.admin.system.user.mapper");
+gc.setServicePackage("com.ez.admin.system.user.service");
+
+// 生成角色模块
+gc.setEntityPackage("com.ez.admin.system.role.entity");
+gc.setMapperPackage("com.ez.admin.system.role.mapper");
+gc.setServicePackage("com.ez.admin.system.role.service");
+```
 
 **依赖关系**：
 - `starter` → `system`
@@ -74,7 +108,9 @@ EZ-ADMIN-SPRINGBOOT4：基于 Spring Boot 4.0 + JDK 21 的轻量级 RBAC 后台�
 
 **设计理念**：
 - **极简结构**：仅 4 个模块（starter、system、common、generator）
-- **包分离**：通过包结构区分功能，而非模块拆分
+- **按业务分层**：system 模块内部按业务功能（user/role/menu...）组织代码
+- **生成代码分离**：代码生成器生成的 CRUD 代码与核心业务代码（auth）分离
+- **清晰直观**：查找用户代码直接去 `system.user` 包，一目了然
 - **适合个人项目**：减少配置复杂度，专注业务开发
 
 ## 技术栈规范
