@@ -1,12 +1,10 @@
 package com.ez.admin.common.redis;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -20,10 +18,10 @@ import java.util.concurrent.TimeUnit;
  * @since 2026-01-19
  */
 @Component
+@RequiredArgsConstructor
 public class RedisCache {
 
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     // =============================  基本操作  =============================
 
@@ -170,7 +168,7 @@ public class RedisCache {
     /**
      * 删除 Hash 缓存
      *
-     * @param key     键
+     * @param key      键
      * @param hashKeys Hash 键集合
      * @return 删除数量
      */

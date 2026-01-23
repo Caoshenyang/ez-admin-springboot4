@@ -1,5 +1,6 @@
 package com.ez.admin;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -8,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  * @author ez-admin
  */
+@MapperScan("com.ez.admin.modules.**.mapper")
 @SpringBootApplication(scanBasePackages = "com.ez.admin")
 public class EzAdminApplication {
 

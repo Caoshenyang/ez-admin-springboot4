@@ -40,5 +40,3 @@ logging:
     com.baomidou.mybatisplus: DEBUG
     # SQL 日志
     com.ez.admin.modules.**.mapper: DEBUG
-  pattern:
-    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n'
