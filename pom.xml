@@ -21,12 +21,11 @@
 
     <!-- 子模块声明（按依赖关系自底向上排列） -->
     <modules>
-        <module>ez-admin-common</module>         <!-- 无依赖，基础层 -->
-        <module>ez-admin-framework</module>      <!-- 框架层 -->
-        <module>ez-admin-generator</module>      <!-- 工具层 -->
-        <module>ez-admin-domain</module>         <!-- 领域层 -->
-        <module>ez-admin-application</module>    <!-- 应用层：聚合服务集合 -->
-        <module>ez-admin-starter</module>        <!-- 启动层，依赖所有 -->
+        <module>ez-admin-common</module>      <!-- 公共模块：异常、工具类、框架配置 -->
+        <module>ez-admin-generator</module>   <!-- 代码生成器 -->
+        <module>ez-admin-auth</module>        <!-- 认证模块：登录、Token管理 -->
+        <module>ez-admin-system</module>      <!-- 系统管理模块：用户、角色、菜单 -->
+        <module>ez-admin-starter</module>     <!-- 启动模块 -->
     </modules>
 
     <!-- 全局属性配置 -->
@@ -79,31 +78,10 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- ez-admin-framework -->
-            <dependency>
-                <groupId>com.ez.admin</groupId>
-                <artifactId>ez-admin-framework</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
             <!-- ez-admin-generator -->
             <dependency>
                 <groupId>com.ez.admin</groupId>
                 <artifactId>ez-admin-generator</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <!-- ez-admin-domain -->
-            <dependency>
-                <groupId>com.ez.admin</groupId>
-                <artifactId>ez-admin-domain</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <!-- ez-admin-domain-system -->
-            <dependency>
-                <groupId>com.ez.admin</groupId>
-                <artifactId>ez-admin-domain-system</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -114,45 +92,10 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- ez-admin-auth-api -->
-            <dependency>
-                <groupId>com.ez.admin</groupId>
-                <artifactId>ez-admin-auth-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <!-- ez-admin-auth-core -->
-            <dependency>
-                <groupId>com.ez.admin</groupId>
-                <artifactId>ez-admin-auth-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <!-- ez-admin-application -->
-            <dependency>
-                <groupId>com.ez.admin</groupId>
-                <artifactId>ez-admin-application</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
             <!-- ez-admin-system -->
             <dependency>
                 <groupId>com.ez.admin</groupId>
                 <artifactId>ez-admin-system</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <!-- ez-admin-system-api -->
-            <dependency>
-                <groupId>com.ez.admin</groupId>
-                <artifactId>ez-admin-system-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <!-- ez-admin-system-core -->
-            <dependency>
-                <groupId>com.ez.admin</groupId>
-                <artifactId>ez-admin-system-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

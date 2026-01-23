@@ -11,9 +11,9 @@
 5. **同步更新进度 (Mandatory)**: 每一项子任务完成后，**必须立即修改并保存 `CLAUDE.md` 文件**。将对应任务标记为 `[x]`，并在末尾标注完成时间。
 
 ## 项目概述
-EZ-ADMIN-SPRINGBOOT4：基于 Spring Boot 4.0 + JDK 21 的高效率 RBAC 后台管理系统。
+EZ-ADMIN-SPRINGBOOT4：基于 Spring Boot 4.0 + JDK 21 的轻量级 RBAC 后台管理系统，专为个人开发者和小团队设计。
 
-## 架构设计
+## 架构设计（简化版）
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -23,51 +23,56 @@ EZ-ADMIN-SPRINGBOOT4：基于 Spring Boot 4.0 + JDK 21 的高效率 RBAC 后台�
                    │ 依赖
                    ▼
 ┌─────────────────────────────────────────────────────┐
-│          ez-admin-application                       │
-│       (应用层：聚合服务集合)                           │
+│          业务模块层（扁平化）                          │
 │  ┌─────────────────┐  ┌─────────────────┐           │
 │  │  ez-admin-auth  │  │ ez-admin-system │           │
-│  │  (认证聚合服务)   │  │ (系统聚合服务)   │           │
-│  │  - api          │  │  - api          │           │
-│  │  - core         │  │  - core         │           │
-│  └────────┬────────┘  └────────┬────────┘           │
-│           │                    │                     │
-│           └────────────┬───────┘                     │
-│                        │                             │
+│  │  (认证功能)      │  │ (系统管理)       │           │
+│  │  - Controller   │  │  - Controller   │           │
+│  │  - Service      │  │  - Service      │           │
+│  │  - DTO/VO       │  │  - DTO/VO       │           │
+│  └─────────────────┘  └─────────────────┘           │
 └────────────────────────┼─────────────────────────────┘
                          │
                          ▼
             ┌─────────────────────────┐
-            │  ez-admin-domain        │
-            │  (领域层)                │
-            │  - domain-system        │
-            │    (实体/Mapper/原子服务) │
+            │  ez-admin-common        │
+            │  (通用模块)              │
+            │  - 统一响应/异常         │
+            │  - Security配置         │
+            │  - Redis工具            │
+            │  - Web配置              │
             └─────────────────────────┘
 ```
 
 **模块职责**：
-- `ez-admin-application`: 应用层父模块，管理所有业务线的聚合服务
-- `ez-admin-auth` (api + core): 认证聚合服务，实现登录/登出/Token管理/设备管理
-  - `api`: 对外暴露层（REST Controller + DTO）
-  - `core`: 内部实现层（Service 接口 + 实现 + 枚举 + 异常 + 策略）
-- `ez-admin-system` (api + core): 系统管理聚合服务，实现用户/角色/菜单/部门管理
-  - `api`: 对外暴露层（REST Controller + DTO + VO）
-  - `core`: 内部实现层（聚合服务 + MapStruct）
-- `ez-admin-domain-system`: 系统领域层，提供基础的 CRUD 能力
+- `ez-admin-starter`: 启动模块，包含 Application 主类和配置文件
+- `ez-admin-auth`: 认证模块，实现登录/登出/Token管理/设备管理
+- `ez-admin-system`: 系统管理模块，实现用户/角色/菜单/部门管理
+- `ez-admin-common`: 公共模块，包含：
+  - 统一响应体（ApiResponse）
+  - 异常处理（ErrorCode、EzBusinessException、GlobalExceptionHandler）
+  - Security 配置（SecurityConfig、JwtAuthenticationFilter、JwtTokenProvider）
+  - Redis 工具（RedisCache、RedisTemplateConfig）
+  - Web 配置（JacksonConfig、OpenApiConfig）
 
-**通用模块**：
-- `ez-admin-common`: 公共模块（ApiResponse、ErrorCode、EzBusinessException）
-- `ez-admin-framework`: 框架层（Security、Redis、Web、全局异常处理）
+**工具模块**：
+- `ez-admin-generator`: 代码生成器（独立使用，不参与业务依赖）
 
 **命名规则**：
-| 层级 | 命名模式 | 示例 |
+| 类型 | 命名模式 | 示例 |
 |------|----------|------|
-| Application | `ez-admin-{业务}` | `auth`, `system`, `blog`, `iwan` |
-| Domain | `ez-admin-domain-{业务}` | `domain-system`, `domain-blog`, `domain-iwan` |
+| 业务模块 | `ez-admin-{功能}` | `auth`, `system`, `blog`, `pay` |
+| 通用模块 | `ez-admin-common` | 公共基础 |
 
 **依赖关系**：
-- 所有聚合服务 (auth/system) → `domain-system` (直接访问实体和原子服务)
-- 聚合服务之间通过 `api` 模块交互 (如 system-core → auth-api)
+- `starter` → `auth`, `system`
+- `auth`, `system` → `common`
+- 业务模块之间可直接依赖（如 system → auth）
+
+**设计理念**：
+- **扁平化结构**：移除了 application/domain 层级，减少 pom.xml 嵌套
+- **实用主义**：api/core 拆分对小项目过度设计，合并为单一模块
+- **简单清晰**：个人项目只需关注 starter + 业务模块 + common
 
 ## 技术栈规范
 - **命名规范 (Strict)**:
@@ -93,6 +98,11 @@ EZ-ADMIN-SPRINGBOOT4：基于 Spring Boot 4.0 + JDK 21 的高效率 RBAC 后台�
 - [x] 实现设备管理核心功能（Redis存储设备列表） - 2026-01-19
 - [x] 重构聚合服务架构（Controller 移至 api 模块） - 2026-01-19
 - [x] 优化聚合服务模块划分（api 仅放 Controller+DTO，使用 common/framework） - 2026-01-19
+- [x] **简化项目架构（扁平化）** - 2026-01-23
+  - 合并 common + framework 模块
+  - 移除 application/domain 层级
+  - 移除 api/core 子模块拆分
+  - 最终结构：starter + auth + system + common + generator
 - [ ] 实现多渠道认证适配器（策略模式）
 - [ ] 集成Spring Security 7配置和过滤器链
 - [ ] 实现微信小程序登录渠道

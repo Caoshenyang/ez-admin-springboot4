@@ -30,17 +30,6 @@
             <artifactId>ez-admin-auth</artifactId>
         </dependency>
 
-        <!-- domain-system：领域层实体、Mapper、原子服务 -->
-        <dependency>
-            <groupId>com.ez.admin</groupId>
-            <artifactId>ez-admin-domain-system</artifactId>
-        </dependency>
-
-        <!-- framework：Web、Security、Redis、MyBatis 通用能力 -->
-        <dependency>
-            <groupId>com.ez.admin</groupId>
-            <artifactId>ez-admin-framework</artifactId>
-        </dependency>
 
         <!-- ========== Web 支持 ========== -->
 

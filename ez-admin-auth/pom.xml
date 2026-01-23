@@ -24,17 +24,6 @@
             <artifactId>ez-admin-common</artifactId>
         </dependency>
 
-        <!-- framework：获取 Security、Redis、JWT 等通用能力 -->
-        <dependency>
-            <groupId>com.ez.admin</groupId>
-            <artifactId>ez-admin-framework</artifactId>
-        </dependency>
-
-        <!-- domain-system：获取 User、Role 等实体 -->
-        <dependency>
-            <groupId>com.ez.admin</groupId>
-            <artifactId>ez-admin-domain-system</artifactId>
-        </dependency>
 
         <!-- ========== Web 支持 ========== -->
 
