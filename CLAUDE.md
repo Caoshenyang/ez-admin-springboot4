@@ -81,7 +81,8 @@ ez-admin-springboot4/
 | `com.ez.admin.api` | 手动编写 | 接口层 | 所有 REST Controller，接收请求 |
 | `com.ez.admin.service` | 手动编写 | 业务聚合层 | 组合原子服务，实现业务逻辑 |
 | `com.ez.admin.modules` | 代码生成 | 原子服务层 | 实体+Mapper，仅提供数据库操作能力 |
-| `com.ez.admin.dto` | 手动编写 | 数据传输对象 | 接口请求/响应的数据结构 |
+| `com.ez.admin.dto.{module}.req` | 手动编写 | 请求对象 | 接口请求参数（按业务模块分包） |
+| `com.ez.admin.dto.{module}.vo` | 手动编写 | 响应对象 | 接口响应数据（按业务模块分包） |
 | `com.ez.admin.common` | 手动编写 | 通用代码 | 异常、响应、Redis、Web 配置 |
 | `com.ez.admin.utils.generator` | 手动编写 | 代码生成器工具类 |
 | `com.ez.admin.config` | 手动编写 | Spring 配置类 |
@@ -104,8 +105,11 @@ ez-admin-springboot4/
    - 可被 service 层复用
 
 4. **dto（数据传输对象）**
-   - 所有接口的请求/响应 DTO
+   - 所有接口的请求/响应对象
    - 按业务模块分包（auth、user、role 等）
+   - 每个模块下再分 req（请求）和 vo（响应）
+   - 例如：dto/auth/req/LoginRequest.java
+   - 例如：dto/auth/vo/LoginResponse.java
 
 **设计理念**：
 - **零模块**：项目根目录即代码根目录，无任何模块嵌套

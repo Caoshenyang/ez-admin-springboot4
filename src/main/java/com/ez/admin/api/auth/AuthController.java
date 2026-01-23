@@ -1,8 +1,8 @@
 package com.ez.admin.api.auth;
 
 import com.ez.admin.common.model.R;
-import com.ez.admin.dto.auth.LoginRequest;
-import com.ez.admin.dto.auth.LoginResponse;
+import com.ez.admin.dto.auth.req.LoginRequest;
+import com.ez.admin.dto.auth.vo.LoginResponse;
 import com.ez.admin.service.auth.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

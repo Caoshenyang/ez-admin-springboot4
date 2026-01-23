@@ -1,4 +1,4 @@
-package com.ez.admin.dto.auth;
+package com.ez.admin.dto.auth.req;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 登录请求 DTO
+ * 登录请求对象
  *
  * @author ez-admin
  * @since 2026-01-23
