@@ -1,7 +1,7 @@
-package com.ez.admin.modules.auth.service;
+package com.ez.admin.service.auth;
 
-import com.ez.admin.modules.auth.dto.LoginRequest;
-import com.ez.admin.modules.auth.dto.LoginResponse;
+import com.ez.admin.dto.auth.LoginRequest;
+import com.ez.admin.dto.auth.LoginResponse;
 
 /**
  * 认证服务接口

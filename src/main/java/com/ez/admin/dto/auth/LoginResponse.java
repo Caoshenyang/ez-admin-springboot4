@@ -1,4 +1,4 @@
-package com.ez.admin.modules.auth.dto;
+package com.ez.admin.dto.auth;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

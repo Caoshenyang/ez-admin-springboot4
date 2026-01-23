@@ -14,7 +14,7 @@
 ## 项目概述
 EZ-ADMIN-SPRINGBOOT4：基于 Spring Boot 4.0 + JDK 21 的轻量级 RBAC 后台管理系统，专为个人开发者和小团队设计。
 
-## 架构设计（零模块 - 完全扁平）
+## 架构设计（零模块 - 三层分离）
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -24,22 +24,24 @@ EZ-ADMIN-SPRINGBOOT4：基于 Spring Boot 4.0 + JDK 21 的轻量级 RBAC 后台�
 │  ┌──────────────────────────────────────────┐      │
 │  │  com.ez.admin                            │      │
 │  │  ├── EzAdminApplication.java             │      │
-│  │  ├── common/           (通用代码)         │      │
-│  │  │   ├── exception/   (异常处理)          │      │
-│  │  │   ├── response/    (统一响应)          │      │
-│  │  │   ├── redis/       (Redis工具)         │      │
-│  │  │   └── web/         (Web配置)           │      │
 │  │  │                                        │      │
-│  │  ├── modules/          (业务模块)          │      │
-│  │  │   ├── admin/        (核心管理)          │      │
-│  │  │   │   ├── entity/                  │      │
-│  │  │   │   ├── mapper/                  │      │
-│  │  │   │   └── service/                 │      │
-│  │  │   └── {其他业务模块}               │      │
+│  │  ├── api/               (接口层)           │      │
+│  │  │   └── auth/          # 认证接口        │      │
 │  │  │                                        │      │
+│  │  ├── service/           (业务聚合层)        │      │
+│  │  │   └── auth/          # 认证业务        │      │
+│  │  │                                        │      │
+│  │  ├── modules/           (原子服务层)        │      │
+│  │  │   └── system/        # 系统原子服务     │      │
+│  │  │       ├── entity/    # 实体            │      │
+│  │  │       └── mapper/    # 数据访问         │      │
+│  │  │                                        │      │
+│  │  ├── dto/               (数据传输对象)       │      │
+│  │  │   └── auth/          # 认证 DTO        │      │
+│  │  │                                        │      │
+│  │  ├── common/            (通用代码)          │      │
 │  │  ├── utils/            (工具类)            │      │
-│  │  │   └── generator/  (代码生成器)          │      │
-│  │  │                                        │      │
+│  │  │   └── generator/    (代码生成器)        │      │
 │  │  └── config/           (配置类)            │      │
 │  └──────────────────────────────────────────┘      │
 └─────────────────────────────────────────────────────┘
@@ -52,42 +54,65 @@ ez-admin-springboot4/
 │   ├── main/
 │   │   ├── java/com/ez/admin/
 │   │   │   ├── EzAdminApplication.java
-│   │   │   ├── common/              # 通用代码
-│   │   │   ├── modules/             # 业务模块（扁平化）
-│   │   │   │   └── system/          # 系统模块
-│   │   │   ├── utils/               # 工具类
-│   │   │   │   └── generator/       # 代码生成器
-│   │   │   └── config/              # 配置类
+│   │   │   ├── api/                    # 所有 REST 接口
+│   │   │   │   └── auth/
+│   │   │   ├── service/                # 业务服务聚合层
+│   │   │   │   └── auth/
+│   │   │   ├── modules/                # 原子服务（仅数据库操作）
+│   │   │   │   └── system/             # 系统模块实体+Mapper
+│   │   │   │       ├── entity/
+│   │   │   │       └── mapper/
+│   │   │   ├── dto/                    # 所有 DTO
+│   │   │   │   └── auth/
+│   │   │   ├── common/                 # 通用代码
+│   │   │   ├── utils/                  # 工具类
+│   │   │   │   └── generator/
+│   │   │   └── config/                 # 配置类
 │   │   └── resources/
 │   └── test/
-├── doc/                             # 文档
-├── pom.xml                          # 唯一 POM 文件
+├── doc/                              # 文档
+├── pom.xml                           # 唯一 POM 文件
 └── CLAUDE.md
 ```
 
 **包结构规则**：
-| 包路径 | 代码来源 | 说明 |
-|--------|----------|------|
-| `com.ez.admin.common` | 手动编写 | 通用代码（异常、响应、Redis、Web） |
-| `com.ez.admin.modules.system` | 代码生成 | 核心管理模块（用户、角色、菜单等） |
-| `com.ez.admin.modules.{module}` | 代码生成 | 其他业务模块 |
+| 包路径 | 代码来源 | 职责 | 说明 |
+|--------|----------|------|------|
+| `com.ez.admin.api` | 手动编写 | 接口层 | 所有 REST Controller，接收请求 |
+| `com.ez.admin.service` | 手动编写 | 业务聚合层 | 组合原子服务，实现业务逻辑 |
+| `com.ez.admin.modules` | 代码生成 | 原子服务层 | 实体+Mapper，仅提供数据库操作能力 |
+| `com.ez.admin.dto` | 手动编写 | 数据传输对象 | 接口请求/响应的数据结构 |
+| `com.ez.admin.common` | 手动编写 | 通用代码 | 异常、响应、Redis、Web 配置 |
 | `com.ez.admin.utils.generator` | 手动编写 | 代码生成器工具类 |
 | `com.ez.admin.config` | 手动编写 | Spring 配置类 |
 
-**代码生成器使用**：
-```bash
-# 方式1：IDE 中直接运行 CodeGenerator.main()
-# 路径：src/main/java/com/ez/admin/utils/generator/CodeGenerator.java
+**分层架构原则**：
 
-# 方式2：Maven 插件运行
-mvn exec:java -Dexec.mainClass="com.ez.admin.utils.generator.CodeGenerator"
-```
+1. **api（接口层）**
+   - 所有 Controller 放在此处
+   - 只负责接收请求、参数校验、返回响应
+   - 调用 service 层完成业务逻辑
+
+2. **service（业务聚合层）**
+   - 业务服务的聚合层，组合原子服务
+   - 实现复杂业务逻辑
+   - 依赖 modules 的 Mapper 和 Entity
+
+3. **modules（原子服务层）**
+   - 仅提供数据库操作能力
+   - Entity + Mapper，无业务逻辑
+   - 可被 service 层复用
+
+4. **dto（数据传输对象）**
+   - 所有接口的请求/响应 DTO
+   - 按业务模块分包（auth、user、role 等）
 
 **设计理念**：
 - **零模块**：项目根目录即代码根目录，无任何模块嵌套
-- **极致扁平**：src 直接在项目根下，无 ez-admin 子目录
-- **极简开发**：无模块管理，修改即生效，专注业务
-- **适合个人项目**：最简化配置，开箱即用
+- **三层分离**：api → service → modules，职责清晰
+- **原子服务**：modules 仅提供数据库操作，无业务逻辑
+- **业务聚合**：service 层组合原子服务，实现业务逻辑
+- **适合个人项目**：极简配置，开箱即用
 
 ## 技术栈规范
 

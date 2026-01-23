@@ -1,11 +1,10 @@
-package com.ez.admin.modules.auth.service.impl;
+package com.ez.admin.service.auth;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.ez.admin.common.exception.ErrorCode;
 import com.ez.admin.common.exception.EzBusinessException;
-import com.ez.admin.modules.auth.dto.LoginRequest;
-import com.ez.admin.modules.auth.dto.LoginResponse;
-import com.ez.admin.modules.auth.service.AuthService;
+import com.ez.admin.dto.auth.LoginRequest;
+import com.ez.admin.dto.auth.LoginResponse;
 import com.ez.admin.modules.system.entity.SysUser;
 import com.ez.admin.modules.system.mapper.SysUserMapper;
 import lombok.RequiredArgsConstructor;
