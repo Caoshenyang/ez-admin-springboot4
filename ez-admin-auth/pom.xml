@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.ez.admin</groupId>
+        <artifactId>ez-admin-springboot4</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>ez-admin-auth</artifactId>
+    <packaging>jar</packaging>
+    <name>ez-admin-auth</name>
+    <description>统一认证授权中心（多端适配 + 双Token机制）</description>
+
+    <dependencies>
+        <!-- ========== 内部依赖 ========== -->
+
+        <!-- common：获取统一返回体 ApiResponse -->
+        <dependency>
+            <groupId>com.ez.admin</groupId>
+            <artifactId>ez-admin-common</artifactId>
+        </dependency>
+
+        <!-- framework：获取 Security、Redis、JWT 等通用能力 -->
+        <dependency>
+            <groupId>com.ez.admin</groupId>
+            <artifactId>ez-admin-framework</artifactId>
+        </dependency>
+
+        <!-- domain-system：获取 User、Role 等实体 -->
+        <dependency>
+            <groupId>com.ez.admin</groupId>
+            <artifactId>ez-admin-domain-system</artifactId>
+        </dependency>
+
+        <!-- ========== Web 支持 ========== -->
+
+        <!-- Spring Web MVC：提供 REST Controller 能力 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Validation API：提供 @NotNull、@Valid 等校验注解 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- ========== 测试依赖 ========== -->
+
+        <!-- Spring Boot Test：单元测试 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Spring Security Test：安全测试 -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

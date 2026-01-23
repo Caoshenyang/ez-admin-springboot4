@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.ez.admin</groupId>
+        <artifactId>ez-admin-springboot4</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>ez-admin-system</artifactId>
+    <packaging>jar</packaging>
+    <name>ez-admin-system</name>
+    <description>系统管理聚合服务（用户、角色、菜单、部门等）</description>
+
+    <dependencies>
+        <!-- ========== 内部依赖 ========== -->
+
+        <!-- common：获取统一返回体 ApiResponse -->
+        <dependency>
+            <groupId>com.ez.admin</groupId>
+            <artifactId>ez-admin-common</artifactId>
+        </dependency>
+
+        <!-- auth：认证授权接口 -->
+        <dependency>
+            <groupId>com.ez.admin</groupId>
+            <artifactId>ez-admin-auth</artifactId>
+        </dependency>
+
+        <!-- domain-system：领域层实体、Mapper、原子服务 -->
+        <dependency>
+            <groupId>com.ez.admin</groupId>
+            <artifactId>ez-admin-domain-system</artifactId>
+        </dependency>
+
+        <!-- framework：Web、Security、Redis、MyBatis 通用能力 -->
+        <dependency>
+            <groupId>com.ez.admin</groupId>
+            <artifactId>ez-admin-framework</artifactId>
+        </dependency>
+
+        <!-- ========== Web 支持 ========== -->
+
+        <!-- Spring Web MVC：提供 REST Controller 能力 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Validation API：提供 @NotNull、@Valid 等校验注解 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- ========== 对象映射 ========== -->
+
+        <!-- MapStruct：对象转换 -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>
