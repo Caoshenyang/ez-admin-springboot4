@@ -25,37 +25,5 @@ public interface UserConverter {
      */
     UserConverter INSTANCE = Mappers.getMapper(UserConverter.class);
 
-    /**
-     * 将 SysUser 实体转换为 LoginVO
-     * <p>
-     * MapStruct 会自动识别 LoginVO 的 @Builder 注解，
-     * 生成的代码等价于：
-     * <pre>
-     * return LoginVO.builder()
-     *     .userId(user.getUserId())
-     *     .username(user.getUsername())
-     *     .nickname(user.getNickname())
-     *     .avatar(user.getAvatar())
-     *     .build();
-     * </pre>
-     * </p>
-     *
-     * @param user 用户实体
-     * @return 登录响应 VO
-     */
-    LoginVO toLoginVO(SysUser user);
 
-    /**
-     * 将 SysUser 实体转换为 LoginVO（附带 token）
-     * <p>
-     * 当字段名相同时，无需 @Mapping 注解，MapStruct 会自动匹配。
-     * 只有在字段名不同或需要指定参数来源时才需要 @Mapping。
-     * </p>
-     *
-     * @param user  用户实体
-     * @param token 访问令牌
-     * @return 登录响应 VO
-     */
-    @Mapping(source = "token", target = "token")
-    LoginVO toLoginVOWithToken(SysUser user, String token);
 }

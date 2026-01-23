@@ -5,3 +5,11 @@
 |   __|     /  /    |______/  /_\  \   |  |  |  ||  |\/|  | |  | |  . `  |
 |  |____   /  /----.      /  _____  \  |  '--'  ||  |  |  | |  | |  |\   |
 |_______| /________|     /__/     \__\ |_______/ |__|  |__| |__| |__| \__|
+
+:: Spring Boot ::                ${spring-boot.formatted-version}
+:: ${project.name} ::            (v${project.version})
+:: Author ::                     ${project.author}
+
+:: Swagger UI ::                 http://localhost:${server.port}/swagger-ui.html
+:: API Docs ::                   http://localhost:${server.port}/v3/api-docs
+:: Profile ::                    ${spring.profiles.active:default}

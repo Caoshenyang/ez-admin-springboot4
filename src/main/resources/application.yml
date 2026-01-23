@@ -1,9 +1,15 @@
 server:
   port: 8080
 
+# 项目信息配置
+project:
+  name: ez-admin
+  version: 0.0.1-SNAPSHOT
+  author: ez-admin
+
 spring:
   application:
-    name: ez-admin
+    name: ${project.name}
   profiles:
     active: dev
 
