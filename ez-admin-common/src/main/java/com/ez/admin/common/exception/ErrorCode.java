@@ -4,90 +4,365 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 业务错误码枚举
+ * 业务错误码枚举（5位数字分段式设计）
  * <p>
- * 定义系统中通用的业务错误码，用于标准化错误处理和国际化支持。
- * 每个错误码包含数值编码和默认错误描述。
+ * 采用 ABBCC 格式：
+ * <ul>
+ *   <li>A (1位): 服务/大类级（0=成功, 1=系统级, 2=业务级, 3=三方服务）</li>
+ *   <li>BB (2位): 模块级（01=通用, 01=用户, 02=角色, 03=菜单, 04=部门, 05=字典, 06=认证, 07=文件）</li>
+ *   <li>CC (2位): 具体错误流水号</li>
+ * </ul>
  * </p>
  *
- * <p>错误码分类约定：</p>
+ * <p>错误码分类：</p>
  * <ul>
- *   <li>1xx: 信息提示</li>
- *   <li>2xx: 成功</li>
- *   <li>4xx: 客户端错误（参数、权限等）</li>
- *   <li>5xx: 服务端错误（系统异常、业务异常等）</li>
+ *   <li>0xxxx: 成功</li>
+ *   <li>1xxxx: 系统级错误（参数、权限、限流等通用错误）</li>
+ *   <li>2xxxx: 业务级错误（逻辑层面的业务错误）</li>
+ *   <li>3xxxx: 三方服务错误（数据库、Redis、短信平台等）</li>
  * </ul>
+ *
+ * @author ez-admin
+ * @since 2026-01-23
  */
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
 
-    // ========== 成功 ==========
-    SUCCESS(200, "操作成功"),
+    // ================================ 0xxxx: 成功 ================================
 
-    // ========== 客户端错误 4xx ==========
-    BAD_REQUEST(400, "请求参数错误"),
-    UNAUTHORIZED(401, "未登录或登录已过期"),
-    FORBIDDEN(403, "无权限访问该资源"),
-    NOT_FOUND(404, "请求的资源不存在"),
-    METHOD_NOT_ALLOWED(405, "请求方法不支持"),
-    REQUEST_TIMEOUT(408, "请求超时"),
-    CONFLICT(409, "资源冲突"),
+    /**
+     * 操作成功
+     */
+    SUCCESS(0, "操作成功"),
 
-    // ========== 参数校验错误 ==========
-    VALIDATION_ERROR(4001, "参数校验失败"),
-    MISSING_REQUIRED_PARAMETER(4002, "缺少必填参数"),
-    INVALID_PARAMETER_FORMAT(4003, "参数格式错误"),
-    PARAMETER_OUT_OF_RANGE(4004, "参数超出允许范围"),
 
-    // ========== 业务错误 5xx ==========
-    INTERNAL_SERVER_ERROR(500, "系统内部错误"),
-    SERVICE_UNAVAILABLE(503, "服务暂时不可用"),
-    DATABASE_ERROR(5001, "数据库操作失败"),
-    BUSINESS_ERROR(5002, "业务处理失败"),
+    // ================================ 1xxxx: 系统级错误 ================================
 
-    // ========== 用户相关错误 ==========
-    USER_NOT_FOUND(10001, "用户不存在"),
-    USER_ALREADY_EXISTS(10002, "用户已存在"),
-    USER_PASSWORD_ERROR(10003, "用户名或密码错误"),
-    USER_ACCOUNT_DISABLED(10004, "用户账号已被禁用"),
-    USER_ACCOUNT_LOCKED(10005, "用户账号已被锁定"),
+    /**
+     * 请求参数格式错误
+     */
+    BAD_REQUEST(10001, "请求参数格式错误"),
 
-    // ========== 角色权限相关错误 ==========
-    ROLE_NOT_FOUND(20001, "角色不存在"),
-    ROLE_ALREADY_EXISTS(20002, "角色已存在"),
-    PERMISSION_NOT_FOUND(20003, "权限不存在"),
-    ROLE_ASSIGNED_TO_USER(20004, "该角色已分配给用户，无法删除"),
+    /**
+     * 未授权（未登录或登录已过期）
+     */
+    UNAUTHORIZED(10002, "未授权，请先登录"),
 
-    // ========== 菜单相关错误 ==========
-    MENU_NOT_FOUND(30001, "菜单不存在"),
-    MENU_ALREADY_EXISTS(30002, "菜单已存在"),
-    MENU_HAS_CHILDREN(30003, "菜单存在子菜单，无法删除"),
-    MENU_PARENT_NOT_FOUND(30004, "父菜单不存在"),
+    /**
+     * 权限不足（无权访问该接口）
+     */
+    FORBIDDEN(10003, "权限不足，无权访问"),
 
-    // ========== 部门相关错误 ==========
-    DEPARTMENT_NOT_FOUND(40001, "部门不存在"),
-    DEPARTMENT_ALREADY_EXISTS(40002, "部门已存在"),
-    DEPARTMENT_HAS_USERS(40003, "部门下存在用户，无法删除"),
-    DEPARTMENT_HAS_CHILDREN(40004, "部门存在子部门，无法删除"),
+    /**
+     * 请求过于频繁（限流）
+     */
+    TOO_MANY_REQUESTS(10004, "请求过于频繁，请稍后再试"),
 
-    // ========== 字典相关错误 ==========
-    DICT_TYPE_NOT_FOUND(50001, "字典类型不存在"),
-    DICT_TYPE_ALREADY_EXISTS(50002, "字典类型已存在"),
-    DICT_DATA_NOT_FOUND(50003, "字典数据不存在"),
-    DICT_DATA_ALREADY_EXISTS(50004, "字典数据已存在"),
+    /**
+     * 参数校验失败
+     */
+    VALIDATION_ERROR(10005, "参数校验失败"),
 
-    // ========== 文件相关错误 ==========
-    FILE_UPLOAD_ERROR(60001, "文件上传失败"),
-    FILE_DOWNLOAD_ERROR(60002, "文件下载失败"),
-    FILE_NOT_FOUND(60003, "文件不存在"),
-    FILE_SIZE_EXCEEDED(60004, "文件大小超出限制"),
-    FILE_TYPE_NOT_ALLOWED(60005, "不支持的文件类型"),
+    /**
+     * 缺少必填参数
+     */
+    MISSING_PARAMETER(10006, "缺少必填参数"),
 
-    // ========== 第三方服务错误 ==========
-    THIRD_PARTY_SERVICE_ERROR(70001, "第三方服务调用失败"),
-    SMS_SEND_ERROR(70002, "短信发送失败"),
-    EMAIL_SEND_ERROR(70003, "邮件发送失败");
+    /**
+     * 参数格式错误
+     */
+    INVALID_PARAMETER_FORMAT(10007, "参数格式错误"),
+
+    /**
+     * 参数超出允许范围
+     */
+    PARAMETER_OUT_OF_RANGE(10008, "参数超出允许范围"),
+
+    /**
+     * 请求的资源不存在
+     */
+    NOT_FOUND(10009, "请求的资源不存在"),
+
+    /**
+     * 请求方法不支持
+     */
+    METHOD_NOT_ALLOWED(10010, "请求方法不支持"),
+
+    /**
+     * 服务器内部错误
+     */
+    INTERNAL_SERVER_ERROR(10500, "服务器内部错误"),
+
+    /**
+     * 服务暂时不可用
+     */
+    SERVICE_UNAVAILABLE(10503, "服务暂时不可用"),
+
+
+    // ================================ 2xxxx: 业务级错误 ================================
+
+    // ========== 201xx: 用户模块 ==========
+
+    /**
+     * 用户不存在
+     */
+    USER_NOT_FOUND(20101, "用户不存在"),
+
+    /**
+     * 用户名或密码错误
+     */
+    USER_PASSWORD_ERROR(20102, "用户名或密码错误"),
+
+    /**
+     * 账号已被禁用
+     */
+    USER_ACCOUNT_DISABLED(20103, "账号已被禁用"),
+
+    /**
+     * 账号已被锁定
+     */
+    USER_ACCOUNT_LOCKED(20104, "账号已被锁定"),
+
+    /**
+     * 用户已存在
+     */
+    USER_ALREADY_EXISTS(20105, "用户已存在"),
+
+    /**
+     * 手机号已存在
+     */
+    USER_PHONE_ALREADY_EXISTS(20106, "手机号已存在"),
+
+    /**
+     * 邮箱已存在
+     */
+    USER_EMAIL_ALREADY_EXISTS(20107, "邮箱已存在"),
+
+
+    // ========== 202xx: 角色模块 ==========
+
+    /**
+     * 角色不存在
+     */
+    ROLE_NOT_FOUND(20201, "角色不存在"),
+
+    /**
+     * 角色已存在
+     */
+    ROLE_ALREADY_EXISTS(20202, "角色已存在"),
+
+    /**
+     * 角色已分配给用户，无法删除
+     */
+    ROLE_ASSIGNED_TO_USER(20203, "角色已分配给用户，无法删除"),
+
+    /**
+     * 权限不存在
+     */
+    PERMISSION_NOT_FOUND(20204, "权限不存在"),
+
+
+    // ========== 203xx: 菜单模块 ==========
+
+    /**
+     * 菜单不存在
+     */
+    MENU_NOT_FOUND(20301, "菜单不存在"),
+
+    /**
+     * 菜单已存在
+     */
+    MENU_ALREADY_EXISTS(20302, "菜单已存在"),
+
+    /**
+     * 菜单存在子菜单，无法删除
+     */
+    MENU_HAS_CHILDREN(20303, "菜单存在子菜单，无法删除"),
+
+    /**
+     * 父菜单不存在
+     */
+    MENU_PARENT_NOT_FOUND(20304, "父菜单不存在"),
+
+
+    // ========== 204xx: 部门模块 ==========
+
+    /**
+     * 部门不存在
+     */
+    DEPT_NOT_FOUND(20401, "部门不存在"),
+
+    /**
+     * 部门已存在
+     */
+    DEPT_ALREADY_EXISTS(20402, "部门已存在"),
+
+    /**
+     * 部门下存在用户，无法删除
+     */
+    DEPT_HAS_USERS(20403, "部门下存在用户，无法删除"),
+
+    /**
+     * 部门存在子部门，无法删除
+     */
+    DEPT_HAS_CHILDREN(20404, "部门存在子部门，无法删除"),
+
+
+    // ========== 205xx: 字典模块 ==========
+
+    /**
+     * 字典类型不存在
+     */
+    DICT_TYPE_NOT_FOUND(20501, "字典类型不存在"),
+
+    /**
+     * 字典类型已存在
+     */
+    DICT_TYPE_ALREADY_EXISTS(20502, "字典类型已存在"),
+
+    /**
+     * 字典数据不存在
+     */
+    DICT_DATA_NOT_FOUND(20503, "字典数据不存在"),
+
+    /**
+     * 字典数据已存在
+     */
+    DICT_DATA_ALREADY_EXISTS(20504, "字典数据已存在"),
+
+
+    // ========== 206xx: 认证模块 ==========
+
+    /**
+     * Token 无效或已过期
+     */
+    TOKEN_INVALID(20601, "Token 无效或已过期"),
+
+    /**
+     * Refresh Token 无效或已过期
+     */
+    REFRESH_TOKEN_INVALID(20602, "Refresh Token 无效或已过期"),
+
+    /**
+     * 设备未授权
+     */
+    DEVICE_NOT_AUTHORIZED(20603, "设备未授权"),
+
+    /**
+     * 设备已在其他地方登录
+     */
+    DEVICE_LOGIN_ELSEWHERE(20604, "设备已在其他地方登录"),
+
+    /**
+     * 验证码错误或已过期
+     */
+    VERIFICATION_CODE_ERROR(20605, "验证码错误或已过期"),
+
+    /**
+     * 验证码发送频繁
+     */
+    VERIFICATION_CODE_TOO_FREQUENT(20606, "验证码发送频繁，请稍后再试"),
+
+
+    // ========== 207xx: 文件模块 ==========
+
+    /**
+     * 文件上传失败
+     */
+    FILE_UPLOAD_ERROR(20701, "文件上传失败"),
+
+    /**
+     * 文件下载失败
+     */
+    FILE_DOWNLOAD_ERROR(20702, "文件下载失败"),
+
+    /**
+     * 文件不存在
+     */
+    FILE_NOT_FOUND(20703, "文件不存在"),
+
+    /**
+     * 文件大小超出限制
+     */
+    FILE_SIZE_EXCEEDED(20704, "文件大小超出限制"),
+
+    /**
+     * 不支持的文件类型
+     */
+    FILE_TYPE_NOT_ALLOWED(20705, "不支持的文件类型"),
+
+
+    // ================================ 3xxxx: 三方服务错误 ================================
+
+    // ========== 301xx: 数据库服务 ==========
+
+    /**
+     * 数据库操作失败
+     */
+    DATABASE_ERROR(30101, "数据库操作失败"),
+
+    /**
+     * 数据库连接超时
+     */
+    DATABASE_TIMEOUT(30102, "数据库连接超时"),
+
+    /**
+     * 数据记录已存在
+     */
+    DUPLICATE_RECORD(30103, "数据记录已存在"),
+
+
+    // ========== 302xx: Redis 服务 ==========
+
+    /**
+     * Redis 操作失败
+     */
+    REDIS_ERROR(30201, "Redis 操作失败"),
+
+    /**
+     * Redis 连接超时
+     */
+    REDIS_TIMEOUT(30202, "Redis 连接超时"),
+
+
+    // ========== 303xx: 短信服务 ==========
+
+    /**
+     * 短信发送失败
+     */
+    SMS_SEND_ERROR(30301, "短信发送失败"),
+
+    /**
+     * 短信模板不存在
+     */
+    SMS_TEMPLATE_NOT_FOUND(30302, "短信模板不存在"),
+
+    /**
+     * 短信余额不足
+     */
+    SMS_BALANCE_NOT_ENOUGH(30303, "短信余额不足"),
+
+
+    // ========== 304xx: 邮件服务 ==========
+
+    /**
+     * 邮件发送失败
+     */
+    EMAIL_SEND_ERROR(30401, "邮件发送失败"),
+
+
+    // ========== 305xx: 第三方服务通用 ==========
+
+    /**
+     * 第三方服务调用失败
+     */
+    THIRD_PARTY_SERVICE_ERROR(30501, "第三方服务调用失败"),
+
+    /**
+     * 第三方服务超时
+     */
+    THIRD_PARTY_SERVICE_TIMEOUT(30502, "第三方服务超时");
 
     /**
      * 错误码
@@ -112,5 +387,14 @@ public enum ErrorCode {
             }
         }
         return INTERNAL_SERVER_ERROR;
+    }
+
+    /**
+     * 判断是否为成功响应
+     *
+     * @return true=成功, false=失败
+     */
+    public boolean isSuccess() {
+        return this.code == 0;
     }
 }

@@ -10,18 +10,20 @@ import lombok.Setter;
  * 支持使用错误码枚举和自定义错误消息两种方式构建异常。
  * </p>
  * <p>
- * 使用示例：
+ * 使用示例（基于 5 位数字错误码标准）：
  * <pre>{@code
  * // 使用错误码枚举
- * throw new EzBusinessException(ErrorCode.USER_NOT_FOUND);
+ * throw new EzBusinessException(ErrorCode.USER_NOT_FOUND); // 20101
  *
  * // 使用错误码枚举 + 自定义消息
- * throw new EzBusinessException(ErrorCode.USER_NOT_FOUND, "用户ID: " + userId);
+ * throw new EzBusinessException(ErrorCode.USER_PASSWORD_ERROR, "用户ID: " + userId); // 20102
  *
- * // 仅使用自定义消息（默认使用 500 错误码）
- * throw new EzBusinessException("数据保存失败");
+ * // 仅使用自定义消息（默认使用 10500 错误码）
+ * throw new EzBusinessException("数据保存失败"); // 10500
  * }</pre>
  * </p>
+ *
+ * @see ErrorCode 错误码枚举（5位数字分段式设计）
  */
 @Getter
 @Setter
@@ -88,7 +90,7 @@ public class EzBusinessException extends RuntimeException {
     }
 
     /**
-     * 使用自定义消息构建异常（默认使用 500 错误码）
+     * 使用自定义消息构建异常（默认使用 10500 错误码）
      *
      * @param message 自定义错误消息
      */
@@ -99,7 +101,7 @@ public class EzBusinessException extends RuntimeException {
     }
 
     /**
-     * 使用自定义消息和原始异常构建异常（默认使用 500 错误码）
+     * 使用自定义消息和原始异常构建异常（默认使用 10500 错误码）
      *
      * @param message 自定义错误消息
      * @param cause   原始异常（用于异常链追踪）

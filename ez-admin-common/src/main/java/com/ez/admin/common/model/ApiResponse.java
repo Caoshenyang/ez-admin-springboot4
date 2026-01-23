@@ -27,15 +27,12 @@ public class ApiResponse<T> implements Serializable {
      * 业务状态码
      * <p>
      * 表示业务逻辑层的处理结果，与 HTTP 状态码解耦。
-     * 推荐的业务状态码约定：
+     * 采用 5 位数字分段式设计（ABBCC）：
      * <ul>
-     *   <li>200: 操作成功</li>
-     *   <li>400: 请求参数校验失败</li>
-     *   <li>401: 未登录或登录已过期</li>
-     *   <li>403: 无权限访问该资源</li>
-     *   <li>404: 业务资源不存在</li>
-     *   <li>500: 业务处理异常</li>
-     *   <li>其他: 可扩展自定义业务状态码</li>
+     *   <li>0: 操作成功</li>
+     *   <li>1xxxx: 系统级错误（参数、权限、限流等）</li>
+     *   <li>2xxxx: 业务级错误（用户、角色、菜单等业务逻辑）</li>
+     *   <li>3xxxx: 三方服务错误（数据库、Redis、短信平台等）</li>
      * </ul>
      * </p>
      */
@@ -85,10 +82,10 @@ public class ApiResponse<T> implements Serializable {
      * 成功响应（无数据）
      *
      * @param <T> 数据泛型类型
-     * @return 包含 200 状态码的响应对象
+     * @return 包含成功状态码（0）的响应对象
      */
     public static <T> ApiResponse<T> success() {
-        return new ApiResponse<>(200, "操作成功", null);
+        return new ApiResponse<>(0, "操作成功", null);
     }
 
     /**
@@ -96,10 +93,10 @@ public class ApiResponse<T> implements Serializable {
      *
      * @param data 业务数据
      * @param <T>  数据泛型类型
-     * @return 包含 200 状态码和指定数据的响应对象
+     * @return 包含成功状态码（0）和指定数据的响应对象
      */
     public static <T> ApiResponse<T> success(T data) {
-        return new ApiResponse<>(200, "操作成功", data);
+        return new ApiResponse<>(0, "操作成功", data);
     }
 
     /**
@@ -108,21 +105,21 @@ public class ApiResponse<T> implements Serializable {
      * @param message 成功提示消息
      * @param data    业务数据
      * @param <T>     数据泛型类型
-     * @return 包含 200 状态码的响应对象
+     * @return 包含成功状态码（0）的响应对象
      */
     public static <T> ApiResponse<T> success(String message, T data) {
-        return new ApiResponse<>(200, message, data);
+        return new ApiResponse<>(0, message, data);
     }
 
     /**
-     * 失败响应（默认错误码 500）
+     * 失败响应（默认错误码 10500）
      *
      * @param message 错误提示消息
      * @param <T>     数据泛型类型
-     * @return 包含 500 状态码的响应对象
+     * @return 包含 10500 状态码的响应对象
      */
     public static <T> ApiResponse<T> error(String message) {
-        return new ApiResponse<>(500, message, null);
+        return new ApiResponse<>(10500, message, null);
     }
 
     /**

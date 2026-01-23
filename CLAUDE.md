@@ -81,8 +81,80 @@ EZ-ADMIN-SPRINGBOOT4：基于 Spring Boot 4.0 + JDK 21 的轻量级 RBAC 后台�
 - **命名规范 (Strict)**:
   - 严禁使用模糊命名（如 `BaseReq`, `Handle.java`）。
   - 必须使用明确的语义化命名：`UserQueryDTO`, `RoleResponseVO`, `MenuTreeService`。
-- **代码注释 (Mandatory)**: 必须在 Controller 接口、Service 复杂逻辑处编写清晰注释。注释需解释“为什么这么做”以及核心业务逻辑。
+- **代码注释 (Mandatory)**: 必须在 Controller 接口、Service 复杂逻辑处编写清晰注释。注释需解释"为什么这么做"以及核心业务逻辑。
 - **对象转换**: 强制使用 MapStruct。若遇到转换逻辑复杂，请在 `model/mapstruct/` 下定义转换器接口。
+
+## 错误码设计规范
+
+### 设计原则
+- **易读性**: 5 位数字分段式，便于快速识别错误类型
+- **唯一性**: 每个错误码全局唯一，避免歧义
+- **分类明确**: 按层级和模块划分，易于扩展
+
+### 错误码结构（ABBCC 格式）
+
+```
+A    BB         CC
+│    │          │
+│    │          └─ 具体错误流水号 (01-99)
+│    └──────────── 模块级 (01=通用, 01=用户, 02=角色, 03=菜单, 04=部门, 05=字典, 06=认证, 07=文件)
+└───────────────── 服务/大类级 (0=成功, 1=系统级, 2=业务级, 3=三方服务)
+```
+
+### 错误码分类
+
+| 首位 | 分类 | 说明 | 示例 |
+|------|------|------|------|
+| 0 | 成功 | 操作成功 | 00000 |
+| 1 | 系统级错误 | 参数、权限、限流等通用错误 | 10001=参数错误, 10002=未授权 |
+| 2 | 业务级错误 | 业务逻辑错误（用户、角色、菜单等） | 20101=用户不存在, 20201=角色不存在 |
+| 3 | 三方服务错误 | 数据库、Redis、短信平台等 | 30101=数据库错误, 30301=短信失败 |
+
+### 模块划分（BB 部分）
+
+| 模块码 | 模块名称 | 错误码范围 | 说明 |
+|--------|----------|------------|------|
+| 00 | 通用模块 | 10000-10099 | 系统级通用错误 |
+| 01 | 用户模块 | 20100-20199 | 用户登录、注册、信息管理 |
+| 02 | 角色模块 | 20200-20299 | 角色管理、权限分配 |
+| 03 | 菜单模块 | 20300-20399 | 菜单管理、权限树 |
+| 04 | 部门模块 | 20400-20499 | 部门管理、组织架构 |
+| 05 | 字典模块 | 20500-20599 | 字典类型、字典数据 |
+| 06 | 认证模块 | 20600-20699 | Token、设备、验证码 |
+| 07 | 文件模块 | 20700-20799 | 文件上传、下载、管理 |
+| 01 | 数据库 | 30100-30199 | 三方服务：数据库 |
+| 02 | Redis | 30200-30299 | 三方服务：Redis |
+| 03 | 短信服务 | 30300-30399 | 三方服务：短信 |
+
+### 使用示例
+
+```java
+// 成功响应
+ApiResponse.success(data);  // code: 0
+
+// 系统级错误
+throw new EzBusinessException(ErrorCode.BAD_REQUEST);  // 10001
+throw new EzBusinessException(ErrorCode.UNAUTHORIZED);  // 10002
+
+// 业务级错误
+throw new EzBusinessException(ErrorCode.USER_NOT_FOUND);  // 20101
+throw new EzBusinessException(ErrorCode.ROLE_NOT_FOUND);  // 20201
+
+// 三方服务错误
+throw new EzBusinessException(ErrorCode.DATABASE_ERROR);  // 30101
+throw new EzBusinessException(ErrorCode.SMS_SEND_ERROR);   // 30301
+```
+
+### 响应体格式
+
+```json
+{
+  "code": 20101,
+  "message": "用户不存在",
+  "data": null,
+  "timestamp": 1705978432000
+}
+```
 
 ## 常用开发命令
 - **运行项目**: `mvn spring-boot:run` (由用户执行)
@@ -110,6 +182,11 @@ EZ-ADMIN-SPRINGBOOT4：基于 Spring Boot 4.0 + JDK 21 的轻量级 RBAC 后台�
   - 合并 auth → system 模块
   - 通过包结构区分功能（system.auth、system.system）
   - 最终结构：starter + system + common + generator（仅4个模块）
+- [x] **重构错误码设计（5位数字分段式）** - 2026-01-23
+  - 采用 ABBCC 格式（A=层级, BB=模块, CC=流水号）
+  - 0xxxx=成功, 1xxxx=系统级, 2xxxx=业务级, 3xxxx=三方服务
+  - 更新 ErrorCode、ApiResponse、EzBusinessException
+  - 成功状态码从 200 改为 0
 - [ ] 实现多渠道认证适配器（策略模式）
 - [ ] 集成Spring Security 7配置和过滤器链
 - [ ] 实现微信小程序登录渠道
