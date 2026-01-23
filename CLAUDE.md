@@ -13,12 +13,12 @@
 ## 项目概述
 EZ-ADMIN-SPRINGBOOT4：基于 Spring Boot 4.0 + JDK 21 的轻量级 RBAC 后台管理系统，专为个人开发者和小团队设计。
 
-## 架构设计（单体架构）
+## 架构设计（极致单体）
 
 ```
 ┌─────────────────────────────────────────────────────┐
 │                   ez-admin                          │
-│              (单体应用 - 极简架构)                    │
+│              (极致单体 - 唯一模块)                    │
 │                                                      │
 │  ┌──────────────────────────────────────────┐      │
 │  │  com.ez.admin                            │      │
@@ -37,19 +37,20 @@ EZ-ADMIN-SPRINGBOOT4：基于 Spring Boot 4.0 + JDK 21 的轻量级 RBAC 后台�
 │  │  │       │   └── service/                 │      │
 │  │  │       └── {其他业务模块}               │      │
 │  │  │                                        │      │
+│  │  ├── utils/            (工具类)            │      │
+│  │  │   └── generator/  (代码生成器)          │      │
+│  │  │                                        │      │
 │  │  └── config/           (配置类)            │      │
 │  └──────────────────────────────────────────┘      │
 └─────────────────────────────────────────────────────┘
 ```
 
-**模块职责**：
-- `ez-admin`: 单体应用模块，包含所有功能
+**项目结构**：
+- `ez-admin`: 唯一模块，包含所有代码
   - **common**: 通用代码（异常、响应、Redis、Web配置）
   - **system.modules**: 业务模块（admin、user、role、menu...）
+  - **utils.generator**: 代码生成器工具类（开发工具）
   - **config**: Spring 配置类
-
-**工具模块**：
-- `ez-admin-generator`: 代码生成器（独立工具，不参与业务代码编译）
 
 **包结构规则**：
 | 包路径 | 代码来源 | 说明 |
@@ -57,21 +58,23 @@ EZ-ADMIN-SPRINGBOOT4：基于 Spring Boot 4.0 + JDK 21 的轻量级 RBAC 后台�
 | `com.ez.admin.common` | 手动编写 | 通用代码（异常、响应、Redis、Web） |
 | `com.ez.admin.system.modules.admin` | 代码生成 | 核心管理模块（用户、角色、菜单等） |
 | `com.ez.admin.system.modules.{module}` | 代码生成 | 其他业务模块 |
+| `com.ez.admin.utils.generator` | 手动编写 | 代码生成器工具类 |
 | `com.ez.admin.config` | 手动编写 | Spring 配置类 |
 
 **代码生成器使用**：
 ```bash
-# 运行代码生成器（交互式输入）
-# 1. 输入模块名：如 admin、blog、order
-# 2. 输入表名：如 ez_admin_user 或 all（生成所有表）
-java -jar ez-admin-generator/target/ez-admin-generator.jar
+# 方式1：IDE 中直接运行 CodeGenerator.main()
+# 路径：ez-admin/src/main/java/com/ez/admin/utils/generator/CodeGenerator.java
+
+# 方式2：Maven 插件运行
+mvn exec:java -Dexec.mainClass="com.ez.admin.utils.generator.CodeGenerator"
 ```
 
 **设计理念**：
-- **单体应用**：所有代码在一个模块，无需跨模块依赖管理
-- **包分层**：通过包结构区分功能，而非模块拆分
-- **极简开发**：修改代码立即生效，无需重新编译依赖模块
-- **适合个人/小团队**：减少配置复杂度，专注业务开发
+- **极致单体**：整个项目只有一个模块，零模块拆分
+- **工具内嵌**：代码生成器作为工具类放在 utils 包，不作为独立模块
+- **极简开发**：无需模块管理，修改即生效
+- **适合个人项目**：最大程度简化配置，专注业务开发
 
 ## 技术栈规范
 - **命名规范 (Strict)**:
@@ -155,7 +158,7 @@ throw new EzBusinessException(ErrorCode.SMS_SEND_ERROR);   // 30301
 ## 常用开发命令
 - **运行项目**: `mvn spring-boot:run` (由用户执行)
 - **跳过测试打包**: `mvn clean package -DskipTests` (由用户执行)
-- **代码生成**: 运行 `CodeGenerator.java` (由用户执行)
+- **代码生成**: 在 IDE 中直接运行 `CodeGenerator.main()` 或使用 `mvn exec:java -Dexec.mainClass="com.ez.admin.utils.generator.CodeGenerator"` (由用户执行)
 
 ## 任务清单 (Todo List)
 
@@ -183,6 +186,11 @@ throw new EzBusinessException(ErrorCode.SMS_SEND_ERROR);   // 30301
   - 0xxxx=成功, 1xxxx=系统级, 2xxxx=业务级, 3xxxx=三方服务
   - 更新 ErrorCode、ApiResponse、EzBusinessException
   - 成功状态码从 200 改为 0
+- [x] **极致单体架构（零模块拆分）** - 2026-01-23
+  - 合并 starter、system、common 为单一 ez-admin 模块
+  - 移除所有模块拆分，通过包结构组织代码
+  - 代码生成器改为 utils 包下的工具类
+  - 最终结构：ez-admin（唯一模块）
 - [ ] 实现多渠道认证适配器（策略模式）
 - [ ] 集成Spring Security 7配置和过滤器链
 - [ ] 实现微信小程序登录渠道

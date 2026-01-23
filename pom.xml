@@ -21,8 +21,7 @@
 
     <!-- 子模块声明 -->
     <modules>
-        <module>ez-admin</module>             <!-- 单体应用模块 -->
-        <module>ez-admin-generator</module>   <!-- 代码生成器（独立工具） -->
+        <module>ez-admin</module>             <!-- 单体应用模块（包含代码生成器工具） -->
     </modules>
 
     <!-- 全局属性配置 -->

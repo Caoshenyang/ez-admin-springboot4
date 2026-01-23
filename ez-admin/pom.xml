@@ -57,6 +57,21 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
 
+        <!-- ========== 开发工具（可选依赖，不参与打包）========== -->
+
+        <!-- MyBatis-Plus 代码生成器（开发工具） -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-generator</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- FreeMarker 模板引擎（代码生成器使用） -->
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!-- ========== Spring Security 相关（按需启用）========== -->
 
         <!-- Spring Security：安全框架（Token 认证、权限控制） -->
