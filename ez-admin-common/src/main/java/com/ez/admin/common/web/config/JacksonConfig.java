@@ -1,4 +1,4 @@
-package com.ez.admin.common.framework.web.config;
+package com.ez.admin.common.web.config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

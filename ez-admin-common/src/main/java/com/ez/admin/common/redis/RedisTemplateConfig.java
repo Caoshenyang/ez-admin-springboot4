@@ -1,4 +1,4 @@
-package com.ez.admin.common.framework.redis;
+package com.ez.admin.common.redis;
 
 
 import org.springframework.context.annotation.Bean;

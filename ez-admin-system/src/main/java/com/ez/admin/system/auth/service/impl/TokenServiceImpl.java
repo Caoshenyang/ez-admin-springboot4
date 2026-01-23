@@ -1,7 +1,7 @@
 package com.ez.admin.system.auth.service.impl;
 
 import com.ez.admin.system.auth.service.TokenService;
-import com.ez.admin.common.framework.security.jwt.JwtTokenProvider;
+import com.ez.admin.common.security.jwt.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

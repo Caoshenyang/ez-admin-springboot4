@@ -1,4 +1,4 @@
-package com.ez.admin.common.framework.web.config;
+package com.ez.admin.common.web.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

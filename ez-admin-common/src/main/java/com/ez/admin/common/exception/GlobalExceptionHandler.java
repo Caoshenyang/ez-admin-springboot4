@@ -1,8 +1,8 @@
-package com.ez.admin.common.framework.exception;
+package com.ez.admin.common.exception;
 
 import com.ez.admin.common.exception.ErrorCode;
 import com.ez.admin.common.exception.EzBusinessException;
-import com.ez.admin.common.model.ApiResponse;
+import com.ez.admin.common.model.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 /**
  * 全局异常处理器
  * <p>
- * 集中处理系统中的各类异常，统一封装成 {@link ApiResponse} 格式返回给前端。
+ * 集中处理系统中的各类异常，统一封装成 {@link R} 格式返回给前端。
  * 使用 {@link RestControllerAdvice} 注解实现对所有 Controller 层异常的拦截处理。
  * </p>
  * <p>
@@ -45,9 +45,9 @@ public class GlobalExceptionHandler {
      * @return 统一错误响应
      */
     @ExceptionHandler(EzBusinessException.class)
-    public ApiResponse<Void> handleEzBusinessException(EzBusinessException ex) {
+    public R<Void> handleEzBusinessException(EzBusinessException ex) {
         log.warn("业务异常: code={}, message={}", ex.getCode(), ex.getMessage());
-        return ApiResponse.error(ex.getCode(), ex.getMessage());
+        return R.error(ex.getCode(), ex.getMessage());
     }
 
     /**
@@ -61,12 +61,12 @@ public class GlobalExceptionHandler {
      * @return 统一错误响应，包含所有字段的校验错误信息
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ApiResponse<Void> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    public R<Void> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         String errorMessage = ex.getBindingResult().getFieldErrors().stream()
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("; "));
         log.warn("参数校验失败: {}", errorMessage);
-        return ApiResponse.error(ErrorCode.VALIDATION_ERROR.getCode(), errorMessage);
+        return R.error(ErrorCode.VALIDATION_ERROR.getCode(), errorMessage);
     }
 
     /**
@@ -80,12 +80,12 @@ public class GlobalExceptionHandler {
      * @return 统一错误响应，包含所有字段的绑定错误信息
      */
     @ExceptionHandler(BindException.class)
-    public ApiResponse<Void> handleBindException(BindException ex) {
+    public R<Void> handleBindException(BindException ex) {
         String errorMessage = ex.getBindingResult().getFieldErrors().stream()
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("; "));
         log.warn("参数绑定失败: {}", errorMessage);
-        return ApiResponse.error(ErrorCode.VALIDATION_ERROR.getCode(), errorMessage);
+        return R.error(ErrorCode.VALIDATION_ERROR.getCode(), errorMessage);
     }
 
     /**
@@ -99,12 +99,12 @@ public class GlobalExceptionHandler {
      * @return 统一错误响应，提示参数类型错误
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ApiResponse<Void> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+    public R<Void> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         String errorMessage = String.format("参数 '%s' 类型错误，期望类型: %s",
                 ex.getName(),
                 ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "未知");
         log.warn("参数类型不匹配: {}", errorMessage);
-        return ApiResponse.error(ErrorCode.INVALID_PARAMETER_FORMAT.getCode(), errorMessage);
+        return R.error(ErrorCode.INVALID_PARAMETER_FORMAT.getCode(), errorMessage);
     }
 
     /**
@@ -118,10 +118,10 @@ public class GlobalExceptionHandler {
      * @return 统一错误响应，提示接口不存在
      */
     @ExceptionHandler(NoHandlerFoundException.class)
-    public ApiResponse<Void> handleNoHandlerFoundException(NoHandlerFoundException ex) {
+    public R<Void> handleNoHandlerFoundException(NoHandlerFoundException ex) {
         String errorMessage = String.format("接口 [%s] 不存在", ex.getRequestURL());
         log.warn("接口不存在: {}", errorMessage);
-        return ApiResponse.error(ErrorCode.NOT_FOUND.getCode(), errorMessage);
+        return R.error(ErrorCode.NOT_FOUND.getCode(), errorMessage);
     }
 
     /**
@@ -134,9 +134,9 @@ public class GlobalExceptionHandler {
      * @return 统一错误响应
      */
     @ExceptionHandler(IllegalArgumentException.class)
-    public ApiResponse<Void> handleIllegalArgumentException(IllegalArgumentException ex) {
+    public R<Void> handleIllegalArgumentException(IllegalArgumentException ex) {
         log.warn("非法参数: {}", ex.getMessage());
-        return ApiResponse.error(ErrorCode.BAD_REQUEST.getCode(), ex.getMessage());
+        return R.error(ErrorCode.BAD_REQUEST.getCode(), ex.getMessage());
     }
 
     /**
@@ -149,9 +149,9 @@ public class GlobalExceptionHandler {
      * @return 统一错误响应
      */
     @ExceptionHandler(IllegalStateException.class)
-    public ApiResponse<Void> handleIllegalStateException(IllegalStateException ex) {
+    public R<Void> handleIllegalStateException(IllegalStateException ex) {
         log.error("非法状态: {}", ex.getMessage(), ex);
-        return ApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), ex.getMessage());
+        return R.error(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), ex.getMessage());
     }
 
     /**
@@ -164,9 +164,9 @@ public class GlobalExceptionHandler {
      * @return 统一错误响应
      */
     @ExceptionHandler(NullPointerException.class)
-    public ApiResponse<Void> handleNullPointerException(NullPointerException ex) {
+    public R<Void> handleNullPointerException(NullPointerException ex) {
         log.error("空指针异常", ex);
-        return ApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), "系统内部错误");
+        return R.error(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), "系统内部错误");
     }
 
     /**
@@ -180,8 +180,8 @@ public class GlobalExceptionHandler {
      * @return 统一错误响应
      */
     @ExceptionHandler(Exception.class)
-    public ApiResponse<Void> handleException(Exception ex) {
+    public R<Void> handleException(Exception ex) {
         log.error("系统异常", ex);
-        return ApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
+        return R.error(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
     }
 }

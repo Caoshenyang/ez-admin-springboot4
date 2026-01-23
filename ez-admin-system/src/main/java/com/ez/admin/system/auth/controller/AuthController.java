@@ -3,7 +3,7 @@ package com.ez.admin.system.auth.controller;
 import com.ez.admin.system.auth.dto.LoginRequest;
 import com.ez.admin.system.auth.dto.TokenResponse;
 import com.ez.admin.system.auth.service.IAuthService;
-import com.ez.admin.common.model.ApiResponse;
+import com.ez.admin.common.model.R;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +38,13 @@ public class AuthController {
      * @return Token 响应
      */
     @PostMapping("/login")
-    public ApiResponse<TokenResponse> login(@RequestBody LoginRequest request) {
+    public R<TokenResponse> login(@RequestBody LoginRequest request) {
         log.info("用户登录: channelType={}, deviceId={}", request.getChannelType(), request.getDeviceId());
 
         TokenResponse response = authService.login(request);
 
         log.info("登录成功: userId={}, deviceId={}", response.getUserId(), request.getDeviceId());
-        return ApiResponse.success(response);
+        return R.success(response);
     }
 
     /**
@@ -57,7 +57,7 @@ public class AuthController {
      * @return 新的 Token 响应
      */
     @PostMapping("/refresh")
-    public ApiResponse<TokenResponse> refreshToken(@RequestBody Map<String, String> requestBody) {
+    public R<TokenResponse> refreshToken(@RequestBody Map<String, String> requestBody) {
         String refreshToken = requestBody.get("refreshToken");
         String deviceId = requestBody.get("deviceId");
 
@@ -66,7 +66,7 @@ public class AuthController {
         TokenResponse response = authService.refreshToken(refreshToken, deviceId);
 
         log.info("Token 刷新成功: userId={}, deviceId={}", response.getUserId(), deviceId);
-        return ApiResponse.success(response);
+        return R.success(response);
     }
 
     /**
@@ -79,7 +79,7 @@ public class AuthController {
      * @return 操作结果
      */
     @PostMapping("/logout")
-    public ApiResponse<Void> logout(@RequestBody Map<String, String> requestBody) {
+    public R<Void> logout(@RequestBody Map<String, String> requestBody) {
         Long userId = Long.parseLong(requestBody.get("userId"));
         String deviceId = requestBody.get("deviceId");
 
@@ -87,7 +87,7 @@ public class AuthController {
 
         authService.logout(userId, deviceId);
 
-        return ApiResponse.success("登出成功", null);
+        return R.success("登出成功", null);
     }
 
     /**
@@ -100,7 +100,7 @@ public class AuthController {
      * @return 操作结果
      */
     @PostMapping("/kickout")
-    public ApiResponse<Void> kickOutDevice(@RequestBody Map<String, String> requestBody) {
+    public R<Void> kickOutDevice(@RequestBody Map<String, String> requestBody) {
         Long userId = Long.parseLong(requestBody.get("userId"));
         String deviceId = requestBody.get("deviceId");
 
@@ -108,7 +108,7 @@ public class AuthController {
 
         authService.kickOutDevice(userId, deviceId);
 
-        return ApiResponse.success("设备已踢出", null);
+        return R.success("设备已踢出", null);
     }
 
     /**
@@ -121,17 +121,17 @@ public class AuthController {
      * @return 验证结果
      */
     @GetMapping("/validate")
-    public ApiResponse<Map<String, Object>> validateToken(HttpServletRequest request) {
+    public R<Map<String, Object>> validateToken(HttpServletRequest request) {
         String token = extractTokenFromRequest(request);
 
         boolean isValid = authService.validateToken(token);
 
         if (isValid) {
             Long userId = authService.getUserIdFromToken(token);
-            return ApiResponse.success(Map.of("valid", true, "userId", userId));
+            return R.success(Map.of("valid", true, "userId", userId));
         }
 
-        return ApiResponse.success(Map.of("valid", false));
+        return R.success(Map.of("valid", false));
     }
 
     /**
@@ -144,16 +144,16 @@ public class AuthController {
      * @return 用户信息
      */
     @GetMapping("/userinfo")
-    public ApiResponse<Map<String, Object>> getUserInfo(HttpServletRequest request) {
+    public R<Map<String, Object>> getUserInfo(HttpServletRequest request) {
         String token = extractTokenFromRequest(request);
 
         if (!authService.validateToken(token)) {
-            return ApiResponse.error(401, "Token 无效");
+            return R.error(401, "Token 无效");
         }
 
         Long userId = authService.getUserIdFromToken(token);
 
-        return ApiResponse.success(Map.of("userId", userId));
+        return R.success(Map.of("userId", userId));
     }
 
     // =============================  私有方法  =============================

@@ -1,4 +1,4 @@
-package com.ez.admin.common.framework.security.handler;
+package com.ez.admin.common.security.handler;
 
 
 import jakarta.servlet.ServletException;

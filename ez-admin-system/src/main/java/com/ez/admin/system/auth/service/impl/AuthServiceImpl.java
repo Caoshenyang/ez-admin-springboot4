@@ -10,7 +10,7 @@ import com.ez.admin.system.auth.service.DeviceService;
 import com.ez.admin.system.auth.service.IAuthService;
 import com.ez.admin.system.auth.service.TokenService;
 import com.ez.admin.common.exception.EzBusinessException;
-import com.ez.admin.common.framework.security.jwt.JwtTokenProvider;
+import com.ez.admin.common.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

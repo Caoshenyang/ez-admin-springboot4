@@ -6,7 +6,7 @@ import com.ez.admin.system.auth.enums.ChannelType;
 import com.ez.admin.common.exception.EzBusinessException;
 import com.ez.admin.domain.system.entity.User;
 import com.ez.admin.domain.system.service.IUserService;
-import com.ez.admin.common.framework.security.config.SecurityConfig;
+import com.ez.admin.common.security.config.SecurityConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

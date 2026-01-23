@@ -1,4 +1,4 @@
-package com.ez.admin.common.framework.security.filter;
+package com.ez.admin.common.security.filter;
 
 import com.ez.admin.framework.security.jwt.JwtTokenProvider;
 import jakarta.servlet.FilterChain;

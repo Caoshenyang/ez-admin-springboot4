@@ -1,4 +1,4 @@
-package com.ez.admin.common.framework.security.jwt;
+package com.ez.admin.common.security.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;

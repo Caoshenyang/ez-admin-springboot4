@@ -1,4 +1,4 @@
-package com.ez.admin.common.framework.security.config;
+package com.ez.admin.common.security.config;
 
 import com.ez.admin.framework.security.jwt.JwtTokenProvider;
 import com.ez.admin.framework.security.filter.JwtAuthenticationFilter;

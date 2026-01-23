@@ -2,7 +2,7 @@ package com.ez.admin.system.auth.service.impl;
 
 import com.ez.admin.system.auth.model.DeviceInfo;
 import com.ez.admin.system.auth.service.DeviceService;
-import com.ez.admin.common.framework.redis.RedisCache;
+import com.ez.admin.common.redis.RedisCache;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
