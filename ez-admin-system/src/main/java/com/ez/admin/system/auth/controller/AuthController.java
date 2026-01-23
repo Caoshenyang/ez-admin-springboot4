@@ -1,8 +1,8 @@
-package com.ez.admin.auth.controller;
+package com.ez.admin.system.auth.controller;
 
-import com.ez.admin.auth.dto.LoginRequest;
-import com.ez.admin.auth.dto.TokenResponse;
-import com.ez.admin.auth.service.IAuthService;
+import com.ez.admin.system.auth.dto.LoginRequest;
+import com.ez.admin.system.auth.dto.TokenResponse;
+import com.ez.admin.system.auth.service.IAuthService;
 import com.ez.admin.common.model.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;

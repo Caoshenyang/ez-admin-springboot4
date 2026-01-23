@@ -1,6 +1,6 @@
-package com.ez.admin.auth.service;
+package com.ez.admin.system.auth.service;
 
-import com.ez.admin.auth.model.DeviceInfo;
+import com.ez.admin.system.auth.model.DeviceInfo;
 
 import java.util.Map;
 

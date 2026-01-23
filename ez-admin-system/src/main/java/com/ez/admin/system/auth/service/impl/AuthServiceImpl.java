@@ -1,14 +1,14 @@
-package com.ez.admin.auth.service.impl;
+package com.ez.admin.system.auth.service.impl;
 
-import com.ez.admin.auth.dto.LoginRequest;
-import com.ez.admin.auth.dto.TokenResponse;
-import com.ez.admin.auth.channel.AuthenticationChannel;
-import com.ez.admin.auth.enums.ChannelType;
-import com.ez.admin.auth.enums.TokenType;
-import com.ez.admin.auth.model.DeviceInfo;
-import com.ez.admin.auth.service.DeviceService;
-import com.ez.admin.auth.service.IAuthService;
-import com.ez.admin.auth.service.TokenService;
+import com.ez.admin.system.auth.dto.LoginRequest;
+import com.ez.admin.system.auth.dto.TokenResponse;
+import com.ez.admin.system.auth.channel.AuthenticationChannel;
+import com.ez.admin.system.auth.enums.ChannelType;
+import com.ez.admin.system.auth.enums.TokenType;
+import com.ez.admin.system.auth.model.DeviceInfo;
+import com.ez.admin.system.auth.service.DeviceService;
+import com.ez.admin.system.auth.service.IAuthService;
+import com.ez.admin.system.auth.service.TokenService;
 import com.ez.admin.common.exception.EzBusinessException;
 import com.ez.admin.common.framework.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;

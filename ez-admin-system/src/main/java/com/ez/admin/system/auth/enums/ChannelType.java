@@ -1,4 +1,4 @@
-package com.ez.admin.auth.enums;
+package com.ez.admin.system.auth.enums;
 
 /**
  * 登录渠道枚举

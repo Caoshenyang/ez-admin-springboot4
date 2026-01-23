@@ -1,4 +1,4 @@
-package com.ez.admin.auth.dto;
+package com.ez.admin.system.auth.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

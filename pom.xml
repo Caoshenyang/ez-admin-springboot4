@@ -23,8 +23,7 @@
     <modules>
         <module>ez-admin-common</module>      <!-- 公共模块：异常、工具类、框架配置 -->
         <module>ez-admin-generator</module>   <!-- 代码生成器 -->
-        <module>ez-admin-auth</module>        <!-- 认证模块：登录、Token管理 -->
-        <module>ez-admin-system</module>      <!-- 系统管理模块：用户、角色、菜单 -->
+        <module>ez-admin-system</module>      <!-- 后台管理模块（包含认证和系统管理） -->
         <module>ez-admin-starter</module>     <!-- 启动模块 -->
     </modules>
 
@@ -82,13 +81,6 @@
             <dependency>
                 <groupId>com.ez.admin</groupId>
                 <artifactId>ez-admin-generator</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <!-- ez-admin-auth -->
-            <dependency>
-                <groupId>com.ez.admin</groupId>
-                <artifactId>ez-admin-auth</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

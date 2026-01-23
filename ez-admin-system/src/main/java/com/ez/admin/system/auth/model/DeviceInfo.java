@@ -1,4 +1,4 @@
-package com.ez.admin.auth.model;
+package com.ez.admin.system.auth.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

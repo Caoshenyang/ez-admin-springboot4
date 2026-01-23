@@ -13,21 +13,15 @@
     <artifactId>ez-admin-system</artifactId>
     <packaging>jar</packaging>
     <name>ez-admin-system</name>
-    <description>系统管理聚合服务（用户、角色、菜单、部门等）</description>
+    <description>后台管理模块：包含认证（登录/Token）和系统管理（用户/角色/菜单/部门）</description>
 
     <dependencies>
         <!-- ========== 内部依赖 ========== -->
 
-        <!-- common：获取统一返回体 ApiResponse -->
+        <!-- common：获取统一返回体 ApiResponse、Security、Redis 等通用能力 -->
         <dependency>
             <groupId>com.ez.admin</groupId>
             <artifactId>ez-admin-common</artifactId>
-        </dependency>
-
-        <!-- auth：认证授权接口 -->
-        <dependency>
-            <groupId>com.ez.admin</groupId>
-            <artifactId>ez-admin-auth</artifactId>
         </dependency>
 
 

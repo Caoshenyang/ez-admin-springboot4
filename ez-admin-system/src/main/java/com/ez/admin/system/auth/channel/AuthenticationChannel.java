@@ -1,7 +1,7 @@
-package com.ez.admin.auth.channel;
+package com.ez.admin.system.auth.channel;
 
-import com.ez.admin.auth.dto.LoginRequest;
-import com.ez.admin.auth.enums.ChannelType;
+import com.ez.admin.system.auth.dto.LoginRequest;
+import com.ez.admin.system.auth.enums.ChannelType;
 
 /**
  * 认证渠道适配器接口

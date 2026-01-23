@@ -1,4 +1,4 @@
-package com.ez.admin.auth.enums;
+package com.ez.admin.system.auth.enums;
 
 /**
  * Token 类型枚举

@@ -1,8 +1,8 @@
-package com.ez.admin.auth.channel;
+package com.ez.admin.system.auth.channel;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.ez.admin.auth.dto.LoginRequest;
-import com.ez.admin.auth.enums.ChannelType;
+import com.ez.admin.system.auth.dto.LoginRequest;
+import com.ez.admin.system.auth.enums.ChannelType;
 import com.ez.admin.common.exception.EzBusinessException;
 import com.ez.admin.domain.system.entity.User;
 import com.ez.admin.domain.system.service.IUserService;
