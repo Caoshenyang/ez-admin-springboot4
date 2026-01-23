@@ -28,11 +28,11 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * <p>生成规则：
  * <ul>
- *   <li>输入模块名：如 "user"，生成包名 "com.ez.admin.system.modules.user"</li>
- *   <li>输入模块名：如 "admin"，生成包名 "com.ez.admin.system.modules.admin"</li>
- *   <li>所有代码统一生成到 ez-admin 单体模块</li>
- *   <li>Java 代码路径：ez-admin/src/main/java/com/ez/admin/system/modules/{模块}/</li>
- *   <li>Mapper XML 路径：ez-admin/src/main/resources/mapper/{模块}/</li>
+ *   <li>输入模块名：如 "user"，生成包名 "com.ez.admin.modules.user"</li>
+ *   <li>输入模块名：如 "admin"，生成包名 "com.ez.admin.modules.admin"</li>
+ *   <li>所有代码统一生成到项目根目录</li>
+ *   <li>Java 代码路径：src/main/java/com/ez/admin/modules/{模块}/</li>
+ *   <li>Mapper XML 路径：src/main/resources/mapper/{模块}/</li>
  * </ul>
  *
  * <p>数据库配置优先级：系统环境变量 > JVM 启动参数 > .env 文件 > 默认值
@@ -70,8 +70,8 @@ public class CodeGenerator {
                 .globalConfig((scanner, builder) -> {
                     moduleShortName.set(scanner.apply("请输入业务模块名（如：admin、blog、order）："));
 
-                    // 所有代码统一生成到 ez-admin 单体模块
-                    String javaOutputDir = projectRoot + "/ez-admin/src/main/java";
+                    // 所有代码统一生成到项目根目录
+                    String javaOutputDir = projectRoot + "/src/main/java";
 
                     builder.author("ez-admin")
                             .disableOpenDir() // 生成完毕后不自动打开资源管理器
@@ -91,13 +91,13 @@ public class CodeGenerator {
                 )
                 // 包配置
                 .packageConfig((scanner, builder) -> {
-                    // 包名：com.ez.admin.system.modules.{module}
-                    // 例如：输入 user → com.ez.admin.system.modules.user
-                    //      输入 admin → com.ez.admin.system.modules.admin
-                    String packageName = "com.ez.admin.system.modules." + moduleShortName.get();
+                    // 包名：com.ez.admin.modules.{module}
+                    // 例如：输入 user → com.ez.admin.modules.user
+                    //      输入 admin → com.ez.admin.modules.admin
+                    String packageName = "com.ez.admin.modules." + moduleShortName.get();
 
-                    // Mapper XML 生成路径：ez-admin/src/main/resources/mapper/{module}/
-                    String mapperXmlPath = projectRoot + "/ez-admin/src/main/resources/mapper/" + moduleShortName.get();
+                    // Mapper XML 生成路径：src/main/resources/mapper/{module}/
+                    String mapperXmlPath = projectRoot + "/src/main/resources/mapper/" + moduleShortName.get();
 
                     builder.parent(packageName)
                             .entity("entity")
