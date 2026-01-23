@@ -362,7 +362,25 @@ public enum ErrorCode {
     /**
      * 第三方服务超时
      */
-    THIRD_PARTY_SERVICE_TIMEOUT(30502, "第三方服务超时");
+    THIRD_PARTY_SERVICE_TIMEOUT(30502, "第三方服务超时"),
+
+
+    // ========== 208xx: 初始化模块 ==========
+
+    /**
+     * 系统已初始化，无法重复执行初始化
+     */
+    SYSTEM_ALREADY_INITIALIZED(20801, "系统已初始化，无法重复执行初始化"),
+
+    /**
+     * 系统初始化失败
+     */
+    SYSTEM_INIT_FAILED(20802, "系统初始化失败"),
+
+    /**
+     * 系统尚未初始化
+     */
+    SYSTEM_NOT_INITIALIZED(20803, "系统尚未初始化，请先初始化系统");
 
     /**
      * 错误码

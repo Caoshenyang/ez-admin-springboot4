@@ -2,6 +2,7 @@ package com.ez.admin.modules.system.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.ez.admin.common.constant.SystemConstants;
 import com.ez.admin.modules.system.entity.SysUser;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -25,7 +26,16 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
     default SysUser selectByUsername(String username) {
         return this.selectOne(new LambdaQueryWrapper<SysUser>()
                 .eq(SysUser::getUsername, username)
-                // 只查询未删除的用户
-                .eq(SysUser::getIsDeleted, 0));
+                .eq(SysUser::getIsDeleted, SystemConstants.NOT_DELETED));
+    }
+
+    /**
+     * 统计未删除的用户数量
+     *
+     * @return 用户数量
+     */
+    default Long countActiveUsers() {
+        return this.selectCount(new LambdaQueryWrapper<SysUser>()
+                .eq(SysUser::getIsDeleted, SystemConstants.NOT_DELETED));
     }
 }
