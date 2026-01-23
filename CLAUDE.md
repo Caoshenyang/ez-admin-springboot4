@@ -53,7 +53,7 @@ ez-admin-springboot4/
 │   │   │   ├── EzAdminApplication.java
 │   │   │   ├── common/              # 通用代码
 │   │   │   ├── modules/             # 业务模块（扁平化）
-│   │   │   │   └── admin/
+│   │   │   │   └── system/          # 系统模块
 │   │   │   ├── utils/               # 工具类
 │   │   │   │   └── generator/       # 代码生成器
 │   │   │   └── config/              # 配置类
@@ -68,7 +68,7 @@ ez-admin-springboot4/
 | 包路径 | 代码来源 | 说明 |
 |--------|----------|------|
 | `com.ez.admin.common` | 手动编写 | 通用代码（异常、响应、Redis、Web） |
-| `com.ez.admin.modules.admin` | 代码生成 | 核心管理模块（用户、角色、菜单等） |
+| `com.ez.admin.modules.system` | 代码生成 | 核心管理模块（用户、角色、菜单等） |
 | `com.ez.admin.modules.{module}` | 代码生成 | 其他业务模块 |
 | `com.ez.admin.utils.generator` | 手动编写 | 代码生成器工具类 |
 | `com.ez.admin.config` | 手动编写 | Spring 配置类 |
@@ -89,11 +89,110 @@ mvn exec:java -Dexec.mainClass="com.ez.admin.utils.generator.CodeGenerator"
 - **适合个人项目**：最简化配置，开箱即用
 
 ## 技术栈规范
-- **命名规范 (Strict)**:
-  - 严禁使用模糊命名（如 `BaseReq`, `Handle.java`）。
-  - 必须使用明确的语义化命名：`UserQueryDTO`, `RoleResponseVO`, `MenuTreeService`。
-- **代码注释 (Mandatory)**: 必须在 Controller 接口、Service 复杂逻辑处编写清晰注释。注释需解释"为什么这么做"以及核心业务逻辑。
-- **对象转换**: 强制使用 MapStruct。若遇到转换逻辑复杂，请在 `model/mapstruct/` 下定义转换器接口。
+
+### 命名规范 (Strict)
+- 严禁使用模糊命名（如 `BaseReq`, `Handle.java`）。
+- 必须使用明确的语义化命名：`UserQueryDTO`, `RoleResponseVO`, `MenuTreeService`。
+
+### 代码注释 (Mandatory)
+- 必须在 Controller 接口、Service 复杂逻辑处编写清晰注释。
+- 注释需解释"为什么这么做"以及核心业务逻辑。
+
+### 对象转换
+- 强制使用 MapStruct。若遇到转换逻辑复杂，请在 `common/mapstruct/` 下定义转换器接口。
+
+### MyBatis-Plus 使用规范 (核心架构原则)
+
+#### 2.1 分治主义设计哲学
+
+本规范采用"分治主义"策略，在**开发效率**、**代码质量**与**后期可维护性**之间取得最佳平衡：
+
+- **单表与简单逻辑**：拥抱编程式（MyBatis-Plus Wrapper），利用其类型安全和极致效率
+- **多表与复杂逻辑**：回归 XML，利用其结构化能力、ResultMap 映射能力和 SQL 优化空间
+- **注解 SQL**：**全面禁用**。注解既缺乏编程的可维护性，又缺乏 XML 的结构化美感
+
+#### 2.2 职责分层规范
+
+**实体层 (Entity / VO)**
+- **Entity**：严格对应数据库表，仅使用 MyBatis-Plus 注解（`@TableName`, `@TableId`, `@TableField`）
+- **VO (View Object)**：用于复杂查询的结果接收，必须在 XML 中定义对应的 `ResultMap`
+
+**Mapper 接口层**
+Mapper 是抹平"编程式"与"XML"差异的关键。Service 层不应感知底层实现细节：
+- **简单 CRUD**：直接继承 `BaseMapper<T>`
+- **单表复杂查询**：在接口中使用 `default` 关键字编写 LambdaWrapper 逻辑
+- **多表联查/原生 SQL**：仅声明方法，具体实现在 XML 中
+
+#### 2.3 技术决策准则（什么时候用什么？）
+
+| 场景类型 | 推荐方案 | 实施方式 |
+| :--- | :--- | :--- |
+| **基础 CRUD** | **MP 内置方法** | `insert`, `updateById`, `deleteById` 等 |
+| **单表动态筛选** | **编程式 (Wrapper)** | Mapper 中的 `default` 方法 + `LambdaQueryWrapper` |
+| **2-3 表简单联查** | **编程式 / XML** | 逻辑简单可选用 `default` 封装；涉及多字段映射选 XML |
+| **复杂关联/报表** | **XML** | 编写自定义 SQL，配置嵌套 `ResultMap` |
+| **高性能/极致优化** | **XML** | 需精确控制 SQL 执行计划或使用特定数据库函数 |
+
+#### 2.4 XML 编写规范
+
+**ResultMap 嵌套映射**
+```xml
+<mapper namespace="com.example.mapper.UserMapper">
+    <sql id="Base_Column_List">
+        u.id, u.username, u.age, u.dept_id, u.status
+    </sql>
+
+    <resultMap id="UserDetailMap" type="com.example.vo.UserVO">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <association property="dept" javaType="com.example.entity.Dept">
+            <id property="id" column="d_id"/>
+            <result property="name" column="d_name"/>
+        </association>
+        <collection property="roles" ofType="com.example.entity.Role">
+            <id property="id" column="r_id"/>
+            <result property="roleName" column="r_name"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectUserDetail" resultMap="UserDetailMap">
+        SELECT
+            <include refid="Base_Column_List"/>,
+            d.id AS d_id, d.name AS d_name,
+            r.id AS r_id, r.role_name AS r_name
+        FROM sys_user u
+        LEFT JOIN sys_dept d ON u.dept_id = d.id
+        LEFT JOIN sys_user_role ur ON u.id = ur.user_id
+        LEFT JOIN sys_role r ON ur.role_id = r.id
+        WHERE u.id = #{id}
+    </select>
+</mapper>
+```
+
+**Mapper 层封装示例**
+```java
+@Mapper
+public interface UserMapper extends BaseMapper<User> {
+
+    // 【规范】单表复杂查询 - 使用 default 封装，对 Service 屏蔽 Wrapper
+    default List<User> selectActiveUsers(String keyword) {
+        return this.selectList(new LambdaQueryWrapper<User>()
+                .eq(User::getStatus, 1)
+                .like(StringUtils.hasText(keyword), User::getUsername, keyword));
+    }
+
+    // 【规范】多表联查 - XML 实现
+    UserVO selectUserDetail(@Param("id") Long id);
+}
+```
+
+#### 2.5 团队开发红线（强制执行）
+
+- **【禁止】** 在 Service 层拼装超过 3 个条件的 QueryWrapper。此类逻辑必须下沉至 Mapper 层封装为方法
+- **【禁止】** 在项目中使用 `@Select`、`@Update` 等注解编写 SQL
+- **【强制】** 必须使用 `LambdaQueryWrapper`，严禁在代码中出现硬编码的数据库字段名
+- **【强制】** 多表联查 SQL 必须显式定义 ResultMap，严禁使用 Map 或 JSONObject 接收结果
+- **【建议】** SQL 关键字保持大写，提高 XML 代码的视觉可读性
 
 ## 错误码设计规范
 
@@ -172,67 +271,7 @@ throw new EzBusinessException(ErrorCode.SMS_SEND_ERROR);   // 30301
 - **跳过测试打包**: `mvn clean package -DskipTests` (由用户执行)
 - **代码生成**: 在 IDE 中直接运行 `CodeGenerator.main()`，路径：`src/main/java/com/ez/admin/utils/generator/CodeGenerator.java` (由用户执行)
 
-## 任务清单 (Todo List)
-
-### 统一认证授权中心 (多端适配 + 双Token机制)
-
-#### 核心功能（必须完成）
-- [x] 创建 ez-admin-auth 独立模块（auth-api + auth-core） - 2026-01-19
-- [x] 重构 framework 模块（提取 Security/Redis/Web 通用能力） - 2026-01-19
-- [x] 调整 auth-core 依赖（依赖 framework 而非直接依赖 Security） - 2026-01-19
-- [x] 实现双Token机制（Access Token + Refresh Token） - 2026-01-19
-- [x] 实现设备管理核心功能（Redis存储设备列表） - 2026-01-19
-- [x] 重构聚合服务架构（Controller 移至 api 模块） - 2026-01-19
-- [x] 优化聚合服务模块划分（api 仅放 Controller+DTO，使用 common/framework） - 2026-01-19
-- [x] **简化项目架构（扁平化）** - 2026-01-23
-  - 合并 common + framework 模块
-  - 移除 application/domain 层级
-  - 移除 api/core 子模块拆分
-  - 最终结构：starter + auth + system + common + generator
-- [x] **极简化项目架构（包分离）** - 2026-01-23
-  - 合并 auth → system 模块
-  - 通过包结构区分功能（system.auth、system.system）
-  - 最终结构：starter + system + common + generator（仅4个模块）
-- [x] **重构错误码设计（5位数字分段式）** - 2026-01-23
-  - 采用 ABBCC 格式（A=层级, BB=模块, CC=流水号）
-  - 0xxxx=成功, 1xxxx=系统级, 2xxxx=业务级, 3xxxx=三方服务
-  - 更新 ErrorCode、ApiResponse、EzBusinessException
-  - 成功状态码从 200 改为 0
-- [x] **极致单体架构（零模块拆分）** - 2026-01-23
-  - 合并 starter、system、common 为单一 ez-admin 模块
-  - 移除所有模块拆分，通过包结构组织代码
-  - 代码生成器改为 utils 包下的工具类
-  - 最终结构：ez-admin（唯一模块）
-- [x] **零模块架构（完全扁平）** - 2026-01-23
-  - 移除 ez-admin 子模块，src 直接放在项目根目录
-  - 项目根目录即代码根目录，无任何模块嵌套
-  - 代码生成器路径更新为 src/main/java
-  - 最终结构：零模块，极致扁平
-- [ ] 实现多渠道认证适配器（策略模式）
-- [ ] 集成Spring Security 7配置和过滤器链
-- [ ] 实现微信小程序登录渠道
-- [ ] 实现账号密码登录渠道
-- [ ] 实现手机号验证码登录渠道
-
-#### 安全增强
-- [ ] 实现Token指纹（设备ID+IP+User-Agent绑定）
-- [ ] 实现Refresh Token刷新限流（10次/分钟）
-- [ ] 实现异常登录检测（异地、频繁失败）
-
-#### 用户体验优化
-- [ ] 实现多设备管理接口（查看、踢出设备）
-- [ ] 实现Device Token（记住登录，30天有效期）
-
-#### 监控审计
-- [ ] 实现登录/登出/刷新操作日志
-- [ ] 实现异常登录告警通知
-- [ ] 实现Token使用统计和分析
-
-#### 后期扩展
-- [ ] 接入钉钉认证渠道
-- [ ] 接入飞书认证渠道
-- [ ] 实现多租户认证隔离
-- [ ] 实现SSO单点登录
+## 任务清单 (Todo List) 
 
 ---
 *注：每次执行完代码修改后，请确认已勾选上述清单，并告知用户下一项任务是什么。*
