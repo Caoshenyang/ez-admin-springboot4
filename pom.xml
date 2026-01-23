@@ -3,7 +3,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- 父项目：继承 Spring Boot Starter Parent，用于管理 Spring Boot 生态系统的依赖版本 -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -11,251 +10,111 @@
         <relativePath/>
     </parent>
 
-    <!-- 项目基本信息 -->
     <groupId>com.ez.admin</groupId>
     <artifactId>ez-admin-springboot4</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>ez-admin-springboot4</name>
-    <description>EZ Admin SpringBoot 4.x - 轻量级 RBAC 后台管理系统（极致单体架构）</description>
+    <description>EZ Admin SpringBoot 4.x - 轻量级 RBAC 后台管理系统</description>
 
-    <!-- 全局属性配置 -->
     <properties>
-        <java.version>21</java.version> <!-- Java 版本：JDK 21（Spring Boot 4.0 最低要求） -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> <!-- 项目源码编码 -->
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding> <!-- 项目报告输出编码 -->
-        <mybatis-plus.version>3.5.15</mybatis-plus.version> <!-- MyBatis-Plus 版本 -->
-        <postgresql.version>42.7.9</postgresql.version> <!-- PostgreSQL 驱动版本 -->
-        <springdoc.version>2.7.0</springdoc.version> <!-- SpringDoc OpenAPI 版本 -->
-        <freemarker.version>2.3.32</freemarker.version> <!-- FreeMarker 版本 -->
-        <mapstruct.version>1.6.3</mapstruct.version> <!-- MapStruct 版本 -->
+        <java.version>21</java.version>
+        <mybatis-plus.version>3.5.15</mybatis-plus.version>
+        <postgresql.version>42.7.9</postgresql.version>
+        <springdoc.version>2.7.0</springdoc.version>
+        <freemarker.version>2.3.32</freemarker.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
     </properties>
 
-    <!-- 全局依赖：所有子模块默认继承 -->
     <dependencies>
-        <!-- Lombok：通过注解简化 Java 代码（getter/setter/构造器等） -->
+        <!-- Lombok & MapStruct -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-        <!-- MapStruct：对象转换 -->
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
+            <version>${mapstruct.version}</version>
             <optional>true</optional>
         </dependency>
 
-        <!-- ========== Spring Boot 框架依赖 ========== -->
-
-        <!-- Spring Web：提供 Web MVC 支持 -->
+        <!-- Spring Boot Starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
-
-        <!-- Redis：缓存和分布式存储 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
-
-        <!-- Validation：参数校验 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!-- MyBatis-Plus：增强版 MyBatis -->
+        <!-- MyBatis-Plus -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
+            <version>${mybatis-plus.version}</version>
         </dependency>
-        <!-- MyBatis-Plus JSQLParser：支持分页、条件构造器 -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-jsqlparser</artifactId>
+            <version>${mybatis-plus.version}</version>
         </dependency>
-        <!-- PostgreSQL 驱动 -->
+
+        <!-- Database -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
         </dependency>
-        <!-- SpringDoc OpenAPI：API 文档生成 -->
+
+        <!-- API Documentation -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc.version}</version>
         </dependency>
 
-        <!-- ========== 开发工具（可选依赖，不参与打包）========== -->
-
-        <!-- MyBatis-Plus 代码生成器（开发工具） -->
+        <!-- Code Generator (Optional) -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-generator</artifactId>
+            <version>${mybatis-plus.version}</version>
             <optional>true</optional>
         </dependency>
-        <!-- FreeMarker 模板引擎（代码生成器使用） -->
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
+            <version>${freemarker.version}</version>
             <optional>true</optional>
         </dependency>
-
-        <!-- ========== Spring Security 相关（按需启用）========== -->
-
-        <!-- Spring Security：安全框架（Token 认证、权限控制） -->
-        <!--
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        -->
-        <!-- JWT：JSON Web Token 生成和解析 -->
-        <!--
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-api</artifactId>
-            <version>0.11.5</version>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-impl</artifactId>
-            <version>0.11.5</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-jackson</artifactId>
-            <version>0.11.5</version>
-            <scope>runtime</scope>
-        </dependency>
-        -->
     </dependencies>
 
-    <!-- 依赖版本管理：统一管理第三方依赖版本，子模块引用时无需指定版本 -->
-    <dependencyManagement>
-        <dependencies>
-            <!-- MyBatis-Plus Spring Boot 4.x Starter -->
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
-                <version>${mybatis-plus.version}</version>
-            </dependency>
-            <!-- MyBatis-Plus JSQLParser：支持分页、条件构造器等 -->
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-jsqlparser</artifactId>
-                <version>${mybatis-plus.version}</version>
-            </dependency>
-            <!-- MyBatis-Plus 代码生成器 -->
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-generator</artifactId>
-                <version>${mybatis-plus.version}</version>
-            </dependency>
-            <!-- PostgreSQL 驱动 -->
-            <dependency>
-                <groupId>org.postgresql</groupId>
-                <artifactId>postgresql</artifactId>
-                <version>${postgresql.version}</version>
-            </dependency>
-            <!-- SpringDoc OpenAPI：API 文档生成 -->
-            <dependency>
-                <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-                <version>${springdoc.version}</version>
-            </dependency>
-            <!-- FreeMarker 模板引擎 -->
-            <dependency>
-                <groupId>org.freemarker</groupId>
-                <artifactId>freemarker</artifactId>
-                <version>${freemarker.version}</version>
-            </dependency>
-            <!-- MapStruct：对象映射 -->
-            <dependency>
-                <groupId>org.mapstruct</groupId>
-                <artifactId>mapstruct</artifactId>
-                <version>${mapstruct.version}</version>
-            </dependency>
-
-        </dependencies>
-    </dependencyManagement>
-
-    <!-- 依赖仓库：使用阿里云镜像加速依赖下载 -->
     <repositories>
         <repository>
-            <id>public</id>
-            <name>aliyun nexus</name>
+            <id>aliyun</id>
             <url>https://maven.aliyun.com/repository/public</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
         </repository>
     </repositories>
 
-    <!-- 插件仓库：存放 Maven 构建插件的 JAR 包 -->
-    <pluginRepositories>
-        <pluginRepository>
-            <id>public</id>
-            <name>aliyun nexus</name>
-            <url>https://maven.aliyun.com/repository/public</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
-
-    <!-- 构建配置 -->
     <build>
-        <!-- 插件版本管理：统一管理插件版本，子模块引用时无需指定版本 -->
-        <pluginManagement>
-            <plugins>
-                <!--  编译插件  -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <source>${java.version}</source>
-                        <target>${java.version}</target>
-                        <annotationProcessorPaths>
-                            <path>
-                                <groupId>org.projectlombok</groupId>
-                                <artifactId>lombok</artifactId>
-                                <version>${lombok.version}</version>
-                            </path>
-                            <path>
-                                <groupId>org.mapstruct</groupId>
-                                <artifactId>mapstruct-processor</artifactId>
-                                <version>${mapstruct.version}</version>
-                            </path>
-                        </annotationProcessorPaths>
-                    </configuration>
-                </plugin>
-                <!-- Spring Boot Maven 插件：用于打包可执行的 JAR/WAR 文件 -->
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <configuration>
-                        <!-- 排除 Lombok：构建时不会将 Lombok 打入最终包，因为它只在编译时生效 -->
-                        <excludes>
-                            <exclude>
-                                <groupId>org.projectlombok</groupId>
-                                <artifactId>lombok</artifactId>
-                            </exclude>
-                        </excludes>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
-            <!-- Spring Boot Maven 插件：用于打包可执行的 JAR 文件 -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
