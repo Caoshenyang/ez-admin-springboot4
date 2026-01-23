@@ -6,3 +6,39 @@ spring:
     name: ez-admin
   profiles:
     active: dev
+
+# MyBatis-Plus 配置
+mybatis-plus:
+  # Mapper XML 扫描路径
+  mapper-locations: classpath:mapper/**/*.xml
+  # 实体类扫描路径（类型别名）
+  type-aliases-package: com.ez.admin.modules.**.entity
+  # 全局配置
+  global-config:
+    # 数据库相关配置
+    db-config:
+      # 主键类型（AUTO: 数据库自增, INPUT: 用户输入, ASSIGN_ID: 雪花算法, ASSIGN_UUID: UUID）
+      id-type: ASSIGN_ID
+      # 逻辑删除字段名
+      logic-delete-field: isDeleted
+      # 逻辑删除值（默认 1）
+      logic-delete-value: 1
+      # 逻辑未删除值（默认 0）
+      logic-not-delete-value: 0
+    # Banner 配置
+    banner: false
+  # 配置打印 SQL 语句（开发环境）
+  # configuration:
+  #   log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# 日志配置
+logging:
+  level:
+    # 项目日志级别
+    com.ez.admin: DEBUG
+    # MyBatis-Plus 日志级别
+    com.baomidou.mybatisplus: DEBUG
+    # SQL 日志
+    com.ez.admin.modules.**.mapper: DEBUG
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n'

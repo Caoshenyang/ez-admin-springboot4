@@ -1,1 +1,55 @@
 # 生产环境配置
+spring:
+  # 数据源配置
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ez-admin}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 50
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  # Redis 配置
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 20
+          max-wait: -1ms
+          max-idle: 10
+          min-idle: 5
+
+# 生产环境：不打印 SQL
+mybatis-plus:
+  configuration:
+    # 关闭 SQL 日志
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+
+# 生产环境日志配置
+logging:
+  level:
+    # 生产环境只记录 INFO 及以上级别
+    com.ez.admin: INFO
+    com.baomidou.mybatisplus: WARN
+    # Spring 框架日志
+    org.springframework: WARN
+    # 其他框架日志
+    org.apache: WARN
+    org.hibernate: WARN
+  # 日志文件配置
+  file:
+    name: logs/ez-admin.log
+  # 日志滚动策略
+  logback:
+    rollingpolicy:
+      max-file-size: 100MB
+      max-history: 30
+      total-size-cap: 10GB

@@ -23,8 +23,43 @@ spring:
       # 连接最大存活时间（毫秒，30分钟）
       max-lifetime: 1800000
 
-  # SQL 初始化配置（可选）
-  sql:
-    init:
-      # 模式：从不自动初始化（建议使用 Flyway 或 Liquibase 进行版本管理）
-      mode: never
+  # Redis 配置
+  data:
+    redis:
+      # Redis 主机地址
+      host: ${REDIS_HOST:localhost}
+      # Redis 端口
+      port: ${REDIS_PORT:6379}
+      # Redis 密码（无密码可省略）
+      # password: ${REDIS_PASSWORD:}
+      # 连接超时时间（毫秒）
+      timeout: 3000ms
+      # Lettuce 连接池配置
+      lettuce:
+        pool:
+          # 连接池最大连接数
+          max-active: 8
+          # 连接池最大阻塞等待时间（毫秒）
+          max-wait: -1ms
+          # 连接池中的最大空闲连接
+          max-idle: 8
+          # 连接池中的最小空闲连接
+          min-idle: 0
+
+# 开发环境：打印 SQL 语句
+mybatis-plus:
+  configuration:
+    # SQL 日志实现
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# 开发环境日志配置
+logging:
+  level:
+    # 项目日志级别
+    com.ez.admin: DEBUG
+    # MyBatis-Plus 日志级别
+    com.baomidou.mybatisplus: DEBUG
+    # SQL 日志
+    com.ez.admin.modules.**.mapper: DEBUG
+    # Spring 框架日志
+    org.springframework: INFO
