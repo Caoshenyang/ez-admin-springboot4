@@ -19,7 +19,7 @@ import java.time.Instant;
 @Data
 @Accessors(chain = true)
 @NoArgsConstructor
-public class ApiResponse<T> implements Serializable {
+public class R<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -71,7 +71,7 @@ public class ApiResponse<T> implements Serializable {
      * @param message 响应消息
      * @param data    业务数据
      */
-    private ApiResponse(int code, String message, T data) {
+    private R(int code, String message, T data) {
         this.code = code;
         this.message = message;
         this.data = data;
@@ -84,8 +84,8 @@ public class ApiResponse<T> implements Serializable {
      * @param <T> 数据泛型类型
      * @return 包含成功状态码（0）的响应对象
      */
-    public static <T> ApiResponse<T> success() {
-        return new ApiResponse<>(0, "操作成功", null);
+    public static <T> R<T> success() {
+        return new R<>(0, "操作成功", null);
     }
 
     /**
@@ -95,8 +95,8 @@ public class ApiResponse<T> implements Serializable {
      * @param <T>  数据泛型类型
      * @return 包含成功状态码（0）和指定数据的响应对象
      */
-    public static <T> ApiResponse<T> success(T data) {
-        return new ApiResponse<>(0, "操作成功", data);
+    public static <T> R<T> success(T data) {
+        return new R<>(0, "操作成功", data);
     }
 
     /**
@@ -107,8 +107,8 @@ public class ApiResponse<T> implements Serializable {
      * @param <T>     数据泛型类型
      * @return 包含成功状态码（0）的响应对象
      */
-    public static <T> ApiResponse<T> success(String message, T data) {
-        return new ApiResponse<>(0, message, data);
+    public static <T> R<T> success(String message, T data) {
+        return new R<>(0, message, data);
     }
 
     /**
@@ -118,8 +118,8 @@ public class ApiResponse<T> implements Serializable {
      * @param <T>     数据泛型类型
      * @return 包含 10500 状态码的响应对象
      */
-    public static <T> ApiResponse<T> error(String message) {
-        return new ApiResponse<>(10500, message, null);
+    public static <T> R<T> error(String message) {
+        return new R<>(10500, message, null);
     }
 
     /**
@@ -130,7 +130,7 @@ public class ApiResponse<T> implements Serializable {
      * @param <T>     数据泛型类型
      * @return 包含指定状态码的响应对象
      */
-    public static <T> ApiResponse<T> error(int code, String message) {
-        return new ApiResponse<>(code, message, null);
+    public static <T> R<T> error(int code, String message) {
+        return new R<>(code, message, null);
     }
 }

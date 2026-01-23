@@ -13,105 +13,65 @@
 ## 项目概述
 EZ-ADMIN-SPRINGBOOT4：基于 Spring Boot 4.0 + JDK 21 的轻量级 RBAC 后台管理系统，专为个人开发者和小团队设计。
 
-## 架构设计（极简版）
+## 架构设计（单体架构）
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│              ez-admin-starter                       │
-│            (启动模块 / Web 入口)                      │
-└──────────────────┬──────────────────────────────────┘
-                   │ 依赖
-                   ▼
-┌─────────────────────────────────────────────────────┐
-│          ez-admin-system                            │
-│       (后台管理模块 - 按包结构区分)                    │
-│  ┌─────────────────┐  ┌─────────────────┐           │
-│  │  system.auth    │  │  system.system  │           │
-│  │  (认证功能)      │  │  (系统管理)      │           │
-│  │  - Controller   │  │  - Controller   │           │
-│  │  - Service      │  │  - Service      │           │
-│  │  - DTO/VO       │  │  - DTO/VO       │           │
-│  └─────────────────┘  └─────────────────┘           │
-└────────────────────────┼─────────────────────────────┘
-                         │
-                         ▼
-            ┌─────────────────────────┐
-            │  ez-admin-common        │
-            │  (通用模块)              │
-            │  - 统一响应/异常         │
-            │  - Security配置         │
-            │  - Redis工具            │
-            │  - Web配置              │
-            └─────────────────────────┘
+│                   ez-admin                          │
+│              (单体应用 - 极简架构)                    │
+│                                                      │
+│  ┌──────────────────────────────────────────┐      │
+│  │  com.ez.admin                            │      │
+│  │  ├── EzAdminApplication.java             │      │
+│  │  ├── common/           (通用代码)         │      │
+│  │  │   ├── exception/   (异常处理)          │      │
+│  │  │   ├── response/    (统一响应)          │      │
+│  │  │   ├── redis/       (Redis工具)         │      │
+│  │  │   └── web/         (Web配置)           │      │
+│  │  │                                        │      │
+│  │  ├── system/           (系统管理)          │      │
+│  │  │   └── modules/      (业务模块)          │      │
+│  │  │       ├── admin/    (核心管理)          │      │
+│  │  │       │   ├── entity/                  │      │
+│  │  │       │   ├── mapper/                  │      │
+│  │  │       │   └── service/                 │      │
+│  │  │       └── {其他业务模块}               │      │
+│  │  │                                        │      │
+│  │  └── config/           (配置类)            │      │
+│  └──────────────────────────────────────────┘      │
+└─────────────────────────────────────────────────────┘
 ```
 
 **模块职责**：
-- `ez-admin-starter`: 启动模块，包含 Application 主类和配置文件
-- `ez-admin-system`: 后台管理模块，**按业务模块分层**：
-  ```
-  com.ez.admin.system
-  ├── auth/              # 认证模块（手动编写）
-  │   ├── controller/    # 登录、登出、Token 刷新
-  │   ├── service/       # 认证服务
-  │   ├── dto/           # 认证相关 DTO
-  │   └── enums/         # 认证相关枚举
-  │
-  ├── user/              # 用户模块（代码生成）
-  │   ├── entity/        # User 实体
-  │   ├── mapper/        # UserMapper
-  │   ├── service/       # UserService + Impl
-  │   └── controller/    # UserController（可选）
-  │
-  ├── role/              # 角色模块（代码生成）
-  ├── menu/              # 菜单模块（代码生成）
-  ├── dept/              # 部门模块（代码生成）
-  ├── dict/              # 字典模块（代码生成）
-  │
-  └── common/            # 通用代码
-      ├── vo/            # 通用视图对象
-      ├── dto/           # 通用数据传输对象
-      └── mapstruct/     # 对象转换器
-  ```
-- `ez-admin-common`: 公共模块，包含：
-  - 统一响应体（ApiResponse）
-  - 异常处理（ErrorCode、EzBusinessException、GlobalExceptionHandler）
-  - Security 配置（SecurityConfig、JwtAuthenticationFilter、JwtTokenProvider）
-  - Redis 工具（RedisCache、RedisTemplateConfig）
-  - Web 配置（JacksonConfig、OpenApiConfig）
+- `ez-admin`: 单体应用模块，包含所有功能
+  - **common**: 通用代码（异常、响应、Redis、Web配置）
+  - **system.modules**: 业务模块（admin、user、role、menu...）
+  - **config**: Spring 配置类
 
 **工具模块**：
-- `ez-admin-generator`: 代码生成器（独立使用，不参与业务依赖）
+- `ez-admin-generator`: 代码生成器（独立工具，不参与业务代码编译）
 
-**System 模块包结构规则**：
-| 模块类型 | 包路径 | 代码来源 | 说明 |
-|---------|--------|----------|------|
-| 核心认证 | `system.auth` | 手动编写 | 登录、Token、设备管理 |
-| 业务模块 | `system.{user,role,menu,dept,dict}` | 代码生成 | CRUD 操作 |
-| 通用代码 | `system.common` | 手动编写 | 跨模块使用的 VO/DTO/Converter |
+**包结构规则**：
+| 包路径 | 代码来源 | 说明 |
+|--------|----------|------|
+| `com.ez.admin.common` | 手动编写 | 通用代码（异常、响应、Redis、Web） |
+| `com.ez.admin.system.modules.admin` | 代码生成 | 核心管理模块（用户、角色、菜单等） |
+| `com.ez.admin.system.modules.{module}` | 代码生成 | 其他业务模块 |
+| `com.ez.admin.config` | 手动编写 | Spring 配置类 |
 
-**代码生成器配置示例**：
-```java
-// 生成用户模块
-gc.setEntityPackage("com.ez.admin.system.user.entity");
-gc.setMapperPackage("com.ez.admin.system.user.mapper");
-gc.setServicePackage("com.ez.admin.system.user.service");
-
-// 生成角色模块
-gc.setEntityPackage("com.ez.admin.system.role.entity");
-gc.setMapperPackage("com.ez.admin.system.role.mapper");
-gc.setServicePackage("com.ez.admin.system.role.service");
+**代码生成器使用**：
+```bash
+# 运行代码生成器（交互式输入）
+# 1. 输入模块名：如 admin、blog、order
+# 2. 输入表名：如 ez_admin_user 或 all（生成所有表）
+java -jar ez-admin-generator/target/ez-admin-generator.jar
 ```
 
-**依赖关系**：
-- `starter` → `system`
-- `system` → `common`
-
 **设计理念**：
-- **极简结构**：仅 4 个模块（starter、system、common、generator）
-- **按业务分层**：system 模块内部按业务功能（user/role/menu...）组织代码
-- **生成代码分离**：代码生成器生成的 CRUD 代码与核心业务代码（auth）分离
-- **清晰直观**：查找用户代码直接去 `system.user` 包，一目了然
-- **适合个人项目**：减少配置复杂度，专注业务开发
+- **单体应用**：所有代码在一个模块，无需跨模块依赖管理
+- **包分层**：通过包结构区分功能，而非模块拆分
+- **极简开发**：修改代码立即生效，无需重新编译依赖模块
+- **适合个人/小团队**：减少配置复杂度，专注业务开发
 
 ## 技术栈规范
 - **命名规范 (Strict)**:

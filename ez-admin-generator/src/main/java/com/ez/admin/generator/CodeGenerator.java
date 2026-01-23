@@ -30,9 +30,9 @@ import java.util.concurrent.atomic.AtomicReference;
  * <ul>
  *   <li>输入模块名：如 "user"，生成包名 "com.ez.admin.system.modules.user"</li>
  *   <li>输入模块名：如 "admin"，生成包名 "com.ez.admin.system.modules.admin"</li>
- *   <li>所有代码统一生成到 ez-admin-system 模块</li>
- *   <li>Java 代码路径：ez-admin-system/src/main/java/com/ez/admin/system/modules/{模块}/</li>
- *   <li>Mapper XML 路径：ez-admin-system/src/main/resources/mapper/{模块}/</li>
+ *   <li>所有代码统一生成到 ez-admin 单体模块</li>
+ *   <li>Java 代码路径：ez-admin/src/main/java/com/ez/admin/system/modules/{模块}/</li>
+ *   <li>Mapper XML 路径：ez-admin/src/main/resources/mapper/{模块}/</li>
  * </ul>
  *
  * <p>数据库配置优先级：系统环境变量 > JVM 启动参数 > .env 文件 > 默认值
@@ -70,8 +70,8 @@ public class CodeGenerator {
                 .globalConfig((scanner, builder) -> {
                     moduleShortName.set(scanner.apply("请输入业务模块名（如：admin、blog、order）："));
 
-                    // 所有代码统一生成到 ez-admin-system 模块
-                    String javaOutputDir = projectRoot + "/ez-admin-system/src/main/java";
+                    // 所有代码统一生成到 ez-admin 单体模块
+                    String javaOutputDir = projectRoot + "/ez-admin/src/main/java";
 
                     builder.author("ez-admin")
                             .disableOpenDir() // 生成完毕后不自动打开资源管理器
@@ -96,8 +96,8 @@ public class CodeGenerator {
                     //      输入 admin → com.ez.admin.system.modules.admin
                     String packageName = "com.ez.admin.system.modules." + moduleShortName.get();
 
-                    // Mapper XML 生成路径：ez-admin-system/src/main/resources/mapper/{module}/
-                    String mapperXmlPath = projectRoot + "/ez-admin-system/src/main/resources/mapper/" + moduleShortName.get();
+                    // Mapper XML 生成路径：ez-admin/src/main/resources/mapper/{module}/
+                    String mapperXmlPath = projectRoot + "/ez-admin/src/main/resources/mapper/" + moduleShortName.get();
 
                     builder.parent(packageName)
                             .entity("entity")
