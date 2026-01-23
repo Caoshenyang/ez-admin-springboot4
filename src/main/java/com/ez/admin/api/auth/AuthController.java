@@ -1,8 +1,8 @@
 package com.ez.admin.api.auth;
 
 import com.ez.admin.common.model.R;
-import com.ez.admin.dto.auth.req.LoginRequest;
-import com.ez.admin.dto.auth.vo.LoginResponse;
+import com.ez.admin.dto.auth.req.LoginReq;
+import com.ez.admin.dto.auth.vo.LoginVO;
 import com.ez.admin.service.auth.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,9 +34,9 @@ public class AuthController {
      */
     @PostMapping("/login")
     @Operation(summary = "用户登录", description = "使用用户名和密码登录，成功后返回 token")
-    public R<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+    public R<LoginVO> login(@Valid @RequestBody LoginReq request) {
         log.info("用户登录请求：{}", request.getUsername());
-        LoginResponse response = authService.login(request);
+        LoginVO response = authService.login(request);
         return R.success("登录成功", response);
     }
 

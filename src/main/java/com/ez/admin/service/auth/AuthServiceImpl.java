@@ -3,8 +3,8 @@ package com.ez.admin.service.auth;
 import cn.dev33.satoken.stp.StpUtil;
 import com.ez.admin.common.exception.ErrorCode;
 import com.ez.admin.common.exception.EzBusinessException;
-import com.ez.admin.dto.auth.req.LoginRequest;
-import com.ez.admin.dto.auth.vo.LoginResponse;
+import com.ez.admin.dto.auth.req.LoginReq;
+import com.ez.admin.dto.auth.vo.LoginVO;
 import com.ez.admin.modules.system.entity.SysUser;
 import com.ez.admin.modules.system.mapper.SysUserMapper;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
      * @return 登录响应（包含 token）
      */
     @Override
-    public LoginResponse login(LoginRequest request) {
+    public LoginVO login(LoginReq request) {
         // 1. 根据用户名查询用户
         SysUser user = userMapper.selectByUsername(request.getUsername());
 
@@ -61,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
         StpUtil.login(user.getUserId());
 
         // 6. 构造登录响应
-        LoginResponse response = new LoginResponse();
+        LoginVO response = new LoginVO();
         response.setToken(StpUtil.getTokenValue());
         response.setUserId(user.getUserId());
         response.setUsername(user.getUsername());

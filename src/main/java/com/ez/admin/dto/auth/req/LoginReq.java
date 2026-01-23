@@ -13,8 +13,8 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@Schema(name = "LoginRequest", description = "登录请求")
-public class LoginRequest {
+@Schema(name = "LoginReq", description = "登录请求")
+public class LoginReq {
 
     @Schema(description = "用户名", example = "admin")
     @NotBlank(message = "用户名不能为空")

@@ -1,7 +1,7 @@
 package com.ez.admin.service.auth;
 
-import com.ez.admin.dto.auth.req.LoginRequest;
-import com.ez.admin.dto.auth.vo.LoginResponse;
+import com.ez.admin.dto.auth.req.LoginReq;
+import com.ez.admin.dto.auth.vo.LoginVO;
 
 /**
  * 认证服务接口
@@ -17,7 +17,7 @@ public interface AuthService {
      * @param request 登录请求
      * @return 登录响应（包含 token）
      */
-    LoginResponse login(LoginRequest request);
+    LoginVO login(LoginReq request);
 
     /**
      * 用户登出

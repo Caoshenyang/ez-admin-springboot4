@@ -12,8 +12,8 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@Schema(name = "LoginResponse", description = "登录响应")
-public class LoginResponse {
+@Schema(name = "LoginVO", description = "登录响应")
+public class LoginVO {
 
     @Schema(description = "访问令牌")
     private String token;
