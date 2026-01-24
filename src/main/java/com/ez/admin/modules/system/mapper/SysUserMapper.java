@@ -9,7 +9,6 @@ import com.ez.admin.common.condition.QueryConditionSupport;
 import com.ez.admin.common.model.PageQuery;
 import com.ez.admin.modules.system.entity.SysUser;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.util.StringUtils;
 
 /**
  * <p>
@@ -24,12 +23,23 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
 
     /**
      * 确保字段配置已注册（懒加载）
+     * <p>
+     * 字段说明：
+     * <ul>
+     *   <li>username: 用户名（支持快捷搜索）</li>
+     *   <li>nickname: 昵称（支持快捷搜索）</li>
+     *   <li>phoneNumber: 手机号（支持快捷搜索）</li>
+     *   <li>email: 邮箱</li>
+     *   <li>status: 状态</li>
+     *   <li>deptId: 部门ID</li>
+     *   <li>gender: 性别</li>
+     * </ul>
      */
     default void ensureConditionsRegistered() {
         QueryConditionSupport.register(SysUser.class,
-                FieldConfig.string("username", SysUser::getUsername),
-                FieldConfig.string("nickname", SysUser::getNickname),
-                FieldConfig.string("phoneNumber", SysUser::getPhoneNumber),
+                FieldConfig.string("username", SysUser::getUsername, true),
+                FieldConfig.string("nickname", SysUser::getNickname, true),
+                FieldConfig.string("phoneNumber", SysUser::getPhoneNumber, true),
                 FieldConfig.string("email", SysUser::getEmail),
                 FieldConfig.integer("status", SysUser::getStatus),
                 FieldConfig.longNum("deptId", SysUser::getDeptId),
@@ -115,8 +125,8 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      * 分页查询用户列表
      * <p>
      * 查询策略：
-     * 1. keyword：快捷模糊搜索，匹配用户名/昵称/手机号
-     * 2. filters：高级查询，通过 FilterSupport 动态应用
+     * 1. keyword：快捷模糊搜索（自动搜索标记为 keywordSearch=true 的字段）
+     * 2. conditions：高级查询（前端控制任意字段组合）
      * </p>
      *
      * @param page  分页对象
@@ -130,15 +140,8 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
         LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
 
         if (query != null) {
-            // 1. 快捷模糊搜索：用户名/昵称/手机号
-            if (StringUtils.hasText(query.getKeyword())) {
-                String keyword = query.getKeyword();
-                wrapper.and(w -> w.like(SysUser::getUsername, keyword)
-                        .or()
-                        .like(SysUser::getNickname, keyword)
-                        .or()
-                        .like(SysUser::getPhoneNumber, keyword));
-            }
+            // 1. 快捷模糊搜索：自动搜索标记为 keywordSearch=true 的字段
+            QueryConditionSupport.applyKeywordSearch(wrapper, query.getKeyword(), SysUser.class);
 
             // 2. 高级查询：动态应用 conditions
             if (query.getConditions() != null && !query.getConditions().isEmpty()) {
