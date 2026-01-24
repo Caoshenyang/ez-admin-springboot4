@@ -9,7 +9,6 @@ import com.ez.admin.common.mapstruct.UserConverter;
 import com.ez.admin.common.model.PageQuery;
 import com.ez.admin.common.model.PageVO;
 import com.ez.admin.dto.user.req.UserCreateReq;
-import com.ez.admin.dto.user.req.UserQueryReq;
 import com.ez.admin.dto.user.req.UserUpdateReq;
 import com.ez.admin.dto.user.vo.UserDetailVO;
 import com.ez.admin.dto.user.vo.UserListVO;
@@ -205,16 +204,16 @@ public class UserService {
      * @param query 分页查询请求
      * @return 分页结果
      */
-    public PageVO<UserListVO> getUserPage(PageQuery<UserQueryReq> query) {
+    public PageVO<UserListVO> getUserPage(PageQuery query) {
         // 执行分页查询
-        Page<SysUser> result = userMapper.selectUserPage(query.toMpPage(), query.getSearch());
+        Page<SysUser> result = userMapper.selectUserPage(query.toMpPage(), query);
 
         // 使用 MapStruct 批量转换
         List<UserListVO> records = userConverter.toListVOList(result.getRecords());
 
         return PageVO.<UserListVO>builder()
-                .current(result.getCurrent())
-                .size(result.getSize())
+                .pageNum(result.getCurrent())
+                .pageSize(result.getSize())
                 .total(result.getTotal())
                 .pages(result.getPages())
                 .records(records)

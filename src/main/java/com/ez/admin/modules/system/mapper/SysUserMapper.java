@@ -4,10 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ez.admin.common.constant.SystemConstants;
-import com.ez.admin.dto.common.Filter;
-import com.ez.admin.dto.common.Operator;
-import com.ez.admin.dto.common.UserField;
-import com.ez.admin.dto.user.req.UserQueryReq;
+import com.ez.admin.common.filter.FilterSupport;
+import com.ez.admin.common.model.FieldConfig;
+import com.ez.admin.common.model.PageQuery;
 import com.ez.admin.modules.system.entity.SysUser;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.util.StringUtils;
@@ -24,6 +23,21 @@ import java.util.List;
  */
 @Mapper
 public interface SysUserMapper extends BaseMapper<SysUser> {
+
+    /**
+     * 确保字段配置已注册（懒加载）
+     */
+    default void ensureFiltersRegistered() {
+        FilterSupport.register(SysUser.class,
+                FieldConfig.string("username", SysUser::getUsername),
+                FieldConfig.string("nickname", SysUser::getNickname),
+                FieldConfig.string("phoneNumber", SysUser::getPhoneNumber),
+                FieldConfig.string("email", SysUser::getEmail),
+                FieldConfig.integer("status", SysUser::getStatus),
+                FieldConfig.longNum("deptId", SysUser::getDeptId),
+                FieldConfig.integer("gender", SysUser::getGender)
+        );
+    }
 
     /**
      * 根据用户名查询用户（登录时使用）
@@ -102,60 +116,38 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
     /**
      * 分页查询用户列表
      * <p>
-     * 支持固定条件查询和动态过滤条件组合
+     * 查询策略：
+     * 1. keyword：快捷模糊搜索，匹配用户名/昵称/手机号
+     * 2. filters：高级查询，通过 FilterSupport 动态应用
      * </p>
      *
      * @param page  分页对象
      * @param query 查询条件
      * @return 分页结果
      */
-    default Page<SysUser> selectUserPage(Page<SysUser> page, UserQueryReq query) {
-        LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<SysUser>();
+    default Page<SysUser> selectUserPage(Page<SysUser> page, PageQuery query) {
+        // 确保字段配置已注册
+        ensureFiltersRegistered();
+
+        LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
 
         if (query != null) {
-            // 应用固定查询条件
-            wrapper.like(StringUtils.hasText(query.getUsername()), SysUser::getUsername, query.getUsername())
-                    .like(StringUtils.hasText(query.getNickname()), SysUser::getNickname, query.getNickname())
-                    .eq(StringUtils.hasText(query.getPhoneNumber()), SysUser::getPhoneNumber, query.getPhoneNumber())
-                    .eq(query.getStatus() != null, SysUser::getStatus, query.getStatus())
-                    .eq(query.getDeptId() != null, SysUser::getDeptId, query.getDeptId())
-                    .ge(StringUtils.hasText(query.getStartTime()), SysUser::getCreateTime, query.getStartTime())
-                    .le(StringUtils.hasText(query.getEndTime()), SysUser::getCreateTime, query.getEndTime());
+            // 1. 快捷模糊搜索：用户名/昵称/手机号
+            if (StringUtils.hasText(query.getKeyword())) {
+                String keyword = query.getKeyword();
+                wrapper.and(w -> w.like(SysUser::getUsername, keyword)
+                        .or()
+                        .like(SysUser::getNickname, keyword)
+                        .or()
+                        .like(SysUser::getPhoneNumber, keyword));
+            }
 
-            // 应用动态过滤条件（前端控制）
-            applyDynamicFilters(wrapper, query.getFilters());
+            // 2. 高级查询：动态应用 filters（通用 FilterSupport）
+            if (query.getFilters() != null && !query.getFilters().isEmpty()) {
+                FilterSupport.applyFilters(wrapper, query.getFilters(), SysUser.class);
+            }
         }
 
         return this.selectPage(page, wrapper);
     }
-
-    /**
-     * 应用动态过滤条件
-     *
-     * @param wrapper  LambdaQueryWrapper
-     * @param filters  动态过滤条件列表
-     */
-    private default void applyDynamicFilters(LambdaQueryWrapper<SysUser> wrapper, List<Filter> filters) {
-        if (filters == null || filters.isEmpty()) {
-            return;
-        }
-
-        for (Filter filter : filters) {
-            // 解析字段枚举
-            UserField field = UserField.fromFieldName(filter.getField());
-            if (field == null) {
-                continue; // 忽略无效字段
-            }
-
-            // 解析操作符枚举
-            Operator operator = Operator.fromOperator(filter.getOperator());
-            if (operator == null) {
-                continue; // 忽略无效操作符
-            }
-
-            // 应用条件
-            field.apply(wrapper, operator, filter.getValue());
-        }
-    }
 }
-

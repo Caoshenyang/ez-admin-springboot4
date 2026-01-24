@@ -4,9 +4,7 @@ import com.ez.admin.common.model.R;
 import com.ez.admin.common.model.PageQuery;
 import com.ez.admin.common.model.PageVO;
 import com.ez.admin.dto.user.req.UserCreateReq;
-import com.ez.admin.dto.user.req.UserQueryReq;
 import com.ez.admin.dto.user.req.UserUpdateReq;
-import com.ez.admin.dto.user.vo.PageVO;
 import com.ez.admin.dto.user.vo.UserDetailVO;
 import com.ez.admin.dto.user.vo.UserListVO;
 import com.ez.admin.service.user.UserService;
@@ -111,7 +109,7 @@ public class UserController {
      */
     @PostMapping("/page")
     @Operation(summary = "分页查询用户", description = "分页查询用户列表，支持多条件筛选和排序")
-    public R<PageVO<UserListVO>> getPage(@RequestBody PageQuery<UserQueryReq> query) {
+    public R<PageVO<UserListVO>> getPage(@RequestBody PageQuery query) {
         PageVO<UserListVO> page = userService.getUserPage(query);
         return R.success(page);
     }

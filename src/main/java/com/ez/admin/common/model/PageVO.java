@@ -21,10 +21,10 @@ import java.util.List;
 public class PageVO<T> {
 
     @Schema(description = "当前页码")
-    private Long current;
+    private Long pageNum;
 
     @Schema(description = "每页条数")
-    private Long size;
+    private Long pageSize;
 
     @Schema(description = "总记录数")
     private Long total;
