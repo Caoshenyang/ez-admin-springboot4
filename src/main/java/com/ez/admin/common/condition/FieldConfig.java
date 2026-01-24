@@ -1,4 +1,4 @@
-package com.ez.admin.common.filter;
+package com.ez.admin.common.condition;
 
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.ez.admin.common.enums.FieldType;
@@ -6,7 +6,7 @@ import com.ez.admin.common.enums.FieldType;
 /**
  * 实体字段配置
  * <p>
- * 用于定义哪些字段可以参与动态过滤查询
+ * 用于定义哪些字段可以参与动态查询
  * </p>
  * <p>
  * 组件说明：

@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ez.admin.common.constant.SystemConstants;
-import com.ez.admin.common.filter.FilterSupport;
-import com.ez.admin.common.filter.FieldConfig;
+import com.ez.admin.common.condition.FieldConfig;
+import com.ez.admin.common.condition.QueryConditionSupport;
 import com.ez.admin.common.model.PageQuery;
 import com.ez.admin.modules.system.entity.SysUser;
 import org.apache.ibatis.annotations.Mapper;
@@ -25,8 +25,8 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
     /**
      * 确保字段配置已注册（懒加载）
      */
-    default void ensureFiltersRegistered() {
-        FilterSupport.register(SysUser.class,
+    default void ensureConditionsRegistered() {
+        QueryConditionSupport.register(SysUser.class,
                 FieldConfig.string("username", SysUser::getUsername),
                 FieldConfig.string("nickname", SysUser::getNickname),
                 FieldConfig.string("phoneNumber", SysUser::getPhoneNumber),
@@ -125,7 +125,7 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      */
     default Page<SysUser> selectUserPage(Page<SysUser> page, PageQuery query) {
         // 确保字段配置已注册
-        ensureFiltersRegistered();
+        ensureConditionsRegistered();
 
         LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
 
@@ -140,9 +140,9 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
                         .like(SysUser::getPhoneNumber, keyword));
             }
 
-            // 2. 高级查询：动态应用 conditions（通用 FilterSupport）
+            // 2. 高级查询：动态应用 conditions
             if (query.getConditions() != null && !query.getConditions().isEmpty()) {
-                FilterSupport.applyFilters(wrapper, query.getConditions(), SysUser.class);
+                QueryConditionSupport.applyConditions(wrapper, query.getConditions(), SysUser.class);
             }
         }
 

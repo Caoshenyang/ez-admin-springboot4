@@ -1,4 +1,4 @@
-package com.ez.admin.common.filter;
+package com.ez.admin.common.condition;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ez.admin.common.enums.Operator;
@@ -11,9 +11,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 通用查询过滤器支持
+ * 动态查询条件支持
  * <p>
- * 各模块通过注册字段配置来启用动态过滤功能
+ * 各模块通过注册字段配置来启用动态查询功能
  * </p>
  * <p>
  * 使用示例：
@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * );
  *
  * // 2. 使用
- * QueryConditionSupport.applyQueryConditions(wrapper, conditions, SysUser.class);
+ * QueryConditionSupport.applyConditions(wrapper, conditions, SysUser.class);
  * }</pre>
  * </p>
  *
@@ -34,11 +34,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class QueryConditionSupport {
 
-    /**
-     * 字段配置注册表
-     * Key: 实体类
-     * Value: fieldCode → FieldConfig
-     */
     private static final Map<Class<?>, Map<String, FieldConfig<?>>> REGISTRY = new ConcurrentHashMap<>();
 
     private QueryConditionSupport() {
@@ -46,14 +41,9 @@ public final class QueryConditionSupport {
 
     /**
      * 注册字段配置（幂等操作，可多次调用）
-     *
-     * @param entityClass 实体类
-     * @param configs     字段配置列表
-     * @param <T>         实体类型
      */
     @SafeVarargs
     public static <T> void register(Class<T> entityClass, FieldConfig<T>... configs) {
-        // 幂等操作：如果已注册则不重复注册
         if (REGISTRY.containsKey(entityClass)) {
             return;
         }
@@ -65,41 +55,35 @@ public final class QueryConditionSupport {
     }
 
     /**
-     * 应用动态过滤条件
-     *
-     * @param wrapper     查询包装器
-     * @param conditions     过滤条件列表
-     * @param entityClass 实体类
-     * @param <T>         实体类型
+     * 应用动态查询条件
      */
     @SuppressWarnings("unchecked")
-    public static <T> void applyQueryConditions(LambdaQueryWrapper<T> wrapper, List<QueryCondition> conditions, Class<T> entityClass) {
+    public static <T> void applyConditions(LambdaQueryWrapper<T> wrapper, List<QueryCondition> conditions, Class<T> entityClass) {
         Map<String, FieldConfig<?>> configMap = REGISTRY.get(entityClass);
         if (configMap == null || configMap.isEmpty()) {
             return;
         }
 
-        for (QueryCondition filter : conditions) {
-            if (filter == null || !StringUtils.hasText(filter.getField()) ||
-                    !StringUtils.hasText(filter.getOperator())) {
+        for (QueryCondition condition : conditions) {
+            if (condition == null || !StringUtils.hasText(condition.getField()) ||
+                    !StringUtils.hasText(condition.getOperator())) {
                 continue;
             }
 
-            FieldConfig<?> config = configMap.get(filter.getField());
+            FieldConfig<?> config = configMap.get(condition.getField());
             if (config == null) {
-                continue; // 忽略未注册字段
+                continue;
             }
 
-            Operator operator = Operator.fromOperator(filter.getOperator());
+            Operator operator = Operator.fromOperator(condition.getOperator());
             if (operator == null) {
-                continue; // 忽略无效操作符
+                continue;
             }
 
-            // 根据字段类型应用条件
             switch (config.type()) {
-                case STRING -> applyStringCondition(wrapper, operator, (FieldConfig<T>) config, filter.getValue());
-                case INTEGER -> applyIntCondition(wrapper, operator, (FieldConfig<T>) config, filter.getValue());
-                case LONG -> applyLongCondition(wrapper, operator, (FieldConfig<T>) config, filter.getValue());
+                case STRING -> applyStringCondition(wrapper, operator, (FieldConfig<T>) config, condition.getValue());
+                case INTEGER -> applyIntCondition(wrapper, operator, (FieldConfig<T>) config, condition.getValue());
+                case LONG -> applyLongCondition(wrapper, operator, (FieldConfig<T>) config, condition.getValue());
             }
         }
     }
@@ -122,7 +106,6 @@ public final class QueryConditionSupport {
                 }
             }
             default -> {
-                // GT, GE, LT, LE 对字符串无意义，忽略
             }
         }
     }
@@ -144,11 +127,9 @@ public final class QueryConditionSupport {
                 case IN -> applyIntInCondition(wrapper, config, value, true);
                 case NOT_IN -> applyIntInCondition(wrapper, config, value, false);
                 default -> {
-                    // LIKE, NOT_LIKE 对数值字段无意义
                 }
             }
         } catch (NumberFormatException e) {
-            // 忽略无效数值
         }
     }
 
@@ -169,11 +150,9 @@ public final class QueryConditionSupport {
                 case IN -> applyLongInCondition(wrapper, config, value, true);
                 case NOT_IN -> applyLongInCondition(wrapper, config, value, false);
                 default -> {
-                    // LIKE, NOT_LIKE 对数值字段无意义
                 }
             }
         } catch (NumberFormatException e) {
-            // 忽略无效数值
         }
     }
 
@@ -191,7 +170,6 @@ public final class QueryConditionSupport {
                 wrapper.notIn(config.column(), intValues);
             }
         } catch (NumberFormatException e) {
-            // 忽略无效数值
         }
     }
 
@@ -209,7 +187,6 @@ public final class QueryConditionSupport {
                 wrapper.notIn(config.column(), longValues);
             }
         } catch (NumberFormatException e) {
-            // 忽略无效数值
         }
     }
 }
