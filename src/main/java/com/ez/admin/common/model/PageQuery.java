@@ -2,7 +2,7 @@ package com.ez.admin.common.model;
 
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ez.admin.dto.common.Filter;
+import com.ez.admin.dto.common.QueryCondition;
 import lombok.Data;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
  * 设计理念：
  * <ul>
  *   <li>keyword：快捷模糊搜索，适用于大部分场景（如用户名/昵称/手机号）</li>
- *   <li>filters：高级查询，前端控制任意字段组合（如 status=1, deptId=10）</li>
+ *   <li>conditions：高级查询，前端控制任意字段组合（如 status=1, deptId=10）</li>
  * </ul>
  * </p>
  * <p>
@@ -70,10 +70,10 @@ public class PageQuery {
      * 高级查询条件列表（前端控制）
      * <p>
      * 支持任意字段、操作符、值的组合查询
-     * 例如：[{"field":"STATUS","operator":"EQ","value":"1"}]
+     * 例如：[{"field":"status","operator":"EQ","value":"1"}]
      * </p>
      */
-    private List<Filter> filters;
+    private List<QueryCondition> conditions;
 
     /**
      * 转换为 MyBatis-Plus 的 Page 对象

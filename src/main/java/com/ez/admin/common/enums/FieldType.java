@@ -1,4 +1,4 @@
-package com.ez.admin.common.model;
+package com.ez.admin.common.enums;
 
 /**
  * 字段类型枚举

@@ -1,9 +1,8 @@
 package com.ez.admin.common.filter;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.ez.admin.common.model.FieldConfig;
-import com.ez.admin.dto.common.Filter;
-import com.ez.admin.dto.common.Operator;
+import com.ez.admin.common.enums.Operator;
+import com.ez.admin.dto.common.QueryCondition;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -20,20 +19,20 @@ import java.util.concurrent.ConcurrentHashMap;
  * 使用示例：
  * <pre>{@code
  * // 1. 定义字段配置（驼峰命名）
- * FilterSupport.register(SysUser.class,
+ * QueryConditionSupport.register(SysUser.class,
  *     FieldConfig.string("username", SysUser::getUsername),
  *     FieldConfig.integer("status", SysUser::getStatus)
  * );
  *
  * // 2. 使用
- * FilterSupport.applyFilters(wrapper, filters, SysUser.class);
+ * QueryConditionSupport.applyQueryConditions(wrapper, conditions, SysUser.class);
  * }</pre>
  * </p>
  *
  * @author ez-admin
  * @since 2026-01-24
  */
-public final class FilterSupport {
+public final class QueryConditionSupport {
 
     /**
      * 字段配置注册表
@@ -42,7 +41,7 @@ public final class FilterSupport {
      */
     private static final Map<Class<?>, Map<String, FieldConfig<?>>> REGISTRY = new ConcurrentHashMap<>();
 
-    private FilterSupport() {
+    private QueryConditionSupport() {
     }
 
     /**
@@ -69,18 +68,18 @@ public final class FilterSupport {
      * 应用动态过滤条件
      *
      * @param wrapper     查询包装器
-     * @param filters     过滤条件列表
+     * @param conditions     过滤条件列表
      * @param entityClass 实体类
      * @param <T>         实体类型
      */
     @SuppressWarnings("unchecked")
-    public static <T> void applyFilters(LambdaQueryWrapper<T> wrapper, List<Filter> filters, Class<T> entityClass) {
+    public static <T> void applyQueryConditions(LambdaQueryWrapper<T> wrapper, List<QueryCondition> conditions, Class<T> entityClass) {
         Map<String, FieldConfig<?>> configMap = REGISTRY.get(entityClass);
         if (configMap == null || configMap.isEmpty()) {
             return;
         }
 
-        for (Filter filter : filters) {
+        for (QueryCondition filter : conditions) {
             if (filter == null || !StringUtils.hasText(filter.getField()) ||
                     !StringUtils.hasText(filter.getOperator())) {
                 continue;
@@ -105,7 +104,6 @@ public final class FilterSupport {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private static <T> void applyStringCondition(LambdaQueryWrapper<T> wrapper, Operator operator,
                                                   FieldConfig<T> config, String value) {
         switch (operator) {

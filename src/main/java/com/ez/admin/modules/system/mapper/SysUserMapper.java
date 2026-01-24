@@ -5,13 +5,11 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ez.admin.common.constant.SystemConstants;
 import com.ez.admin.common.filter.FilterSupport;
-import com.ez.admin.common.model.FieldConfig;
+import com.ez.admin.common.filter.FieldConfig;
 import com.ez.admin.common.model.PageQuery;
 import com.ez.admin.modules.system.entity.SysUser;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.util.StringUtils;
-
-import java.util.List;
 
 /**
  * <p>
@@ -142,9 +140,9 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
                         .like(SysUser::getPhoneNumber, keyword));
             }
 
-            // 2. 高级查询：动态应用 filters（通用 FilterSupport）
-            if (query.getFilters() != null && !query.getFilters().isEmpty()) {
-                FilterSupport.applyFilters(wrapper, query.getFilters(), SysUser.class);
+            // 2. 高级查询：动态应用 conditions（通用 FilterSupport）
+            if (query.getConditions() != null && !query.getConditions().isEmpty()) {
+                FilterSupport.applyFilters(wrapper, query.getConditions(), SysUser.class);
             }
         }
 
