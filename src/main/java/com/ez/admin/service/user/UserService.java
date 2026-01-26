@@ -208,16 +208,7 @@ public class UserService {
         // 执行分页查询
         Page<SysUser> result = userMapper.selectUserPage(query.toMpPage(), query);
 
-        // 使用 MapStruct 批量转换
-        List<UserListVO> records = userConverter.toListVOList(result.getRecords());
-
-        return PageVO.<UserListVO>builder()
-                .pageNum(result.getCurrent())
-                .pageSize(result.getSize())
-                .total(result.getTotal())
-                .pages(result.getPages())
-                .records(records)
-                .build();
+        return PageVO.of(result, userConverter::toListVO);
     }
 
     // ==================== 私有方法 ====================
