@@ -1,5 +1,6 @@
 package com.ez.admin.api.role;
 
+import com.ez.admin.common.annotation.OperationLog;
 import com.ez.admin.common.model.PageQuery;
 import com.ez.admin.common.model.PageVO;
 import com.ez.admin.common.model.R;
@@ -37,6 +38,7 @@ public class RoleController {
 
     @PostMapping
     @SaCheckPermission("system:role:create")
+    @OperationLog(module = "角色管理", operation = "创建", description = "创建角色")
     @Operation(summary = "创建角色", description = "创建新角色，支持分配菜单和数据权限")
     public R<Void> create(@Valid @RequestBody RoleCreateReq request) {
         log.info("创建角色请求，角色名称：{}", request.getRoleName());
@@ -46,6 +48,7 @@ public class RoleController {
 
     @PutMapping
     @SaCheckPermission("system:role:update")
+    @OperationLog(module = "角色管理", operation = "更新", description = "更新角色信息")
     @Operation(summary = "更新角色", description = "更新角色信息，支持重新分配菜单和数据权限")
     public R<Void> update(@Valid @RequestBody RoleUpdateReq request) {
         log.info("更新角色请求，角色ID：{}", request.getRoleId());
@@ -55,6 +58,7 @@ public class RoleController {
 
     @DeleteMapping("/{roleId}")
     @SaCheckPermission("system:role:delete")
+    @OperationLog(module = "角色管理", operation = "删除", description = "删除角色")
     @Operation(summary = "删除角色", description = "根据角色ID删除角色（逻辑删除）")
     public R<Void> delete(@PathVariable Long roleId) {
         log.info("删除角色请求，角色ID：{}", roleId);

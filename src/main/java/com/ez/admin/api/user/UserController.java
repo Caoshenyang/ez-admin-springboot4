@@ -1,5 +1,6 @@
 package com.ez.admin.api.user;
 
+import com.ez.admin.common.annotation.OperationLog;
 import com.ez.admin.common.model.R;
 import com.ez.admin.common.model.PageQuery;
 import com.ez.admin.common.model.PageVO;
@@ -36,6 +37,7 @@ public class UserController {
 
     @PostMapping
     @SaCheckPermission("system:user:create")
+    @OperationLog(module = "用户管理", operation = "创建", description = "创建用户")
     @Operation(summary = "创建用户", description = "创建新用户，支持分配角色")
     public R<Void> create(@Valid @RequestBody UserCreateReq request) {
         log.info("创建用户请求，用户名：{}", request.getUsername());
@@ -45,6 +47,7 @@ public class UserController {
 
     @PutMapping
     @SaCheckPermission("system:user:update")
+    @OperationLog(module = "用户管理", operation = "更新", description = "更新用户信息")
     @Operation(summary = "更新用户", description = "更新用户信息，支持重新分配角色")
     public R<Void> update(@Valid @RequestBody UserUpdateReq request) {
         log.info("更新用户请求，用户ID：{}", request.getUserId());
@@ -54,6 +57,7 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     @SaCheckPermission("system:user:delete")
+    @OperationLog(module = "用户管理", operation = "删除", description = "删除用户")
     @Operation(summary = "删除用户", description = "根据用户ID删除用户（逻辑删除）")
     public R<Void> delete(@PathVariable Long userId) {
         log.info("删除用户请求，用户ID：{}", userId);
@@ -63,6 +67,7 @@ public class UserController {
 
     @DeleteMapping("/batch")
     @SaCheckPermission("system:user:delete")
+    @OperationLog(module = "用户管理", operation = "批量删除", description = "批量删除用户")
     @Operation(summary = "批量删除用户", description = "批量删除多个用户（逻辑删除）")
     public R<Void> batchDelete(@RequestBody List<Long> userIds) {
         log.info("批量删除用户请求，数量：{}", userIds.size());

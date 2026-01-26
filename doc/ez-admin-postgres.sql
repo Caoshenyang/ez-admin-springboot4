@@ -303,6 +303,50 @@ CREATE INDEX idx_user_role_user_id ON ez_admin_sys_user_role_relation(user_id);
 CREATE INDEX idx_user_role_role_id ON ez_admin_sys_user_role_relation(role_id);
 
 -- ============================================================================
+-- 10. 操作日志表
+-- ============================================================================
+DROP TABLE IF EXISTS ez_admin_sys_operation_log CASCADE;
+
+CREATE TABLE ez_admin_sys_operation_log (
+    log_id BIGINT NOT NULL,
+    module VARCHAR(50),
+    operation VARCHAR(50),
+    description VARCHAR(255),
+    user_id BIGINT,
+    username VARCHAR(30),
+    request_method VARCHAR(10),
+    request_url VARCHAR(500),
+    request_ip VARCHAR(128),
+    request_params TEXT,
+    execute_time BIGINT,
+    status SMALLINT DEFAULT 1,
+    error_msg TEXT,
+    create_time TIMESTAMP,
+    CONSTRAINT pk_ez_admin_sys_operation_log PRIMARY KEY (log_id)
+);
+
+COMMENT ON TABLE ez_admin_sys_operation_log IS '操作日志表';
+COMMENT ON COLUMN ez_admin_sys_operation_log.log_id IS '日志ID';
+COMMENT ON COLUMN ez_admin_sys_operation_log.module IS '模块名称';
+COMMENT ON COLUMN ez_admin_sys_operation_log.operation IS '操作类型';
+COMMENT ON COLUMN ez_admin_sys_operation_log.description IS '操作描述';
+COMMENT ON COLUMN ez_admin_sys_operation_log.user_id IS '操作用户ID';
+COMMENT ON COLUMN ez_admin_sys_operation_log.username IS '操作用户名';
+COMMENT ON COLUMN ez_admin_sys_operation_log.request_method IS '请求方法';
+COMMENT ON COLUMN ez_admin_sys_operation_log.request_url IS '请求URL';
+COMMENT ON COLUMN ez_admin_sys_operation_log.request_ip IS '请求IP';
+COMMENT ON COLUMN ez_admin_sys_operation_log.request_params IS '请求参数';
+COMMENT ON COLUMN ez_admin_sys_operation_log.execute_time IS '执行时长（毫秒）';
+COMMENT ON COLUMN ez_admin_sys_operation_log.status IS '操作状态【0 失败 1 成功】';
+COMMENT ON COLUMN ez_admin_sys_operation_log.error_msg IS '错误信息';
+COMMENT ON COLUMN ez_admin_sys_operation_log.create_time IS '创建时间';
+
+-- 为日志表创建索引以提升查询性能
+CREATE INDEX idx_operation_log_user_id ON ez_admin_sys_operation_log(user_id);
+CREATE INDEX idx_operation_log_create_time ON ez_admin_sys_operation_log(create_time);
+CREATE INDEX idx_operation_log_module ON ez_admin_sys_operation_log(module);
+
+-- ============================================================================
 -- 初始化序列（可选，用于主键自增）
 -- ============================================================================
 -- 如果需要使用自增主键，可以创建序列
@@ -313,3 +357,4 @@ CREATE INDEX idx_user_role_role_id ON ez_admin_sys_user_role_relation(role_id);
 -- CREATE SEQUENCE IF NOT EXISTS seq_role_id START 1;
 -- CREATE SEQUENCE IF NOT EXISTS seq_user_id START 1;
 -- CREATE SEQUENCE IF NOT EXISTS seq_relation_id START 1;
+-- CREATE SEQUENCE IF NOT EXISTS seq_operation_log_id START 1;

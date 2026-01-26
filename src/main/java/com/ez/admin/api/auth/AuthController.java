@@ -1,5 +1,6 @@
 package com.ez.admin.api.auth;
 
+import com.ez.admin.common.annotation.OperationLog;
 import com.ez.admin.common.model.R;
 import com.ez.admin.dto.auth.req.LoginReq;
 import com.ez.admin.dto.auth.vo.LoginVO;
@@ -27,6 +28,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
+    @OperationLog(module = "用户认证", operation = "登录", description = "用户登录")
     @Operation(summary = "用户登录", description = "使用用户名和密码登录，成功后返回 token")
     public R<LoginVO> login(@Valid @RequestBody LoginReq request) {
         log.info("用户登录请求：{}", request.getUsername());
@@ -35,6 +37,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
+    @OperationLog(module = "用户认证", operation = "登出", description = "用户登出")
     @Operation(summary = "用户登出", description = "退出当前登录状态")
     public R<String> logout() {
         authService.logout();
