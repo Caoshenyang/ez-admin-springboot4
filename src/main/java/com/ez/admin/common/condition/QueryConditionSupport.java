@@ -19,13 +19,35 @@ import java.util.stream.Collectors;
  * 各模块通过注册字段配置来启用动态查询功能
  * </p>
  * <p>
- * 使用示例：
+ * 使用方式（从 QueryMetadata 枚举自动注册）：
  * <pre>{@code
- * // 1. 定义字段配置（驼峰命名）
- * QueryConditionSupport.register(SysUser.class,
- *     FieldConfig.string("username", SysUser::getUsername, true),
- *     FieldConfig.integer("status", SysUser::getStatus)
- * );
+ * // 1. 定义 QueryMetadata 枚举
+ * public enum UserQueryMetadata implements QueryMetadata<SysUser> {
+ *     USERNAME("username", "String", "用户账号", ...) {
+ *         @Override public SFunction<SysUser, ?> getColumn() { return SysUser::getUsername; }
+ *         @Override public boolean isKeywordSearch() { return true; }
+ *     },
+ *     STATUS("status", "Integer", "用户状态", ...) {
+ *         @Override public SFunction<SysUser, ?> getColumn() { return SysUser::getStatus; }
+ *         @Override public boolean isKeywordSearch() { return false; }
+ *     };
+ *
+ *     @Getter @AllArgsConstructor
+ *     private final String field;
+ *     private final String type;
+ *     private final String description;
+ *     private final List<Operator> operators;
+ *
+ *     @Override
+ *     public FieldConfig<SysUser>[] toFieldConfigs() {
+ *         return QueryMetadata.super.toFieldConfigs(values());
+ *     }
+ *
+ *     // 类加载时自动注册
+ *     static {
+ *         QueryConditionSupport.register(SysUser.class, USERNAME.toFieldConfigs());
+ *     }
+ * }
  *
  * // 2. 使用快捷搜索
  * QueryConditionSupport.applyKeywordSearch(wrapper, keyword, SysUser.class);
@@ -48,6 +70,13 @@ public final class QueryConditionSupport {
 
     /**
      * 注册字段配置（幂等操作，可多次调用）
+     * <p>
+     * 接受从 QueryMetadata 枚举生成的字段配置数组
+     * </p>
+     *
+     * @param entityClass 实体类
+     * @param configs     字段配置数组
+     * @param <T>         实体类型
      */
     @SafeVarargs
     public static <T> void register(Class<T> entityClass, FieldConfig<T>... configs) {

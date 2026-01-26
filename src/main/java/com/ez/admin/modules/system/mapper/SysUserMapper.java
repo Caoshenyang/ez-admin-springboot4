@@ -3,9 +3,8 @@ package com.ez.admin.modules.system.mapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ez.admin.common.constant.SystemConstants;
-import com.ez.admin.common.condition.FieldConfig;
 import com.ez.admin.common.condition.QueryConditionSupport;
+import com.ez.admin.common.constant.SystemConstants;
 import com.ez.admin.common.model.PageQuery;
 import com.ez.admin.modules.system.entity.SysUser;
 import org.apache.ibatis.annotations.Mapper;
@@ -20,32 +19,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface SysUserMapper extends BaseMapper<SysUser> {
-
-    /**
-     * 确保字段配置已注册（懒加载）
-     * <p>
-     * 字段说明：
-     * <ul>
-     *   <li>username: 用户名（支持快捷搜索）</li>
-     *   <li>nickname: 昵称（支持快捷搜索）</li>
-     *   <li>phoneNumber: 手机号（支持快捷搜索）</li>
-     *   <li>email: 邮箱</li>
-     *   <li>status: 状态</li>
-     *   <li>deptId: 部门ID</li>
-     *   <li>gender: 性别</li>
-     * </ul>
-     */
-    default void ensureConditionsRegistered() {
-        QueryConditionSupport.register(SysUser.class,
-                FieldConfig.string("username", SysUser::getUsername, true),
-                FieldConfig.string("nickname", SysUser::getNickname, true),
-                FieldConfig.string("phoneNumber", SysUser::getPhoneNumber, true),
-                FieldConfig.string("email", SysUser::getEmail),
-                FieldConfig.integer("status", SysUser::getStatus),
-                FieldConfig.longNum("deptId", SysUser::getDeptId),
-                FieldConfig.integer("gender", SysUser::getGender)
-        );
-    }
 
     /**
      * 根据用户名查询用户（登录时使用）
@@ -134,9 +107,6 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      * @return 分页结果
      */
     default Page<SysUser> selectUserPage(Page<SysUser> page, PageQuery query) {
-        // 确保字段配置已注册
-        ensureConditionsRegistered();
-
         LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
 
         if (query != null) {
