@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ez.admin.common.condition.QueryConditionSupport;
 import com.ez.admin.common.constant.SystemConstants;
 import com.ez.admin.common.model.PageQuery;
-import com.ez.admin.dto.role.metadata.RoleQueryMetadata;
 import com.ez.admin.modules.system.entity.SysRole;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -20,14 +19,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface SysRoleMapper extends BaseMapper<SysRole> {
-
-    /**
-     * 主动触发查询元数据注册
-     * <p>
-     * 解决类懒加载问题：确保 RoleQueryMetadata 的静态块在 Mapper 使用前执行
-     * </p>
-     */
-    RoleQueryMetadata TRIGGER_METADATA_REGISTRATION = RoleQueryMetadata.ROLE_NAME;
 
     /**
      * 检查角色名称是否存在

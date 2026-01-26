@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ez.admin.common.condition.QueryConditionSupport;
 import com.ez.admin.common.constant.SystemConstants;
 import com.ez.admin.common.model.PageQuery;
-import com.ez.admin.dto.dict.metadata.DictTypeQueryMetadata;
 import com.ez.admin.modules.system.entity.SysDictType;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -20,14 +19,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface SysDictTypeMapper extends BaseMapper<SysDictType> {
-
-    /**
-     * 主动触发查询元数据注册
-     * <p>
-     * 解决类懒加载问题：确保 DictTypeQueryMetadata 的静态块在 Mapper 使用前执行
-     * </p>
-     */
-    DictTypeQueryMetadata TRIGGER_METADATA_REGISTRATION = DictTypeQueryMetadata.DICT_NAME;
 
     /**
      * 检查字典类型是否存在
