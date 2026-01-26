@@ -3,7 +3,6 @@ package com.ez.admin.dto.user.metadata;
 import com.ez.admin.common.enums.FieldType;
 import com.ez.admin.common.enums.Operator;
 import com.ez.admin.common.metadata.QueryMetadataBuilder;
-import com.ez.admin.common.metadata.QueryMetadataProvider;
 import com.ez.admin.modules.system.entity.SysUser;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -17,19 +16,14 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class UserQueryMetadataProvider implements QueryMetadataProvider<SysUser> {
+public class UserQueryMetadataProvider {
 
-    @Override
-    public Class<SysUser> getEntityClass() {
-        return SysUser.class;
-    }
-
-    @Override
     @PostConstruct
     public void registerMetadata() {
         log.info("注册用户查询元数据...");
 
         QueryMetadataBuilder.create(SysUser.class)
+                .description("用户")
                 // 用户账号
                 .field("username", FieldType.STRING, "用户账号")
                 .keywordSearch()

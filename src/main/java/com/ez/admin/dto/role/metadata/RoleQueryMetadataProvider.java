@@ -3,7 +3,6 @@ package com.ez.admin.dto.role.metadata;
 import com.ez.admin.common.enums.FieldType;
 import com.ez.admin.common.enums.Operator;
 import com.ez.admin.common.metadata.QueryMetadataBuilder;
-import com.ez.admin.common.metadata.QueryMetadataProvider;
 import com.ez.admin.modules.system.entity.SysRole;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -17,19 +16,14 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class RoleQueryMetadataProvider implements QueryMetadataProvider<SysRole> {
+public class RoleQueryMetadataProvider {
 
-    @Override
-    public Class<SysRole> getEntityClass() {
-        return SysRole.class;
-    }
-
-    @Override
     @PostConstruct
     public void registerMetadata() {
         log.info("注册角色查询元数据...");
 
         QueryMetadataBuilder.create(SysRole.class)
+                .description("角色")
                 // 角色名称
                 .field("roleName", FieldType.STRING, "角色名称")
                 .keywordSearch()

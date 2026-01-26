@@ -54,6 +54,7 @@ public class QueryMetadataBuilder<T> {
 
     private final Class<T> entityClass;
     private final List<FieldConfig<T>> fields = new ArrayList<>();
+    private String description;
 
     private QueryMetadataBuilder(Class<T> entityClass) {
         this.entityClass = entityClass;
@@ -68,6 +69,17 @@ public class QueryMetadataBuilder<T> {
      */
     public static <T> QueryMetadataBuilder<T> create(Class<T> entityClass) {
         return new QueryMetadataBuilder<>(entityClass);
+    }
+
+    /**
+     * 设置资源描述
+     *
+     * @param description 资源描述
+     * @return 构建器实例
+     */
+    public QueryMetadataBuilder<T> description(String description) {
+        this.description = description;
+        return this;
     }
 
     /**
@@ -94,6 +106,11 @@ public class QueryMetadataBuilder<T> {
 
         FieldConfig<T>[] configs = fields.toArray(FieldConfig[]::new);
         QueryConditionSupport.register(entityClass, configs);
+
+        if (description != null && !description.isBlank()) {
+            QueryConditionSupport.registerDescription(entityClass, description);
+        }
+
         log.info("注册查询元数据: {} ({} 个字段)", entityClass.getSimpleName(), fields.size());
     }
 

@@ -1,7 +1,6 @@
 package com.ez.admin.common.condition;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.ez.admin.common.enums.FieldType;
 import com.ez.admin.common.enums.Operator;
 import com.ez.admin.dto.common.QueryCondition;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +12,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import static com.ez.admin.common.enums.FieldType.*;
+import static com.ez.admin.common.enums.FieldType.STRING;
 
 /**
  * 动态查询条件支持
@@ -21,33 +20,25 @@ import static com.ez.admin.common.enums.FieldType.*;
  * 各模块通过注册字段配置来启用动态查询功能
  * </p>
  * <p>
- * 使用方式（从 QueryMetadata 枚举自动注册）：
+ * 使用方式：
  * <pre>{@code
- * // 1. 定义 QueryMetadata 枚举
- * public enum UserQueryMetadata implements QueryMetadata<SysUser> {
- *     USERNAME("username", "String", "用户账号", ...) {
- *         @Override public SFunction<SysUser, ?> getColumn() { return SysUser::getUsername; }
- *         @Override public boolean isKeywordSearch() { return true; }
- *     },
- *     STATUS("status", "Integer", "用户状态", ...) {
- *         @Override public SFunction<SysUser, ?> getColumn() { return SysUser::getStatus; }
- *         @Override public boolean isKeywordSearch() { return false; }
- *     };
+ * // 1. 定义 Provider 类
+ * @Component
+ * public class UserQueryMetadataProvider {
  *
- *     @Getter @AllArgsConstructor
- *     private final String field;
- *     private final String type;
- *     private final String description;
- *     private final List<Operator> operators;
- *
- *     @Override
- *     public FieldConfig<SysUser>[] toFieldConfigs() {
- *         return QueryMetadata.super.toFieldConfigs(values());
- *     }
- *
- *     // 类加载时自动注册
- *     static {
- *         QueryConditionSupport.register(SysUser.class, USERNAME.toFieldConfigs());
+ *     @PostConstruct
+ *     public void registerMetadata() {
+ *         QueryMetadataBuilder.create(SysUser.class)
+ *             .field("username", FieldType.STRING, "用户账号")
+ *                 .keywordSearch()
+ *                 .operators(Operator.EQ, Operator.LIKE)
+ *                 .column(SysUser::getUsername)
+ *                 .add()
+ *             .field("status", FieldType.INTEGER, "用户状态")
+ *                 .operators(Operator.EQ, Operator.IN)
+ *                 .column(SysUser::getStatus)
+ *                 .add()
+ *             .register();
  *     }
  * }
  *
@@ -66,6 +57,7 @@ import static com.ez.admin.common.enums.FieldType.*;
 public final class QueryConditionSupport {
 
     private static final Map<Class<?>, Map<String, FieldConfig<?>>> REGISTRY = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, String> DESCRIPTIONS = new ConcurrentHashMap<>();
 
     private QueryConditionSupport() {
     }
@@ -73,7 +65,7 @@ public final class QueryConditionSupport {
     /**
      * 注册字段配置（幂等操作，可多次调用）
      * <p>
-     * 接受从 QueryMetadataProvider 注册的字段配置数组
+     * 从各模块的 Provider 类中调用，注册字段配置数组
      * </p>
      *
      * @param entityClass 实体类
@@ -91,6 +83,18 @@ public final class QueryConditionSupport {
         }
         REGISTRY.put(entityClass, configMap);
         log.debug("注册查询字段: {} -> {}", entityClass.getSimpleName(), configMap.keySet());
+    }
+
+    /**
+     * 注册资源描述
+     *
+     * @param entityClass 实体类
+     * @param description 资源描述
+     * @param <T>         实体类型
+     */
+    public static <T> void registerDescription(Class<T> entityClass, String description) {
+        DESCRIPTIONS.put(entityClass, description);
+        log.debug("注册资源描述: {} -> {}", entityClass.getSimpleName(), description);
     }
 
     /**
@@ -113,13 +117,23 @@ public final class QueryConditionSupport {
     }
 
     /**
+     * 获取资源描述
+     *
+     * @param entityClass 实体类
+     * @return 资源描述，如果未注册返回实体类简单名称
+     */
+    public static String getDescription(Class<?> entityClass) {
+        return DESCRIPTIONS.getOrDefault(entityClass, entityClass.getSimpleName());
+    }
+
+    /**
      * 应用快捷搜索（keyword）
      * <p>
      * 自动对所有标记为 keywordSearch=true 的字段进行模糊匹配
      * </p>
      *
-     * @param wrapper    查询包装器
-     * @param keyword    搜索关键词
+     * @param wrapper     查询包装器
+     * @param keyword     搜索关键词
      * @param entityClass 实体类
      */
     @SuppressWarnings("unchecked")
@@ -138,7 +152,7 @@ public final class QueryConditionSupport {
         List<FieldConfig<T>> keywordFields = configMap.values().stream()
                 .filter(config -> config.isKeywordSearch() && config.getType() == STRING)
                 .map(config -> (FieldConfig<T>) config)
-                .collect(Collectors.toList());
+                .toList();
 
         if (keywordFields.isEmpty()) {
             log.warn("快捷搜索失败: {} 无可用字段（STRING 类型且 keywordSearch=true）", entityClass.getSimpleName());
@@ -162,7 +176,7 @@ public final class QueryConditionSupport {
      *
      * @param wrapper     查询包装器
      * @param conditions  查询条件列表
-     * @param entityClass  实体类
+     * @param entityClass 实体类
      */
     @SuppressWarnings("unchecked")
     public static <T> void applyConditions(LambdaQueryWrapper<T> wrapper, List<QueryCondition> conditions, Class<T> entityClass) {
@@ -196,9 +210,12 @@ public final class QueryConditionSupport {
 
             try {
                 switch (config.getType()) {
-                    case STRING -> applyStringCondition(wrapper, operator, (FieldConfig<T>) config, condition.getValue());
-                    case INTEGER -> applyNumericCondition(wrapper, operator, (FieldConfig<T>) config, condition.getValue(), Integer.class);
-                    case LONG -> applyNumericCondition(wrapper, operator, (FieldConfig<T>) config, condition.getValue(), Long.class);
+                    case STRING ->
+                            applyStringCondition(wrapper, operator, (FieldConfig<T>) config, condition.getValue());
+                    case INTEGER ->
+                            applyNumericCondition(wrapper, operator, (FieldConfig<T>) config, condition.getValue(), Integer.class);
+                    case LONG ->
+                            applyNumericCondition(wrapper, operator, (FieldConfig<T>) config, condition.getValue(), Long.class);
                 }
                 log.debug("应用查询条件: {}.{} {} {}", entityClass.getSimpleName(), condition.getField(), operator, condition.getValue());
             } catch (IllegalArgumentException e) {
@@ -209,7 +226,7 @@ public final class QueryConditionSupport {
     }
 
     private static <T> void applyStringCondition(LambdaQueryWrapper<T> wrapper, Operator operator,
-                                                  FieldConfig<T> config, String value) {
+                                                 FieldConfig<T> config, String value) {
         switch (operator) {
             case EQ -> wrapper.eq(StringUtils.hasText(value), config.getColumn(), value);
             case NE -> wrapper.ne(StringUtils.hasText(value), config.getColumn(), value);
@@ -233,7 +250,6 @@ public final class QueryConditionSupport {
     /**
      * 统一处理数值类型条件（INTEGER/LONG）
      */
-    @SuppressWarnings("unchecked")
     private static <T, N extends Number> void applyNumericCondition(LambdaQueryWrapper<T> wrapper, Operator operator,
                                                                     FieldConfig<T> config, String value, Class<N> numType) {
         if (!StringUtils.hasText(value)) {
@@ -263,7 +279,7 @@ public final class QueryConditionSupport {
      * 统一处理数值 IN 条件（INTEGER/LONG）
      */
     private static <T, N extends Number> void applyNumericInCondition(LambdaQueryWrapper<T> wrapper, FieldConfig<T> config,
-                                                                       String value, Operator operator, Class<N> numType) {
+                                                                      String value, Operator operator, Class<N> numType) {
         String[] values = value.split(",");
         List<N> numValues = new ArrayList<>(values.length);
         for (String v : values) {
@@ -280,13 +296,12 @@ public final class QueryConditionSupport {
     /**
      * 统一数值解析，提供友好的错误提示
      */
-    @SuppressWarnings("unchecked")
     private static <N extends Number> N parseNumber(String value, Class<N> numType, String fieldCode) {
         try {
             if (numType == Integer.class) {
-                return (N) Integer.valueOf(value);
+                return numType.cast(Integer.valueOf(value));
             } else if (numType == Long.class) {
-                return (N) Long.valueOf(value);
+                return numType.cast(Long.valueOf(value));
             }
             throw new IllegalArgumentException("不支持的数值类型: " + numType.getSimpleName());
         } catch (NumberFormatException e) {
