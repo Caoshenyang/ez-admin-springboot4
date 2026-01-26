@@ -1,7 +1,7 @@
 package com.ez.admin.common.mapstruct;
 
+import com.ez.admin.dto.menu.vo.MenuDetailVO;
 import com.ez.admin.dto.menu.vo.MenuTreeVO;
-import com.ez.admin.dto.menu.vo.MenuVO;
 import com.ez.admin.modules.system.entity.SysMenu;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -23,20 +23,20 @@ public interface MenuConverter {
     MenuConverter INSTANCE = Mappers.getMapper(MenuConverter.class);
 
     /**
-     * SysMenu 转 MenuVO（列表展示）
+     * SysMenu 转 MenuDetailVO（详情）
      *
      * @param menu 菜单实体
-     * @return 菜单 VO
+     * @return 菜单详情 VO
      */
-    MenuVO toVO(SysMenu menu);
+    MenuDetailVO toDetailVO(SysMenu menu);
 
     /**
-     * SysMenu 列表转 MenuVO 列表（列表展示）
+     * SysMenu 列表转 MenuDetailVO 列表（详情）
      *
      * @param menus 菜单实体列表
-     * @return 菜单 VO 列表
+     * @return 菜单详情 VO 列表
      */
-    List<MenuVO> toVOList(List<SysMenu> menus);
+    List<MenuDetailVO> toDetailVOList(List<SysMenu> menus);
 
     /**
      * SysMenu 转 MenuTreeVO（树形结构）

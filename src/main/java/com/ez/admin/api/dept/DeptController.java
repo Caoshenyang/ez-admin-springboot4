@@ -3,8 +3,8 @@ package com.ez.admin.api.dept;
 import com.ez.admin.common.model.R;
 import com.ez.admin.dto.dept.req.DeptCreateReq;
 import com.ez.admin.dto.dept.req.DeptUpdateReq;
+import com.ez.admin.dto.dept.vo.DeptDetailVO;
 import com.ez.admin.dto.dept.vo.DeptTreeVO;
-import com.ez.admin.dto.dept.vo.DeptVO;
 import com.ez.admin.service.dept.DeptService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -56,8 +56,8 @@ public class DeptController {
 
     @GetMapping("/{deptId}")
     @Operation(summary = "查询部门详情", description = "根据部门ID查询部门完整信息")
-    public R<DeptVO> getById(@PathVariable Long deptId) {
-        DeptVO dept = deptService.getDeptById(deptId);
+    public R<DeptDetailVO> getById(@PathVariable Long deptId) {
+        DeptDetailVO dept = deptService.getDeptById(deptId);
         return R.success(dept);
     }
 

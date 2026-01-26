@@ -3,7 +3,8 @@ package com.ez.admin.api.menu;
 import com.ez.admin.common.model.R;
 import com.ez.admin.dto.menu.req.MenuCreateReq;
 import com.ez.admin.dto.menu.req.MenuUpdateReq;
-import com.ez.admin.dto.menu.vo.MenuVO;
+import com.ez.admin.dto.menu.vo.MenuDetailVO;
+import com.ez.admin.dto.menu.vo.MenuTreeVO;
 import com.ez.admin.service.menu.MenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -55,15 +56,15 @@ public class MenuController {
 
     @GetMapping("/{menuId}")
     @Operation(summary = "查询菜单详情", description = "根据菜单ID查询菜单完整信息")
-    public R<MenuVO> getById(@PathVariable Long menuId) {
-        MenuVO menu = menuService.getMenuById(menuId);
+    public R<MenuDetailVO> getById(@PathVariable Long menuId) {
+        MenuDetailVO menu = menuService.getMenuById(menuId);
         return R.success(menu);
     }
 
     @GetMapping("/tree")
     @Operation(summary = "查询菜单树", description = "查询完整的菜单树形结构（不分页）")
-    public R<List<MenuVO>> getTree() {
-        List<MenuVO> tree = menuService.getMenuTree();
+    public R<List<MenuTreeVO>> getTree() {
+        List<MenuTreeVO> tree = menuService.getMenuTree();
         return R.success(tree);
     }
 }

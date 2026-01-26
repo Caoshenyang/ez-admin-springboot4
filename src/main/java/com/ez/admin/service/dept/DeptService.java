@@ -7,7 +7,7 @@ import com.ez.admin.common.mapstruct.DeptConverter;
 import com.ez.admin.common.tree.TreeBuilder;
 import com.ez.admin.dto.dept.req.DeptCreateReq;
 import com.ez.admin.dto.dept.req.DeptUpdateReq;
-import com.ez.admin.dto.dept.vo.DeptVO;
+import com.ez.admin.dto.dept.vo.DeptDetailVO;
 import com.ez.admin.modules.system.entity.SysDept;
 import com.ez.admin.modules.system.entity.SysUser;
 import com.ez.admin.modules.system.mapper.SysDeptMapper;
@@ -149,13 +149,13 @@ public class DeptService {
      * @param deptId 部门ID
      * @return 部门详情
      */
-    public DeptVO getDeptById(Long deptId) {
+    public DeptDetailVO getDeptById(Long deptId) {
         SysDept dept = deptMapper.selectById(deptId);
         if (dept == null) {
             throw new EzBusinessException(ErrorCode.DEPT_NOT_FOUND);
         }
 
-        return deptConverter.toVO(dept);
+        return deptConverter.toDetailVO(dept);
     }
 
     /**

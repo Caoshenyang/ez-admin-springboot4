@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ez.admin.common.exception.EzBusinessException;
 import com.ez.admin.common.exception.ErrorCode;
 import com.ez.admin.common.mapstruct.MenuConverter;
+import com.ez.admin.common.tree.TreeBuilder;
 import com.ez.admin.dto.menu.req.MenuCreateReq;
 import com.ez.admin.dto.menu.req.MenuUpdateReq;
-import com.ez.admin.dto.menu.vo.MenuVO;
+import com.ez.admin.dto.menu.vo.MenuDetailVO;
+import com.ez.admin.dto.menu.vo.MenuTreeVO;
 import com.ez.admin.modules.system.entity.SysMenu;
 import com.ez.admin.modules.system.mapper.SysMenuMapper;
 import com.ez.admin.modules.system.service.SysMenuService;
@@ -137,13 +139,13 @@ public class MenuService {
      * @param menuId 菜单ID
      * @return 菜单详情
      */
-    public MenuVO getMenuById(Long menuId) {
+    public MenuDetailVO getMenuById(Long menuId) {
         SysMenu menu = menuMapper.selectById(menuId);
         if (menu == null) {
             throw new EzBusinessException(ErrorCode.MENU_NOT_FOUND);
         }
 
-        return menuConverter.toVO(menu);
+        return menuConverter.toDetailVO(menu);
     }
 
     /**
@@ -151,17 +153,16 @@ public class MenuService {
      *
      * @return 菜单树（完整的树形结构）
      */
-    public List<MenuVO> getMenuTree() {
+    public List<MenuTreeVO> getMenuTree() {
         // 1. 查询所有菜单
         List<SysMenu> allMenus = menuMapper.selectList(new LambdaQueryWrapper<SysMenu>()
                 .orderByAsc(SysMenu::getMenuSort));
 
-        // 2. 转换为 VO
-        List<MenuVO> menuVOs = menuConverter.toVOList(allMenus);
+        // 2. 转换为 TreeVO
+        List<MenuTreeVO> menuTreeVOs = menuConverter.toTreeVOList(allMenus);
 
-        // 3. 构建树形结构（暂时预留，返回平铺列表）
-        // TODO: 后续实现树形结构构建逻辑
-        return menuVOs;
+        // 3. 构建树形结构
+        return TreeBuilder.build(menuTreeVOs);
     }
 
     // ==================== 私有方法 ====================
