@@ -1,5 +1,6 @@
 package com.ez.admin.common.mapstruct;
 
+import com.ez.admin.dto.dept.vo.DeptTreeVO;
 import com.ez.admin.dto.dept.vo.DeptVO;
 import com.ez.admin.modules.system.entity.SysDept;
 import org.mapstruct.Mapper;
@@ -22,7 +23,7 @@ public interface DeptConverter {
     DeptConverter INSTANCE = Mappers.getMapper(DeptConverter.class);
 
     /**
-     * SysDept 转 DeptVO
+     * SysDept 转 DeptVO（列表展示）
      *
      * @param dept 部门实体
      * @return 部门 VO
@@ -30,10 +31,26 @@ public interface DeptConverter {
     DeptVO toVO(SysDept dept);
 
     /**
-     * SysDept 列表转 DeptVO 列表
+     * SysDept 列表转 DeptVO 列表（列表展示）
      *
      * @param depts 部门实体列表
      * @return 部门 VO 列表
      */
     List<DeptVO> toVOList(List<SysDept> depts);
+
+    /**
+     * SysDept 转 DeptTreeVO（树形结构）
+     *
+     * @param dept 部门实体
+     * @return 部门 TreeVO
+     */
+    DeptTreeVO toTreeVO(SysDept dept);
+
+    /**
+     * SysDept 列表转 DeptTreeVO 列表（树形结构）
+     *
+     * @param depts 部门实体列表
+     * @return 部门 TreeVO 列表
+     */
+    List<DeptTreeVO> toTreeVOList(List<SysDept> depts);
 }

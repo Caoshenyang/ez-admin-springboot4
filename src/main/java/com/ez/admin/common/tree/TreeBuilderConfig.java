@@ -33,7 +33,7 @@ import java.util.function.Predicate;
  * @since 2026-01-26
  */
 @Schema(description = "树形结构构建配置类")
-public class TreeBuilderConfig<T extends TreeNode> {
+public class TreeBuilderConfig<T extends TreeNode<T>> {
 
     private final List<T> dataList;
     private Long rootNodeId;
@@ -42,7 +42,7 @@ public class TreeBuilderConfig<T extends TreeNode> {
     private Function<T, Integer> sorter;
 
     /**
-     * 构造函数（私有，由 TreeBuilder.of() 创建）
+     * 构造函数（默认访问权限，由 TreeBuilder.of() 创建）
      *
      * @param dataList 包含树形数据的列表
      */

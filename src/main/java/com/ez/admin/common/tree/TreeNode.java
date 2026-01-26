@@ -10,30 +10,53 @@ import java.util.function.Predicate;
 
 /**
  * <p>
- * 树形节点抽象基类
+ * 树形节点抽象基类（泛型支持）
  * </p>
  * <p>
  * 设计思路：
  * <ul>
+ *   <li>使用泛型：支持类型安全的 children 列表，避免强制类型转换</li>
  *   <li>使用抽象类而非接口：可以直接包含 children 字段和默认实现，避免每个子类重复定义</li>
  *   <li>提供抽象方法：由子类实现 getNodeId 和 getParentId，支持不同的 ID 字段名（如 menuId、deptId）</li>
  *   <li>提供便利方法：addChild、removeChild、clearChildren 等，方便操作子节点</li>
  *   <li>支持遍历：forEach、forEachChildren 等方法，支持递归遍历整棵树</li>
  * </ul>
  * </p>
+ * <p>
+ * 使用示例：
+ * <pre>{@code
+ * public class MenuTreeVO extends TreeNode<MenuTreeVO> {
+ *     @Override
+ *     public Long getNodeId() {
+ *         return this.menuId;
+ *     }
+ *
+ *     @Override
+ *     public Long getParentId() {
+ *         return this.parentId;
+ *     }
+ *
+ *     // 类型安全的 getter
+ *     public List<MenuTreeVO> getChildren() {
+ *         return super.getChildren();
+ *     }
+ * }
+ * }</pre>
+ * </p>
  *
  * @author ez-admin
  * @since 2026-01-26
+ * @param <T> 子类类型（递归泛型）
  */
 @Data
 @Schema(description = "树形节点基类")
-public abstract class TreeNode {
+public abstract class TreeNode<T extends TreeNode<T>> {
 
     /**
-     * 子节点列表
+     * 子节点列表（类型安全）
      */
     @Schema(description = "子节点列表")
-    private List<TreeNode> children = new ArrayList<>();
+    private List<T> children = new ArrayList<>();
 
     /**
      * 获取节点 ID
@@ -96,7 +119,7 @@ public abstract class TreeNode {
      *
      * @param child 子节点
      */
-    public void addChild(TreeNode child) {
+    public void addChild(T child) {
         if (this.children == null) {
             this.children = new ArrayList<>();
         }
@@ -109,7 +132,7 @@ public abstract class TreeNode {
      * @param index 子节点索引
      * @return 被移除的子节点
      */
-    public TreeNode removeChild(int index) {
+    public T removeChild(int index) {
         if (this.children == null || index < 0 || index >= this.children.size()) {
             return null;
         }
@@ -130,8 +153,9 @@ public abstract class TreeNode {
      *
      * @param action 对每个节点执行的操作
      */
-    public void forEach(Consumer<TreeNode> action) {
-        action.accept(this);
+    @SuppressWarnings("unchecked")
+    public void forEach(Consumer<T> action) {
+        action.accept((T) this);
         if (hasChildren()) {
             children.forEach(child -> child.forEach(action));
         }
@@ -142,7 +166,7 @@ public abstract class TreeNode {
      *
      * @param action 对每个子节点执行的操作
      */
-    public void forEachChildren(Consumer<TreeNode> action) {
+    public void forEachChildren(Consumer<T> action) {
         if (hasChildren()) {
             children.forEach(action);
         }
@@ -154,13 +178,14 @@ public abstract class TreeNode {
      * @param predicate 匹配条件
      * @return 第一个符合条件的节点，未找到返回 null
      */
-    public TreeNode find(Predicate<TreeNode> predicate) {
-        if (predicate.test(this)) {
-            return this;
+    @SuppressWarnings("unchecked")
+    public T find(Predicate<T> predicate) {
+        if (predicate.test((T) this)) {
+            return (T) this;
         }
         if (hasChildren()) {
-            for (TreeNode child : children) {
-                TreeNode found = child.find(predicate);
+            for (T child : children) {
+                T found = child.find(predicate);
                 if (found != null) {
                     return found;
                 }
@@ -179,7 +204,7 @@ public abstract class TreeNode {
             return 0;
         }
         int count = children.size();
-        for (TreeNode child : children) {
+        for (TreeNode<T> child : children) {
             count += child.countDescendants();
         }
         return count;
@@ -195,7 +220,7 @@ public abstract class TreeNode {
             return 0;
         }
         int maxDepth = 0;
-        for (TreeNode child : children) {
+        for (TreeNode<T> child : children) {
             maxDepth = Math.max(maxDepth, child.getDepth());
         }
         return maxDepth + 1;

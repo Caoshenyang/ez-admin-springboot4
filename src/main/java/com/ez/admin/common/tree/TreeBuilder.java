@@ -60,7 +60,7 @@ public class TreeBuilder {
      * @param <T>      树形数据对象的类型，必须继承 TreeNode
      * @return 树形结构的根节点列表
      */
-    public static <T extends TreeNode> List<T> build(List<T> dataList) {
+    public static <T extends TreeNode<T>> List<T> build(List<T> dataList) {
         return buildTree(dataList, null, false, null, null);
     }
 
@@ -72,7 +72,7 @@ public class TreeBuilder {
      * @param <T>        树形数据对象的类型
      * @return 树形结构的根节点列表
      */
-    public static <T extends TreeNode> List<T> build(List<T> dataList, Long rootNodeId) {
+    public static <T extends TreeNode<T>> List<T> build(List<T> dataList, Long rootNodeId) {
         return buildTree(dataList, rootNodeId, false, null, null);
     }
 
@@ -84,7 +84,7 @@ public class TreeBuilder {
      * @param <T>      树形数据对象的类型
      * @return 树形结构的根节点列表
      */
-    public static <T extends TreeNode> List<T> build(List<T> dataList, Predicate<T> filter) {
+    public static <T extends TreeNode<T>> List<T> build(List<T> dataList, Predicate<T> filter) {
         return buildTree(dataList, null, false, filter, null);
     }
 
@@ -96,7 +96,7 @@ public class TreeBuilder {
      * @param <T>      树形数据对象的类型
      * @return 树形结构的根节点列表
      */
-    public static <T extends TreeNode> List<T> build(List<T> dataList, Function<T, Integer> sorter) {
+    public static <T extends TreeNode<T>> List<T> build(List<T> dataList, Function<T, Integer> sorter) {
         return buildTree(dataList, null, true, null, sorter);
     }
 
@@ -122,7 +122,7 @@ public class TreeBuilder {
      * @param <T>        树形数据对象的类型
      * @return 树形结构的根节点列表
      */
-    public static <T extends TreeNode> List<T> buildTree(List<T> dataList, Long rootNodeId, boolean needSort, Predicate<T> filter, Function<T, Integer> sorter) {
+    public static <T extends TreeNode<T>> List<T> buildTree(List<T> dataList, Long rootNodeId, boolean needSort, Predicate<T> filter, Function<T, Integer> sorter) {
 
         if (dataList == null || dataList.isEmpty()) {
             return new ArrayList<>();
@@ -188,7 +188,7 @@ public class TreeBuilder {
      * @param <T>    节点类型
      */
     @SuppressWarnings("unchecked")
-    private static <T extends TreeNode> void sortTree(List<T> nodes, Function<T, Integer> sorter) {
+    private static <T extends TreeNode<T>> void sortTree(List<T> nodes, Function<T, Integer> sorter) {
         if (nodes == null || nodes.isEmpty()) {
             return;
         }
@@ -212,7 +212,7 @@ public class TreeBuilder {
         // 递归排序子节点
         nodes.forEach(node -> {
             if (node.hasChildren()) {
-                sortTree((List<T>) node.getChildren(), sorter);
+                sortTree(node.getChildren(), sorter);
             }
         });
     }
@@ -224,7 +224,7 @@ public class TreeBuilder {
      * @param <T>  节点类型
      * @return 平铺后的列表
      */
-    public static <T extends TreeNode> List<T> flatten(List<T> tree) {
+    public static <T extends TreeNode<T>> List<T> flatten(List<T> tree) {
         List<T> result = new ArrayList<>();
         if (tree == null || tree.isEmpty()) {
             return result;
@@ -237,11 +237,11 @@ public class TreeBuilder {
      * 递归平铺
      */
     @SuppressWarnings("unchecked")
-    private static <T extends TreeNode> void flatten(List<T> tree, List<T> result) {
+    private static <T extends TreeNode<T>> void flatten(List<T> tree, List<T> result) {
         for (T node : tree) {
             result.add(node);
             if (node.hasChildren()) {
-                flatten((List<T>) node.getChildren(), result);
+                flatten(node.getChildren(), result);
             }
         }
     }
@@ -255,14 +255,14 @@ public class TreeBuilder {
      * @return 过滤后的树形结构
      */
     @SuppressWarnings("unchecked")
-    public static <T extends TreeNode> List<T> filterTree(List<T> tree, Predicate<T> filter) {
+    public static <T extends TreeNode<T>> List<T> filterTree(List<T> tree, Predicate<T> filter) {
         if (tree == null || tree.isEmpty()) {
             return new ArrayList<>();
         }
 
         return tree.stream().filter(node -> filterNode(node, filter)).peek(node -> {
             if (node.hasChildren()) {
-                List<T> filteredChildren = (List<T>) node.getChildren();
+                List<T> filteredChildren = node.getChildren();
                 node.setChildren(new ArrayList<>(filterTree(filteredChildren, filter)));
             }
         }).collect(Collectors.toList());
@@ -280,8 +280,8 @@ public class TreeBuilder {
 
         // 检查子孙节点
         if (node.hasChildren()) {
-            for (TreeNode child : node.getChildren()) {
-                if (filterNode((T) child, filter)) {
+            for (TreeNode<T> child : node.getChildren()) {
+                if (filterNode(child, filter)) {
                     return true;
                 }
             }
@@ -305,7 +305,7 @@ public class TreeBuilder {
         tree.forEach(node -> {
             action.accept(node);
             if (node.hasChildren()) {
-                forEach((List<T>) node.getChildren(), action);
+                forEach(node.getChildren(), action);
             }
         });
     }
@@ -329,7 +329,7 @@ public class TreeBuilder {
                 return node;
             }
             if (node.hasChildren()) {
-                T found = find((List<T>) node.getChildren(), filter);
+                T found = find(node.getChildren(), filter);
                 if (found != null) {
                     return found;
                 }

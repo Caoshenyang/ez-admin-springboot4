@@ -1,9 +1,10 @@
 package com.ez.admin.service.dept;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.ez.admin.common.exception.EzBusinessException;
 import com.ez.admin.common.exception.ErrorCode;
+import com.ez.admin.common.exception.EzBusinessException;
 import com.ez.admin.common.mapstruct.DeptConverter;
+import com.ez.admin.common.tree.TreeBuilder;
 import com.ez.admin.dto.dept.req.DeptCreateReq;
 import com.ez.admin.dto.dept.req.DeptUpdateReq;
 import com.ez.admin.dto.dept.vo.DeptVO;
@@ -16,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 部门管理服务
@@ -160,17 +163,16 @@ public class DeptService {
      *
      * @return 部门树（完整的树形结构）
      */
-    public java.util.List<DeptVO> getDeptTree() {
+    public List<com.ez.admin.dto.dept.vo.DeptTreeVO> getDeptTree() {
         // 1. 查询所有部门
-        java.util.List<SysDept> allDepts = deptMapper.selectList(new LambdaQueryWrapper<SysDept>()
+        List<SysDept> allDepts = deptMapper.selectList(new LambdaQueryWrapper<SysDept>()
                 .orderByAsc(SysDept::getDeptSort));
 
-        // 2. 转换为 VO
-        java.util.List<DeptVO> deptVOs = deptConverter.toVOList(allDepts);
+        // 2. 转换为 TreeVO
+        List<com.ez.admin.dto.dept.vo.DeptTreeVO> deptTreeVOs = deptConverter.toTreeVOList(allDepts);
 
-        // 3. 构建树形结构（暂时预留，返回平铺列表）
-        // TODO: 后续实现树形结构构建逻辑
-        return deptVOs;
+        // 3. 构建树形结构
+        return TreeBuilder.build(deptTreeVOs);
     }
 
     // ==================== 私有方法 ====================
