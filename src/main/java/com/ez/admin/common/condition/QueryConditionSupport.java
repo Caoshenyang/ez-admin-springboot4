@@ -108,14 +108,8 @@ public final class QueryConditionSupport {
         }
 
         Map<String, FieldConfig<?>> configMap = REGISTRY.get(entityClass);
-
-        // 自动尝试加载元数据
         if (configMap == null || configMap.isEmpty()) {
-            configMap = autoLoadMetadata(entityClass);
-        }
-
-        if (configMap == null || configMap.isEmpty()) {
-            log.warn("快捷搜索失败: {} 未注册字段配置", entityClass.getSimpleName());
+            log.warn("快捷搜索失败: {} 未注册字段配置，请在 QueryMetadataConfiguration 中添加配置", entityClass.getSimpleName());
             return;
         }
 
@@ -152,14 +146,8 @@ public final class QueryConditionSupport {
     @SuppressWarnings("unchecked")
     public static <T> void applyConditions(LambdaQueryWrapper<T> wrapper, List<QueryCondition> conditions, Class<T> entityClass) {
         Map<String, FieldConfig<?>> configMap = REGISTRY.get(entityClass);
-
-        // 自动尝试加载元数据
         if (configMap == null || configMap.isEmpty()) {
-            configMap = autoLoadMetadata(entityClass);
-        }
-
-        if (configMap == null || configMap.isEmpty()) {
-            log.warn("高级查询失败: {} 未注册字段配置", entityClass.getSimpleName());
+            log.warn("高级查询失败: {} 未注册字段配置，请在 QueryMetadataConfiguration 中添加配置", entityClass.getSimpleName());
             return;
         }
 
@@ -284,111 +272,5 @@ public final class QueryConditionSupport {
             String typeName = numType == Integer.class ? "整数" : "长整数";
             throw new IllegalArgumentException(String.format("字段[%s]需要%s类型，但收到: [%s]", fieldCode, typeName, value));
         }
-    }
-
-    /**
-     * 自动尝试加载并注册元数据
-     * <p>
-     * 根据实体类名称，按照约定查找对应的 QueryMetadata 枚举类并自动注册
-     * </p>
-     * <p>
-     * 命名约定：
-     * <ul>
-     *   <li>SysUser → UserQueryMetadata</li>
-     *   <li>SysRole → RoleQueryMetadata</li>
-     *   <li>SysDictType → DictTypeQueryMetadata</li>
-     * </ul>
-     * </p>
-     * <p>
-     * 包路径约定：
-     * <ul>
-     *   <li>com.ez.admin.modules.system.entity.SysUser</li>
-     *   <li>→ com.ez.admin.dto.user.metadata.UserQueryMetadata</li>
-     * </ul>
-     * </p>
-     *
-     * @param entityClass 实体类
-     * @param <T>         实体类型
-     * @return 字段配置映射，如果加载失败则返回 null
-     */
-    @SuppressWarnings("unchecked")
-    private static <T> Map<String, FieldConfig<?>> autoLoadMetadata(Class<T> entityClass) {
-        String entityClassName = entityClass.getSimpleName();
-
-        // 根据实体类名称推断元数据类名
-        String metadataClassName = entityClassName.replace("Sys", "")
-                .replace("Dict", "")
-                + "QueryMetadata";
-
-        // 构建元数据类的完整包路径
-        // com.ez.admin.modules.system.entity.SysUser
-        // → com.ez.admin.dto.user.metadata.UserQueryMetadata
-        String basePackage = "com.ez.admin.dto";
-
-        // 根据实体类名推断模块名（小写）
-        String moduleName = inferModuleName(entityClassName);
-
-        String fullMetadataClassName = basePackage + "." + moduleName + ".metadata." + metadataClassName;
-
-        try {
-            // 尝试加载元数据类
-            Class<?> metadataClass = Class.forName(fullMetadataClassName);
-
-            // 验证是否为 QueryMetadata 接口的实现
-            if (!QueryMetadata.class.isAssignableFrom(metadataClass)) {
-                log.debug("跳过非 QueryMetadata 类: {}", fullMetadataClassName);
-                return null;
-            }
-
-            // 获取 FIELD_CONFIGS 静态字段
-            try {
-                java.lang.reflect.Field fieldConfigsField = metadataClass.getDeclaredField("FIELD_CONFIGS");
-                fieldConfigsField.setAccessible(true);
-
-                FieldConfig<T>[] configs = (FieldConfig<T>[]) fieldConfigsField.get(null);
-
-                if (configs != null && configs.length > 0) {
-                    // 自动注册
-                    register(entityClass, configs);
-                    log.info("自动加载元数据: {} -> {} ({} 个字段)",
-                            entityClass.getSimpleName(), metadataClassName, configs.length);
-                    return REGISTRY.get(entityClass);
-                }
-            } catch (NoSuchFieldException e) {
-                log.debug("元数据类缺少 FIELD_CONFIGS 字段: {}", fullMetadataClassName);
-            }
-
-        } catch (ClassNotFoundException e) {
-            log.debug("未找到元数据类: {}", fullMetadataClassName);
-        } catch (Exception e) {
-            log.debug("加载元数据失败: {} - {}", fullMetadataClassName, e.getMessage());
-        }
-
-        return null;
-    }
-
-    /**
-     * 根据实体类名推断模块名
-     * <p>
-     * 命名约定：
-     * <ul>
-     *   <li>SysUser → user</li>
-     *   <li>SysRole → role</li>
-     *   <li>SysMenu → menu</li>
-     *   <li>SysDept → dept</li>
-     *   <li>SysDictType → dict</li>
-     *   <li>SysDictData → dict</li>
-     * </ul>
-     * </p>
-     */
-    private static String inferModuleName(String entityClassName) {
-        // 移除 Sys 前缀
-        String name = entityClassName.replace("Sys", "");
-
-        // 移除 Type/Data 后缀
-        name = name.replace("Type", "").replace("Data", "");
-
-        // 转换为小写
-        return name.toLowerCase();
     }
 }
