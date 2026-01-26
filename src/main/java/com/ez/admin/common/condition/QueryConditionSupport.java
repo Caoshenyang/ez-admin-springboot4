@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static com.ez.admin.common.enums.FieldType.*;
+
 /**
  * 动态查询条件支持
  * <p>
@@ -85,7 +87,7 @@ public final class QueryConditionSupport {
         }
         Map<String, FieldConfig<?>> configMap = new ConcurrentHashMap<>();
         for (FieldConfig<T> config : configs) {
-            configMap.put(config.fieldCode(), config);
+            configMap.put(config.getFieldCode(), config);
         }
         REGISTRY.put(entityClass, configMap);
         log.debug("注册查询字段: {} -> {}", entityClass.getSimpleName(), configMap.keySet());
@@ -134,7 +136,7 @@ public final class QueryConditionSupport {
 
         // 筛选出可用于快捷搜索的字段（仅字符串类型且 keywordSearch=true）
         List<FieldConfig<T>> keywordFields = configMap.values().stream()
-                .filter(config -> config.keywordSearch() && config.type() == FieldType.STRING)
+                .filter(config -> config.isKeywordSearch() && config.getType() == STRING)
                 .map(config -> (FieldConfig<T>) config)
                 .collect(Collectors.toList());
 
@@ -146,13 +148,13 @@ public final class QueryConditionSupport {
         // 应用 OR 条件：field1 LIKE %keyword% OR field2 LIKE %keyword%
         wrapper.and(w -> {
             var it = keywordFields.iterator();
-            w.like(it.next().column(), keyword);
-            it.forEachRemaining(f -> w.or().like(f.column(), keyword));
+            w.like(it.next().getColumn(), keyword);
+            it.forEachRemaining(f -> w.or().like(f.getColumn(), keyword));
         });
 
         log.debug("应用快捷搜索: {} keyword=[{}] fields=[{}]",
                 entityClass.getSimpleName(), keyword,
-                keywordFields.stream().map(FieldConfig::fieldCode).collect(Collectors.joining(", ")));
+                keywordFields.stream().map(FieldConfig::getFieldCode).collect(Collectors.joining(", ")));
     }
 
     /**
@@ -193,7 +195,7 @@ public final class QueryConditionSupport {
             }
 
             try {
-                switch (config.type()) {
+                switch (config.getType()) {
                     case STRING -> applyStringCondition(wrapper, operator, (FieldConfig<T>) config, condition.getValue());
                     case INTEGER -> applyNumericCondition(wrapper, operator, (FieldConfig<T>) config, condition.getValue(), Integer.class);
                     case LONG -> applyNumericCondition(wrapper, operator, (FieldConfig<T>) config, condition.getValue(), Long.class);
@@ -209,17 +211,17 @@ public final class QueryConditionSupport {
     private static <T> void applyStringCondition(LambdaQueryWrapper<T> wrapper, Operator operator,
                                                   FieldConfig<T> config, String value) {
         switch (operator) {
-            case EQ -> wrapper.eq(StringUtils.hasText(value), config.column(), value);
-            case NE -> wrapper.ne(StringUtils.hasText(value), config.column(), value);
-            case LIKE -> wrapper.like(StringUtils.hasText(value), config.column(), value);
-            case NOT_LIKE -> wrapper.notLike(StringUtils.hasText(value), config.column(), value);
+            case EQ -> wrapper.eq(StringUtils.hasText(value), config.getColumn(), value);
+            case NE -> wrapper.ne(StringUtils.hasText(value), config.getColumn(), value);
+            case LIKE -> wrapper.like(StringUtils.hasText(value), config.getColumn(), value);
+            case NOT_LIKE -> wrapper.notLike(StringUtils.hasText(value), config.getColumn(), value);
             case IN, NOT_IN -> {
                 if (StringUtils.hasText(value)) {
                     String[] values = value.split(",");
                     if (operator == Operator.IN) {
-                        wrapper.in(config.column(), (Object[]) values);
+                        wrapper.in(config.getColumn(), (Object[]) values);
                     } else {
-                        wrapper.notIn(config.column(), (Object[]) values);
+                        wrapper.notIn(config.getColumn(), (Object[]) values);
                     }
                 }
             }
@@ -243,15 +245,15 @@ public final class QueryConditionSupport {
             return;
         }
 
-        N numValue = parseNumber(value, numType, config.fieldCode());
+        N numValue = parseNumber(value, numType, config.getFieldCode());
 
         switch (operator) {
-            case EQ -> wrapper.eq(config.column(), numValue);
-            case NE -> wrapper.ne(config.column(), numValue);
-            case GT -> wrapper.gt(config.column(), numValue);
-            case GE -> wrapper.ge(config.column(), numValue);
-            case LT -> wrapper.lt(config.column(), numValue);
-            case LE -> wrapper.le(config.column(), numValue);
+            case EQ -> wrapper.eq(config.getColumn(), numValue);
+            case NE -> wrapper.ne(config.getColumn(), numValue);
+            case GT -> wrapper.gt(config.getColumn(), numValue);
+            case GE -> wrapper.ge(config.getColumn(), numValue);
+            case LT -> wrapper.lt(config.getColumn(), numValue);
+            case LE -> wrapper.le(config.getColumn(), numValue);
             default -> {
             }
         }
@@ -265,13 +267,13 @@ public final class QueryConditionSupport {
         String[] values = value.split(",");
         List<N> numValues = new ArrayList<>(values.length);
         for (String v : values) {
-            numValues.add(parseNumber(v.trim(), numType, config.fieldCode()));
+            numValues.add(parseNumber(v.trim(), numType, config.getFieldCode()));
         }
 
         if (operator == Operator.IN) {
-            wrapper.in(config.column(), numValues);
+            wrapper.in(config.getColumn(), numValues);
         } else {
-            wrapper.notIn(config.column(), numValues);
+            wrapper.notIn(config.getColumn(), numValues);
         }
     }
 

@@ -139,8 +139,8 @@ public class MetadataController {
             case "user", "users" -> "用户";
             case "role", "roles" -> "角色";
             case "menu", "menus" -> "菜单";
-            case "dept", "dept" -> "部门";
-            case "dicttype", "dicttype" -> "字典类型";
+            case "dept", "depts" -> "部门";
+            case "dicttype", "dicttypes" -> "字典类型";
             default -> resource;
         };
     }
