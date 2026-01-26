@@ -1,7 +1,13 @@
 package com.ez.admin.modules.system.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ez.admin.common.condition.QueryConditionSupport;
+import com.ez.admin.common.constant.SystemConstants;
+import com.ez.admin.common.model.PageQuery;
 import com.ez.admin.modules.system.entity.SysRole;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
@@ -11,6 +17,93 @@ import com.ez.admin.modules.system.entity.SysRole;
  * @author ez-admin
  * @since 2026-01-23
  */
+@Mapper
 public interface SysRoleMapper extends BaseMapper<SysRole> {
 
+    /**
+     * 检查角色名称是否存在
+     *
+     * @param roleName 角色名称
+     * @return 是否存在
+     */
+    default boolean existsByRoleName(String roleName) {
+        return this.selectCount(new LambdaQueryWrapper<SysRole>()
+                .eq(SysRole::getRoleName, roleName)
+                .eq(SysRole::getIsDeleted, SystemConstants.NOT_DELETED)) > 0;
+    }
+
+    /**
+     * 检查角色标识是否存在
+     *
+     * @param roleLabel 角色标识
+     * @return 是否存在
+     */
+    default boolean existsByRoleLabel(String roleLabel) {
+        return this.selectCount(new LambdaQueryWrapper<SysRole>()
+                .eq(SysRole::getRoleLabel, roleLabel)
+                .eq(SysRole::getIsDeleted, SystemConstants.NOT_DELETED)) > 0;
+    }
+
+    /**
+     * 检查角色名称是否被其他角色占用
+     *
+     * @param roleName      角色名称
+     * @param excludeRoleId 排除的角色ID
+     * @return 是否存在
+     */
+    default boolean existsByRoleNameExclude(String roleName, Long excludeRoleId) {
+        return this.selectCount(new LambdaQueryWrapper<SysRole>()
+                .eq(SysRole::getRoleName, roleName)
+                .ne(SysRole::getRoleId, excludeRoleId)
+                .eq(SysRole::getIsDeleted, SystemConstants.NOT_DELETED)) > 0;
+    }
+
+    /**
+     * 检查角色标识是否被其他角色占用
+     *
+     * @param roleLabel     角色标识
+     * @param excludeRoleId 排除的角色ID
+     * @return 是否存在
+     */
+    default boolean existsByRoleLabelExclude(String roleLabel, Long excludeRoleId) {
+        return this.selectCount(new LambdaQueryWrapper<SysRole>()
+                .eq(SysRole::getRoleLabel, roleLabel)
+                .ne(SysRole::getRoleId, excludeRoleId)
+                .eq(SysRole::getIsDeleted, SystemConstants.NOT_DELETED)) > 0;
+    }
+
+    /**
+     * 检查角色是否已分配给用户
+     *
+     * @param roleId 角色ID
+     * @return 是否已分配
+     */
+    default boolean isAssignedToUsers(Long roleId) {
+        // 注意：这里需要通过 SysUserRoleRelationMapper 来查询
+        // 为了简化，我们暂时返回 false，实际使用时需要在 UserRoleRelationMapper 中添加方法
+        return false;
+    }
+
+    /**
+     * 分页查询角色列表
+     *
+     * @param page  分页对象
+     * @param query 查询条件
+     * @return 分页结果
+     */
+    default Page<SysRole> selectRolePage(Page<SysRole> page, PageQuery query) {
+        LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
+
+        if (query != null) {
+            // 1. 快捷模糊搜索：自动搜索标记为 keywordSearch=true 的字段
+            QueryConditionSupport.applyKeywordSearch(wrapper, query.getKeyword(), SysRole.class);
+
+            // 2. 高级查询：动态应用 conditions
+            if (query.getConditions() != null && !query.getConditions().isEmpty()) {
+                QueryConditionSupport.applyConditions(wrapper, query.getConditions(), SysRole.class);
+            }
+        }
+
+        return this.selectPage(page, wrapper);
+    }
 }
