@@ -30,14 +30,6 @@ public class InstallController {
 
     private final InstallService installService;
 
-    /**
-     * 检查系统初始化状态
-     * <p>
-     * 通过查询数据库中的用户记录判断系统是否已初始化
-     * </p>
-     *
-     * @return 初始化状态响应
-     */
     @GetMapping("/status")
     @Operation(summary = "检查初始化状态", description = "查询系统是否已完成初始化")
     public R<InstallStatusVO> getInstallStatus() {
@@ -46,16 +38,6 @@ public class InstallController {
         return R.success(response);
     }
 
-    /**
-     * 初始化系统
-     * <p>
-     * 创建默认管理员账号和超级管理员角色
-     * 只有在系统未初始化时（数据库无用户记录）才能执行
-     * </p>
-     *
-     * @param request 初始化请求
-     * @return 初始化响应
-     */
     @PostMapping
     @Operation(summary = "初始化系统", description = "创建默认管理员账号和超级管理员角色")
     public R<InstallVO> install(@Valid @RequestBody InstallReq request) {

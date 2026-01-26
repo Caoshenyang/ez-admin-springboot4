@@ -91,7 +91,7 @@ public class QueryMetadataBuilder<T> {
      * @return 字段配置构建器
      */
     public FieldConfigBuilder field(String fieldCode, FieldType type, String description) {
-        return new FieldConfigBuilder(fieldCode, type);
+        return new FieldConfigBuilder(fieldCode, type, description);
     }
 
     /**
@@ -121,14 +121,16 @@ public class QueryMetadataBuilder<T> {
 
         private final String fieldCode;
         private final FieldType type;
+        private final String description;
         private final List<Operator> operators = new ArrayList<>();
         private SFunction<T, ?> column;
         private boolean keywordSearch;
         private String dictType;
 
-        public FieldConfigBuilder(String fieldCode, FieldType type) {
+        public FieldConfigBuilder(String fieldCode, FieldType type, String description) {
             this.fieldCode = fieldCode;
             this.type = type;
+            this.description = description;
         }
 
         /**
@@ -187,7 +189,8 @@ public class QueryMetadataBuilder<T> {
                     type,
                     keywordSearch,
                     operators.toArray(Operator[]::new),
-                    dictType
+                    dictType,
+                    description
             );
 
             fields.add(config);

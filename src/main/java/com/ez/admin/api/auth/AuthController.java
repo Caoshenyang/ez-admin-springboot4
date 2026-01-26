@@ -26,12 +26,6 @@ public class AuthController {
 
     private final AuthService authService;
 
-    /**
-     * 用户登录
-     *
-     * @param request 登录请求
-     * @return 登录响应（包含 token）
-     */
     @PostMapping("/login")
     @Operation(summary = "用户登录", description = "使用用户名和密码登录，成功后返回 token")
     public R<LoginVO> login(@Valid @RequestBody LoginReq request) {
@@ -40,11 +34,6 @@ public class AuthController {
         return R.success("登录成功", response);
     }
 
-    /**
-     * 用户登出
-     *
-     * @return 成功响应
-     */
     @PostMapping("/logout")
     @Operation(summary = "用户登出", description = "退出当前登录状态")
     public R<String> logout() {

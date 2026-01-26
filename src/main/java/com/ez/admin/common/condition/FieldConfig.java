@@ -62,43 +62,48 @@ public class FieldConfig<T> {
     private final String dictType;
 
     /**
+     * 字段描述
+     */
+    private final String description;
+
+    /**
      * 创建字符串字段配置（快捷搜索）
      */
-    public static <T> FieldConfig<T> searchableString(String fieldCode, SFunction<T, String> column) {
+    public static <T> FieldConfig<T> searchableString(String fieldCode, SFunction<T, String> column, String description) {
         return new FieldConfig<>(fieldCode, column, FieldType.STRING, true,
-                new Operator[]{Operator.EQ, Operator.LIKE}, null);
+                new Operator[]{Operator.EQ, Operator.LIKE}, null, description);
     }
 
     /**
      * 创建字符串字段配置
      */
-    public static <T> FieldConfig<T> string(String fieldCode, SFunction<T, String> column) {
+    public static <T> FieldConfig<T> string(String fieldCode, SFunction<T, String> column, String description) {
         return new FieldConfig<>(fieldCode, column, FieldType.STRING, false,
-                new Operator[]{Operator.EQ, Operator.LIKE}, null);
+                new Operator[]{Operator.EQ, Operator.LIKE}, null, description);
     }
 
     /**
      * 创建整数字段配置（带字典）
      */
-    public static <T> FieldConfig<T> integer(String fieldCode, SFunction<T, Integer> column, String dictType) {
+    public static <T> FieldConfig<T> integer(String fieldCode, SFunction<T, Integer> column, String dictType, String description) {
         return new FieldConfig<>(fieldCode, column, FieldType.INTEGER, false,
-                new Operator[]{Operator.EQ, Operator.IN}, dictType);
+                new Operator[]{Operator.EQ, Operator.IN}, dictType, description);
     }
 
     /**
      * 创建整数字段配置
      */
-    public static <T> FieldConfig<T> integer(String fieldCode, SFunction<T, Integer> column) {
+    public static <T> FieldConfig<T> integer(String fieldCode, SFunction<T, Integer> column, String description) {
         return new FieldConfig<>(fieldCode, column, FieldType.INTEGER, false,
-                new Operator[]{Operator.EQ, Operator.IN}, null);
+                new Operator[]{Operator.EQ, Operator.IN}, null, description);
     }
 
     /**
      * 创建长整字段配置
      */
-    public static <T> FieldConfig<T> longNum(String fieldCode, SFunction<T, Long> column) {
+    public static <T> FieldConfig<T> longNum(String fieldCode, SFunction<T, Long> column, String description) {
         return new FieldConfig<>(fieldCode, column, FieldType.LONG, false,
-                new Operator[]{Operator.EQ, Operator.IN}, null);
+                new Operator[]{Operator.EQ, Operator.IN}, null, description);
     }
 
     @Override

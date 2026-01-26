@@ -34,12 +34,6 @@ public class DictController {
 
     // ==================== 字典类型 ====================
 
-    /**
-     * 创建字典类型
-     *
-     * @param request 创建请求
-     * @return 成功响应
-     */
     @PostMapping("/type")
     @Operation(summary = "创建字典类型", description = "创建新的字典类型")
     public R<Void> createType(@Valid @RequestBody DictTypeCreateReq request) {
@@ -48,12 +42,6 @@ public class DictController {
         return R.success("创建成功");
     }
 
-    /**
-     * 更新字典类型
-     *
-     * @param request 更新请求
-     * @return 成功响应
-     */
     @PutMapping("/type")
     @Operation(summary = "更新字典类型", description = "更新字典类型信息")
     public R<Void> updateType(@Valid @RequestBody DictTypeUpdateReq request) {
@@ -62,12 +50,6 @@ public class DictController {
         return R.success("更新成功");
     }
 
-    /**
-     * 删除字典类型
-     *
-     * @param dictId 字典ID
-     * @return 成功响应
-     */
     @DeleteMapping("/type/{dictId}")
     @Operation(summary = "删除字典类型", description = "根据字典ID删除字典类型")
     public R<Void> deleteType(@PathVariable Long dictId) {
@@ -76,12 +58,6 @@ public class DictController {
         return R.success("删除成功");
     }
 
-    /**
-     * 根据ID查询字典类型详情
-     *
-     * @param dictId 字典ID
-     * @return 字典类型详情
-     */
     @GetMapping("/type/{dictId}")
     @Operation(summary = "查询字典类型详情", description = "根据字典ID查询字典类型完整信息")
     public R<DictTypeDetailVO> getTypeById(@PathVariable Long dictId) {
@@ -89,12 +65,6 @@ public class DictController {
         return R.success(dictType);
     }
 
-    /**
-     * 分页查询字典类型列表
-     *
-     * @param query 分页查询请求
-     * @return 分页结果
-     */
     @PostMapping("/type/page")
     @Operation(summary = "分页查询字典类型", description = "分页查询字典类型列表")
     public R<PageVO<DictTypeListVO>> getTypePage(@RequestBody PageQuery query) {
@@ -102,11 +72,6 @@ public class DictController {
         return R.success(page);
     }
 
-    /**
-     * 查询所有字典类型列表
-     *
-     * @return 字典类型列表
-     */
     @GetMapping("/type/list")
     @Operation(summary = "查询所有字典类型", description = "查询所有字典类型列表（不分页）")
     public R<List<DictTypeListVO>> getTypeList() {
@@ -116,12 +81,6 @@ public class DictController {
 
     // ==================== 字典数据 ====================
 
-    /**
-     * 创建字典数据
-     *
-     * @param request 创建请求
-     * @return 成功响应
-     */
     @PostMapping("/data")
     @Operation(summary = "创建字典数据", description = "创建新的字典数据")
     public R<Void> createData(@Valid @RequestBody DictDataCreateReq request) {
@@ -130,12 +89,6 @@ public class DictController {
         return R.success("创建成功");
     }
 
-    /**
-     * 更新字典数据
-     *
-     * @param request 更新请求
-     * @return 成功响应
-     */
     @PutMapping("/data")
     @Operation(summary = "更新字典数据", description = "更新字典数据信息")
     public R<Void> updateData(@Valid @RequestBody DictDataUpdateReq request) {
@@ -144,12 +97,6 @@ public class DictController {
         return R.success("更新成功");
     }
 
-    /**
-     * 删除字典数据
-     *
-     * @param dictDataId 字典数据ID
-     * @return 成功响应
-     */
     @DeleteMapping("/data/{dictDataId}")
     @Operation(summary = "删除字典数据", description = "根据字典数据ID删除字典数据")
     public R<Void> deleteData(@PathVariable Long dictDataId) {
@@ -158,12 +105,6 @@ public class DictController {
         return R.success("删除成功");
     }
 
-    /**
-     * 根据字典类型查询字典数据列表
-     *
-     * @param dictId 字典类型ID
-     * @return 字典数据列表
-     */
     @GetMapping("/data/list/{dictId}")
     @Operation(summary = "根据字典类型查询数据", description = "根据字典类型ID查询字典数据列表")
     public R<List<DictDataListVO>> getDataListByDictId(@PathVariable Long dictId) {
@@ -171,12 +112,6 @@ public class DictController {
         return R.success(list);
     }
 
-    /**
-     * 根据字典类型编码查询字典数据列表
-     *
-     * @param dictType 字典类型编码
-     * @return 字典数据列表
-     */
     @GetMapping("/data/type/{dictType}")
     @Operation(summary = "根据字典类型编码查询数据", description = "根据字典类型编码查询字典数据列表")
     public R<List<DictDataListVO>> getDataListByDictType(@PathVariable String dictType) {

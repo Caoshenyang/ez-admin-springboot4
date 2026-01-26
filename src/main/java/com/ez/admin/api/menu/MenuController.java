@@ -29,12 +29,6 @@ public class MenuController {
 
     private final MenuService menuService;
 
-    /**
-     * 创建菜单
-     *
-     * @param request 创建请求
-     * @return 成功响应
-     */
     @PostMapping
     @Operation(summary = "创建菜单", description = "创建新菜单（目录、菜单或按钮）")
     public R<Void> create(@Valid @RequestBody MenuCreateReq request) {
@@ -43,12 +37,6 @@ public class MenuController {
         return R.success("创建成功");
     }
 
-    /**
-     * 更新菜单
-     *
-     * @param request 更新请求
-     * @return 成功响应
-     */
     @PutMapping
     @Operation(summary = "更新菜单", description = "更新菜单信息")
     public R<Void> update(@Valid @RequestBody MenuUpdateReq request) {
@@ -57,12 +45,6 @@ public class MenuController {
         return R.success("更新成功");
     }
 
-    /**
-     * 删除菜单
-     *
-     * @param menuId 菜单ID
-     * @return 成功响应
-     */
     @DeleteMapping("/{menuId}")
     @Operation(summary = "删除菜单", description = "根据菜单ID删除菜单（逻辑删除）")
     public R<Void> delete(@PathVariable Long menuId) {
@@ -71,12 +53,6 @@ public class MenuController {
         return R.success("删除成功");
     }
 
-    /**
-     * 根据ID查询菜单详情
-     *
-     * @param menuId 菜单ID
-     * @return 菜单详情
-     */
     @GetMapping("/{menuId}")
     @Operation(summary = "查询菜单详情", description = "根据菜单ID查询菜单完整信息")
     public R<MenuVO> getById(@PathVariable Long menuId) {
@@ -84,11 +60,6 @@ public class MenuController {
         return R.success(menu);
     }
 
-    /**
-     * 查询菜单树
-     *
-     * @return 菜单树（完整的树形结构）
-     */
     @GetMapping("/tree")
     @Operation(summary = "查询菜单树", description = "查询完整的菜单树形结构（不分页）")
     public R<List<MenuVO>> getTree() {

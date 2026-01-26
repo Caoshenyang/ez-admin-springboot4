@@ -119,7 +119,7 @@ public class MetadataService {
         return FieldMetadata.builder()
                 .field(config.getFieldCode())
                 .type(config.getType().name())
-                .description(config.getFieldCode()) // TODO: 从 Provider 中传入描述
+                .description(config.getDescription())
                 .operators(convertOperators(config.getOperators()))
                 .required(false)
                 .example(null)

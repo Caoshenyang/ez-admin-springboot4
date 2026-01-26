@@ -32,12 +32,6 @@ public class RoleController {
 
     private final RoleService roleService;
 
-    /**
-     * 创建角色
-     *
-     * @param request 创建请求
-     * @return 成功响应
-     */
     @PostMapping
     @Operation(summary = "创建角色", description = "创建新角色，支持分配菜单和数据权限")
     public R<Void> create(@Valid @RequestBody RoleCreateReq request) {
@@ -46,12 +40,6 @@ public class RoleController {
         return R.success("创建成功");
     }
 
-    /**
-     * 更新角色
-     *
-     * @param request 更新请求
-     * @return 成功响应
-     */
     @PutMapping
     @Operation(summary = "更新角色", description = "更新角色信息，支持重新分配菜单和数据权限")
     public R<Void> update(@Valid @RequestBody RoleUpdateReq request) {
@@ -60,12 +48,6 @@ public class RoleController {
         return R.success("更新成功");
     }
 
-    /**
-     * 删除角色
-     *
-     * @param roleId 角色ID
-     * @return 成功响应
-     */
     @DeleteMapping("/{roleId}")
     @Operation(summary = "删除角色", description = "根据角色ID删除角色（逻辑删除）")
     public R<Void> delete(@PathVariable Long roleId) {
@@ -74,12 +56,6 @@ public class RoleController {
         return R.success("删除成功");
     }
 
-    /**
-     * 批量删除角色
-     *
-     * @param roleIds 角色ID列表
-     * @return 成功响应
-     */
     @DeleteMapping("/batch")
     @Operation(summary = "批量删除角色", description = "批量删除多个角色（逻辑删除）")
     public R<Void> batchDelete(@RequestBody List<Long> roleIds) {
@@ -88,12 +64,6 @@ public class RoleController {
         return R.success("批量删除成功");
     }
 
-    /**
-     * 根据ID查询角色详情
-     *
-     * @param roleId 角色ID
-     * @return 角色详情
-     */
     @GetMapping("/{roleId}")
     @Operation(summary = "查询角色详情", description = "根据角色ID查询角色完整信息，包括菜单和部门权限")
     public R<RoleDetailVO> getById(@PathVariable Long roleId) {
@@ -101,12 +71,6 @@ public class RoleController {
         return R.success(role);
     }
 
-    /**
-     * 分页查询角色列表
-     *
-     * @param query 分页查询请求
-     * @return 分页结果
-     */
     @PostMapping("/page")
     @Operation(summary = "分页查询角色", description = "分页查询角色列表，支持多条件筛选和排序")
     public R<PageVO<RoleListVO>> getPage(@RequestBody PageQuery query) {
@@ -114,11 +78,6 @@ public class RoleController {
         return R.success(page);
     }
 
-    /**
-     * 查询所有角色列表
-     *
-     * @return 角色列表
-     */
     @GetMapping("/list")
     @Operation(summary = "查询所有角色", description = "查询所有角色列表（不分页）")
     public R<List<RoleListVO>> getList() {

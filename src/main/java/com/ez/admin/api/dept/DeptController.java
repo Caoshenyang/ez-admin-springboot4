@@ -29,12 +29,6 @@ public class DeptController {
 
     private final DeptService deptService;
 
-    /**
-     * 创建部门
-     *
-     * @param request 创建请求
-     * @return 成功响应
-     */
     @PostMapping
     @Operation(summary = "创建部门", description = "创建新部门")
     public R<Void> create(@Valid @RequestBody DeptCreateReq request) {
@@ -43,12 +37,6 @@ public class DeptController {
         return R.success("创建成功");
     }
 
-    /**
-     * 更新部门
-     *
-     * @param request 更新请求
-     * @return 成功响应
-     */
     @PutMapping
     @Operation(summary = "更新部门", description = "更新部门信息")
     public R<Void> update(@Valid @RequestBody DeptUpdateReq request) {
@@ -57,12 +45,6 @@ public class DeptController {
         return R.success("更新成功");
     }
 
-    /**
-     * 删除部门
-     *
-     * @param deptId 部门ID
-     * @return 成功响应
-     */
     @DeleteMapping("/{deptId}")
     @Operation(summary = "删除部门", description = "根据部门ID删除部门（逻辑删除）")
     public R<Void> delete(@PathVariable Long deptId) {
@@ -71,12 +53,6 @@ public class DeptController {
         return R.success("删除成功");
     }
 
-    /**
-     * 根据ID查询部门详情
-     *
-     * @param deptId 部门ID
-     * @return 部门详情
-     */
     @GetMapping("/{deptId}")
     @Operation(summary = "查询部门详情", description = "根据部门ID查询部门完整信息")
     public R<DeptVO> getById(@PathVariable Long deptId) {
@@ -84,11 +60,6 @@ public class DeptController {
         return R.success(dept);
     }
 
-    /**
-     * 查询部门树
-     *
-     * @return 部门树（完整的树形结构）
-     */
     @GetMapping("/tree")
     @Operation(summary = "查询部门树", description = "查询完整的部门树形结构（不分页）")
     public R<List<DeptVO>> getTree() {

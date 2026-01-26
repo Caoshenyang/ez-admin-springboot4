@@ -32,12 +32,6 @@ public class UserController {
 
     private final UserService userService;
 
-    /**
-     * 创建用户
-     *
-     * @param request 创建请求
-     * @return 成功响应
-     */
     @PostMapping
     @Operation(summary = "创建用户", description = "创建新用户，支持分配角色")
     public R<Void> create(@Valid @RequestBody UserCreateReq request) {
@@ -46,12 +40,6 @@ public class UserController {
         return R.success("创建成功");
     }
 
-    /**
-     * 更新用户
-     *
-     * @param request 更新请求
-     * @return 成功响应
-     */
     @PutMapping
     @Operation(summary = "更新用户", description = "更新用户信息，支持重新分配角色")
     public R<Void> update(@Valid @RequestBody UserUpdateReq request) {
@@ -60,12 +48,6 @@ public class UserController {
         return R.success("更新成功");
     }
 
-    /**
-     * 删除用户
-     *
-     * @param userId 用户ID
-     * @return 成功响应
-     */
     @DeleteMapping("/{userId}")
     @Operation(summary = "删除用户", description = "根据用户ID删除用户（逻辑删除）")
     public R<Void> delete(@PathVariable Long userId) {
@@ -74,12 +56,6 @@ public class UserController {
         return R.success("删除成功");
     }
 
-    /**
-     * 批量删除用户
-     *
-     * @param userIds 用户ID列表
-     * @return 成功响应
-     */
     @DeleteMapping("/batch")
     @Operation(summary = "批量删除用户", description = "批量删除多个用户（逻辑删除）")
     public R<Void> batchDelete(@RequestBody List<Long> userIds) {
@@ -88,12 +64,6 @@ public class UserController {
         return R.success("批量删除成功");
     }
 
-    /**
-     * 根据ID查询用户详情
-     *
-     * @param userId 用户ID
-     * @return 用户详情
-     */
     @GetMapping("/{userId}")
     @Operation(summary = "查询用户详情", description = "根据用户ID查询用户完整信息，包括角色列表")
     public R<UserDetailVO> getById(@PathVariable Long userId) {
@@ -101,12 +71,6 @@ public class UserController {
         return R.success(user);
     }
 
-    /**
-     * 分页查询用户列表
-     *
-     * @param query 分页查询请求
-     * @return 分页结果
-     */
     @PostMapping("/page")
     @Operation(summary = "分页查询用户", description = "分页查询用户列表，支持多条件筛选和排序")
     public R<PageVO<UserListVO>> getPage(@RequestBody PageQuery query) {
