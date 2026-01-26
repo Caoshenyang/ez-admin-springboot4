@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ez.admin.common.condition.QueryConditionSupport;
 import com.ez.admin.common.constant.SystemConstants;
 import com.ez.admin.common.model.PageQuery;
+import com.ez.admin.dto.user.metadata.UserQueryMetadata;
 import com.ez.admin.modules.system.entity.SysUser;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -19,6 +20,14 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface SysUserMapper extends BaseMapper<SysUser> {
+
+    /**
+     * 主动触发查询元数据注册
+     * <p>
+     * 解决类懒加载问题：确保 UserQueryMetadata 的静态块在 Mapper 使用前执行
+     * </p>
+     */
+    UserQueryMetadata TRIGGER_METADATA_REGISTRATION = UserQueryMetadata.USERNAME;
 
     /**
      * 根据用户名查询用户（登录时使用）
