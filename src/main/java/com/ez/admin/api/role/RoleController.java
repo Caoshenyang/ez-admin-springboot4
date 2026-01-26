@@ -3,6 +3,8 @@ package com.ez.admin.api.role;
 import com.ez.admin.common.model.PageQuery;
 import com.ez.admin.common.model.PageVO;
 import com.ez.admin.common.model.R;
+import com.ez.admin.dto.role.req.RoleAssignDeptReq;
+import com.ez.admin.dto.role.req.RoleAssignMenuReq;
 import com.ez.admin.dto.role.req.RoleCreateReq;
 import com.ez.admin.dto.role.req.RoleUpdateReq;
 import com.ez.admin.dto.role.vo.RoleDetailVO;
@@ -83,5 +85,35 @@ public class RoleController {
     public R<List<RoleListVO>> getList() {
         List<RoleListVO> list = roleService.getRoleList();
         return R.success(list);
+    }
+
+    @PostMapping("/assign/menus")
+    @Operation(summary = "分配菜单", description = "为角色分配菜单权限（覆盖式，传入的菜单ID列表将替换原有权限）")
+    public R<Void> assignMenus(@Valid @RequestBody RoleAssignMenuReq request) {
+        log.info("角色分配菜单请求，角色ID：{}，菜单数量：{}", request.getRoleId(), request.getMenuIds().size());
+        roleService.assignMenus(request.getRoleId(), request.getMenuIds());
+        return R.success("分配成功");
+    }
+
+    @GetMapping("/{roleId}/menus")
+    @Operation(summary = "获取角色菜单", description = "获取角色已分配的菜单ID列表")
+    public R<List<Long>> getMenus(@PathVariable Long roleId) {
+        List<Long> menuIds = roleService.getRoleMenuIds(roleId);
+        return R.success(menuIds);
+    }
+
+    @PostMapping("/assign/depts")
+    @Operation(summary = "分配部门", description = "为角色分配数据权限（覆盖式，传入的部门ID列表将替换原有权限）")
+    public R<Void> assignDepts(@Valid @RequestBody RoleAssignDeptReq request) {
+        log.info("角色分配部门请求，角色ID：{}，部门数量：{}", request.getRoleId(), request.getDeptIds().size());
+        roleService.assignDepts(request.getRoleId(), request.getDeptIds());
+        return R.success("分配成功");
+    }
+
+    @GetMapping("/{roleId}/depts")
+    @Operation(summary = "获取角色部门", description = "获取角色已分配的部门ID列表")
+    public R<List<Long>> getDepts(@PathVariable Long roleId) {
+        List<Long> deptIds = roleService.getRoleDeptIds(roleId);
+        return R.success(deptIds);
     }
 }

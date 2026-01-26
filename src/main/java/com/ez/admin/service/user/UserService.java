@@ -124,10 +124,6 @@ public class UserService {
 
         // 5. 重新分配角色
         if (request.getRoleIds() != null) {
-            // 先删除原有角色关联
-            userRoleRelationMapper.delete(new LambdaQueryWrapper<SysUserRoleRelation>()
-                    .eq(SysUserRoleRelation::getUserId, request.getUserId()));
-            // 分配新角色
             assignRoles(request.getUserId(), request.getRoleIds());
         }
 
@@ -232,30 +228,57 @@ public class UserService {
     }
 
     /**
-     * 分配角色
+     * 分配角色（覆盖式）
+     *
+     * @param userId  用户ID
+     * @param roleIds 角色ID列表
      */
-    private void assignRoles(Long userId, List<Long> roleIds) {
-        List<SysUserRoleRelation> relations = roleIds.stream()
-                .map(roleId -> {
-                    SysUserRoleRelation relation = new SysUserRoleRelation();
-                    relation.setUserId(userId);
-                    relation.setRoleId(roleId);
-                    return relation;
-                })
-                .collect(Collectors.toList());
+    @Transactional(rollbackFor = Exception.class)
+    public void assignRoles(Long userId, List<Long> roleIds) {
+        // 1. 检查用户是否存在
+        if (userMapper.selectById(userId) == null) {
+            throw new EzBusinessException(ErrorCode.USER_NOT_FOUND);
+        }
 
-        // 批量插入
-        relations.forEach(userRoleRelationMapper::insert);
+        // 2. 删除原有角色关联
+        userRoleRelationMapper.delete(new LambdaQueryWrapper<SysUserRoleRelation>()
+                .eq(SysUserRoleRelation::getUserId, userId));
+
+        // 3. 批量插入新关联
+        if (roleIds != null && !roleIds.isEmpty()) {
+            List<SysUserRoleRelation> relations = roleIds.stream()
+                    .map(roleId -> {
+                        SysUserRoleRelation relation = new SysUserRoleRelation();
+                        relation.setUserId(userId);
+                        relation.setRoleId(roleId);
+                        return relation;
+                    })
+                    .collect(Collectors.toList());
+
+            // 批量插入
+            relations.forEach(userRoleRelationMapper::insert);
+        }
+
+        log.info("用户分配角色成功，用户ID：{}，角色数量：{}", userId, roleIds != null ? roleIds.size() : 0);
     }
 
     /**
      * 获取用户角色ID列表
+     *
+     * @param userId 用户ID
+     * @return 角色ID列表
      */
-    private List<Long> getUserRoleIds(Long userId) {
+    public List<Long> getUserRoleIds(Long userId) {
         return userRoleRelationMapper.selectList(new LambdaQueryWrapper<SysUserRoleRelation>()
                         .eq(SysUserRoleRelation::getUserId, userId))
                 .stream()
                 .map(SysUserRoleRelation::getRoleId)
                 .collect(Collectors.toList());
     }
-}
+
+    // ==================== 私有方法 ====================
+
+    /**
+     * 构建用户实体
+     */
+    private SysUser buildUser(UserCreateReq request) {

@@ -3,6 +3,7 @@ package com.ez.admin.api.user;
 import com.ez.admin.common.model.R;
 import com.ez.admin.common.model.PageQuery;
 import com.ez.admin.common.model.PageVO;
+import com.ez.admin.dto.user.req.UserAssignRoleReq;
 import com.ez.admin.dto.user.req.UserCreateReq;
 import com.ez.admin.dto.user.req.UserUpdateReq;
 import com.ez.admin.dto.user.vo.UserDetailVO;
@@ -76,5 +77,20 @@ public class UserController {
     public R<PageVO<UserListVO>> getPage(@RequestBody PageQuery query) {
         PageVO<UserListVO> page = userService.getUserPage(query);
         return R.success(page);
+    }
+
+    @PostMapping("/assign/roles")
+    @Operation(summary = "分配角色", description = "为用户分配角色（覆盖式，传入的角色ID列表将替换原有角色）")
+    public R<Void> assignRoles(@Valid @RequestBody UserAssignRoleReq request) {
+        log.info("用户分配角色请求，用户ID：{}，角色数量：{}", request.getUserId(), request.getRoleIds().size());
+        userService.assignRoles(request.getUserId(), request.getRoleIds());
+        return R.success("分配成功");
+    }
+
+    @GetMapping("/{userId}/roles")
+    @Operation(summary = "获取用户角色", description = "获取用户已分配的角色ID列表")
+    public R<List<Long>> getRoles(@PathVariable Long userId) {
+        List<Long> roleIds = userService.getUserRoleIds(userId);
+        return R.success(roleIds);
     }
 }

@@ -239,6 +239,104 @@ public class RoleService {
         return roleConverter.toListVOList(roles);
     }
 
+    /**
+     * 分配菜单权限（覆盖式）
+     *
+     * @param roleId  角色ID
+     * @param menuIds 菜单ID列表
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void assignMenus(Long roleId, List<Long> menuIds) {
+        // 1. 检查角色是否存在
+        if (roleMapper.selectById(roleId) == null) {
+            throw new EzBusinessException(ErrorCode.ROLE_NOT_FOUND);
+        }
+
+        // 2. 删除原有菜单关联
+        roleMenuRelationMapper.delete(new LambdaQueryWrapper<SysRoleMenuRelation>()
+                .eq(SysRoleMenuRelation::getRoleId, roleId));
+
+        // 3. 批量插入新关联
+        if (menuIds != null && !menuIds.isEmpty()) {
+            List<SysRoleMenuRelation> relations = menuIds.stream()
+                    .map(menuId -> {
+                        SysRoleMenuRelation relation = new SysRoleMenuRelation();
+                        relation.setRoleId(roleId);
+                        relation.setMenuId(menuId);
+                        return relation;
+                    })
+                    .collect(Collectors.toList());
+
+            // 批量插入
+            relations.forEach(roleMenuRelationMapper::insert);
+        }
+
+        log.info("角色分配菜单成功，角色ID：{}，菜单数量：{}", roleId, menuIds != null ? menuIds.size() : 0);
+    }
+
+    /**
+     * 获取角色菜单ID列表
+     *
+     * @param roleId 角色ID
+     * @return 菜单ID列表
+     */
+    public List<Long> getRoleMenuIds(Long roleId) {
+        return roleMenuRelationMapper.selectList(new LambdaQueryWrapper<SysRoleMenuRelation>()
+                        .eq(SysRoleMenuRelation::getRoleId, roleId))
+                .stream()
+                .map(SysRoleMenuRelation::getMenuId)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 分配数据权限（部门，覆盖式）
+     *
+     * @param roleId  角色ID
+     * @param deptIds 部门ID列表
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void assignDepts(Long roleId, List<Long> deptIds) {
+        // 1. 检查角色是否存在
+        if (roleMapper.selectById(roleId) == null) {
+            throw new EzBusinessException(ErrorCode.ROLE_NOT_FOUND);
+        }
+
+        // 2. 删除原有部门关联
+        roleDeptRelationMapper.delete(new LambdaQueryWrapper<SysRoleDeptRelation>()
+                .eq(SysRoleDeptRelation::getRoleId, roleId));
+
+        // 3. 批量插入新关联
+        if (deptIds != null && !deptIds.isEmpty()) {
+            List<SysRoleDeptRelation> relations = deptIds.stream()
+                    .map(deptId -> {
+                        SysRoleDeptRelation relation = new SysRoleDeptRelation();
+                        relation.setRoleId(roleId);
+                        relation.setDeptId(deptId);
+                        return relation;
+                    })
+                    .collect(Collectors.toList());
+
+            // 批量插入
+            relations.forEach(roleDeptRelationMapper::insert);
+        }
+
+        log.info("角色分配部门成功，角色ID：{}，部门数量：{}", roleId, deptIds != null ? deptIds.size() : 0);
+    }
+
+    /**
+     * 获取角色部门ID列表
+     *
+     * @param roleId 角色ID
+     * @return 部门ID列表
+     */
+    public List<Long> getRoleDeptIds(Long roleId) {
+        return roleDeptRelationMapper.selectList(new LambdaQueryWrapper<SysRoleDeptRelation>()
+                        .eq(SysRoleDeptRelation::getRoleId, roleId))
+                .stream()
+                .map(SysRoleDeptRelation::getDeptId)
+                .collect(Collectors.toList());
+    }
+
     // ==================== 私有方法 ====================
 
     /**
@@ -253,61 +351,5 @@ public class RoleService {
         role.setStatus(request.getStatus());
         role.setDescription(request.getDescription());
         return role;
-    }
-
-    /**
-     * 分配菜单权限
-     */
-    private void assignMenus(Long roleId, List<Long> menuIds) {
-        List<SysRoleMenuRelation> relations = menuIds.stream()
-                .map(menuId -> {
-                    SysRoleMenuRelation relation = new SysRoleMenuRelation();
-                    relation.setRoleId(roleId);
-                    relation.setMenuId(menuId);
-                    return relation;
-                })
-                .collect(Collectors.toList());
-
-        // 批量插入
-        relations.forEach(roleMenuRelationMapper::insert);
-    }
-
-    /**
-     * 分配数据权限（部门）
-     */
-    private void assignDepts(Long roleId, List<Long> deptIds) {
-        List<SysRoleDeptRelation> relations = deptIds.stream()
-                .map(deptId -> {
-                    SysRoleDeptRelation relation = new SysRoleDeptRelation();
-                    relation.setRoleId(roleId);
-                    relation.setDeptId(deptId);
-                    return relation;
-                })
-                .collect(Collectors.toList());
-
-        // 批量插入
-        relations.forEach(roleDeptRelationMapper::insert);
-    }
-
-    /**
-     * 获取角色菜单ID列表
-     */
-    private List<Long> getRoleMenuIds(Long roleId) {
-        return roleMenuRelationMapper.selectList(new LambdaQueryWrapper<SysRoleMenuRelation>()
-                        .eq(SysRoleMenuRelation::getRoleId, roleId))
-                .stream()
-                .map(SysRoleMenuRelation::getMenuId)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * 获取角色部门ID列表
-     */
-    private List<Long> getRoleDeptIds(Long roleId) {
-        return roleDeptRelationMapper.selectList(new LambdaQueryWrapper<SysRoleDeptRelation>()
-                        .eq(SysRoleDeptRelation::getRoleId, roleId))
-                .stream()
-                .map(SysRoleDeptRelation::getDeptId)
-                .collect(Collectors.toList());
     }
 }
