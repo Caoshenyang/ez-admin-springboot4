@@ -2,4 +2,38 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ez.admin.modules.system.mapper.SysRoleMapper">
 
+    <!-- 根据用户ID查询角色标识列表 -->
+    <select id="selectRoleLabelsByUserId" resultType="java.lang.String">
+        SELECT r.role_label
+        FROM ez_admin_sys_role r
+        INNER JOIN ez_admin_sys_user_role_relation ur ON r.role_id = ur.role_id
+        WHERE ur.user_id = #{userId}
+          AND r.is_deleted = 0
+          AND r.status = 1
+    </select>
+
+    <!-- 根据用户ID查询角色ID列表 -->
+    <select id="selectRoleIdsByUserId" resultType="java.lang.Long">
+        SELECT ur.role_id
+        FROM ez_admin_sys_user_role_relation ur
+        INNER JOIN ez_admin_sys_role r ON ur.role_id = r.role_id
+        WHERE ur.user_id = #{userId}
+          AND r.is_deleted = 0
+          AND r.status = 1
+    </select>
+
+    <!-- 根据菜单ID列表查询权限标识列表 -->
+    <select id="selectMenuPermsByIds" resultType="java.lang.String">
+        SELECT m.menu_perm
+        FROM ez_admin_sys_menu m
+        WHERE m.menu_id IN
+        <foreach collection="menuIds" item="menuId" open="(" separator="," close=")">
+            #{menuId}
+        </foreach>
+          AND m.is_deleted = 0
+          AND m.status = 1
+          AND m.menu_perm IS NOT NULL
+          AND m.menu_perm != ''
+    </select>
+
 </mapper>

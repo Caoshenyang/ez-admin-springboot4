@@ -8,6 +8,9 @@ import com.ez.admin.common.constant.SystemConstants;
 import com.ez.admin.common.model.PageQuery;
 import com.ez.admin.modules.system.entity.SysRole;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -106,4 +109,28 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
 
         return this.selectPage(page, wrapper);
     }
+
+    /**
+     * 根据用户ID查询角色标识列表
+     *
+     * @param userId 用户ID
+     * @return 角色标识列表
+     */
+    List<String> selectRoleLabelsByUserId(@Param("userId") Long userId);
+
+    /**
+     * 根据用户ID查询角色ID列表
+     *
+     * @param userId 用户ID
+     * @return 角色ID列表
+     */
+    List<Long> selectRoleIdsByUserId(@Param("userId") Long userId);
+
+    /**
+     * 根据菜单ID列表查询权限标识列表
+     *
+     * @param menuIds 菜单ID列表
+     * @return 权限标识列表
+     */
+    List<String> selectMenuPermsByIds(@Param("menuIds") List<Long> menuIds);
 }
