@@ -6,6 +6,7 @@ import com.ez.admin.dto.dept.req.DeptUpdateReq;
 import com.ez.admin.dto.dept.vo.DeptDetailVO;
 import com.ez.admin.dto.dept.vo.DeptTreeVO;
 import com.ez.admin.service.dept.DeptService;
+import com.ez.admin.common.permission.SaCheckPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -31,6 +32,7 @@ public class DeptController {
     private final DeptService deptService;
 
     @PostMapping
+    @SaCheckPermission("system:dept:create")
     @Operation(summary = "创建部门", description = "创建新部门")
     public R<Void> create(@Valid @RequestBody DeptCreateReq request) {
         log.info("创建部门请求，部门名称：{}", request.getDeptName());
@@ -39,6 +41,7 @@ public class DeptController {
     }
 
     @PutMapping
+    @SaCheckPermission("system:dept:update")
     @Operation(summary = "更新部门", description = "更新部门信息")
     public R<Void> update(@Valid @RequestBody DeptUpdateReq request) {
         log.info("更新部门请求，部门ID：{}", request.getDeptId());
@@ -47,6 +50,7 @@ public class DeptController {
     }
 
     @DeleteMapping("/{deptId}")
+    @SaCheckPermission("system:dept:delete")
     @Operation(summary = "删除部门", description = "根据部门ID删除部门（逻辑删除）")
     public R<Void> delete(@PathVariable Long deptId) {
         log.info("删除部门请求，部门ID：{}", deptId);
@@ -55,6 +59,7 @@ public class DeptController {
     }
 
     @GetMapping("/{deptId}")
+    @SaCheckPermission("system:dept:query")
     @Operation(summary = "查询部门详情", description = "根据部门ID查询部门完整信息")
     public R<DeptDetailVO> getById(@PathVariable Long deptId) {
         DeptDetailVO dept = deptService.getDeptById(deptId);
@@ -62,6 +67,7 @@ public class DeptController {
     }
 
     @GetMapping("/tree")
+    @SaCheckPermission("system:dept:query")
     @Operation(summary = "查询部门树", description = "查询完整的部门树形结构（不分页）")
     public R<List<DeptTreeVO>> getTree() {
         List<DeptTreeVO> tree = deptService.getDeptTree();
