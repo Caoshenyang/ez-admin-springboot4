@@ -71,7 +71,7 @@ public final class QueryConditionSupport {
     /**
      * 注册字段配置（幂等操作，可多次调用）
      * <p>
-     * 接受从 QueryMetadata 枚举生成的字段配置数组
+     * 接受从 QueryMetadataProvider 注册的字段配置数组
      * </p>
      *
      * @param entityClass 实体类
@@ -89,6 +89,25 @@ public final class QueryConditionSupport {
         }
         REGISTRY.put(entityClass, configMap);
         log.debug("注册查询字段: {} -> {}", entityClass.getSimpleName(), configMap.keySet());
+    }
+
+    /**
+     * 获取所有已注册的实体类
+     *
+     * @return 实体类集合
+     */
+    public static List<Class<?>> getRegisteredEntityClasses() {
+        return new ArrayList<>(REGISTRY.keySet());
+    }
+
+    /**
+     * 根据实体类获取字段配置映射
+     *
+     * @param entityClass 实体类
+     * @return 字段配置映射，如果未注册返回 null
+     */
+    public static Map<String, FieldConfig<?>> getFieldConfigs(Class<?> entityClass) {
+        return REGISTRY.get(entityClass);
     }
 
     /**
