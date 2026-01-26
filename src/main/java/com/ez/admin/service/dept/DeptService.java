@@ -8,6 +8,7 @@ import com.ez.admin.dto.dept.req.DeptCreateReq;
 import com.ez.admin.dto.dept.req.DeptUpdateReq;
 import com.ez.admin.dto.dept.vo.DeptVO;
 import com.ez.admin.modules.system.entity.SysDept;
+import com.ez.admin.modules.system.entity.SysUser;
 import com.ez.admin.modules.system.mapper.SysDeptMapper;
 import com.ez.admin.modules.system.mapper.SysUserMapper;
 import com.ez.admin.modules.system.service.SysDeptService;
@@ -127,8 +128,8 @@ public class DeptService {
         }
 
         // 3. 检查部门下是否存在用户
-        long userCount = userMapper.selectCount(new LambdaQueryWrapper<>()
-                .eq("dept_id", deptId));
+        long userCount = userMapper.selectCount(new LambdaQueryWrapper<SysUser>()
+                .eq(SysUser::getDeptId, deptId));
         if (userCount > 0) {
             throw new EzBusinessException(ErrorCode.DEPT_HAS_USERS);
         }

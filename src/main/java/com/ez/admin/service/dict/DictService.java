@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ez.admin.common.exception.EzBusinessException;
 import com.ez.admin.common.exception.ErrorCode;
 import com.ez.admin.common.mapstruct.DictConverter;
+import com.ez.admin.common.model.PageQuery;
+import com.ez.admin.common.model.PageVO;
 import com.ez.admin.dto.dict.req.*;
 import com.ez.admin.dto.dict.vo.DictDataListVO;
 import com.ez.admin.dto.dict.vo.DictTypeDetailVO;
