@@ -3,6 +3,7 @@ package com.ez.admin.common.model;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ez.admin.dto.common.QueryCondition;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.List;
@@ -40,39 +41,22 @@ import java.util.List;
  * @since 2026-01-23
  */
 @Data
+@Schema(description = "通用分页查询对象")
 public class PageQuery {
 
-    /**
-     * 当前页码（从 1 开始）
-     */
+    @Schema(description = "当前页码（从 1 开始）", example = "1")
     private Integer pageNum = 1;
 
-    /**
-     * 每页条数
-     */
+    @Schema(description = "每页条数", example = "10")
     private Integer pageSize = 10;
 
-    /**
-     * 排序字段列表，支持多字段排序
-     */
+    @Schema(description = "排序字段列表，支持多字段排序")
     private List<OrderItem> orders;
 
-    /**
-     * 快捷搜索关键词（模糊匹配）
-     * <p>
-     * 具体搜索字段由各 Mapper 自行定义
-     * 例如：用户模块 → username/nickname/phoneNumber
-     * </p>
-     */
+    @Schema(description = "快捷搜索关键词（模糊匹配），具体搜索字段由各 Mapper 自行定义", example = "admin")
     private String keyword;
 
-    /**
-     * 高级查询条件列表（前端控制）
-     * <p>
-     * 支持任意字段、操作符、值的组合查询
-     * 例如：[{"field":"status","operator":"EQ","value":"1"}]
-     * </p>
-     */
+    @Schema(description = "高级查询条件列表，支持任意字段、操作符、值的组合查询")
     private List<QueryCondition> conditions;
 
     /**

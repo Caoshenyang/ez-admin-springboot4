@@ -64,7 +64,7 @@ public class MetadataController {
      * @param resource 资源名称
      * @return 元数据枚举，如果不存在返回 null
      */
-    private QueryMetadata getMetadataByResource(String resource) {
+    private QueryMetadata<?> getMetadataByResource(String resource) {
         return switch (resource.toLowerCase()) {
             case "user", "users" -> UserQueryMetadata.USERNAME;
             // TODO: 未来扩展

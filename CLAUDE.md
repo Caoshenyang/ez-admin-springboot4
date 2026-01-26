@@ -156,8 +156,55 @@ ez-admin-springboot4/
 - 必须使用明确的语义化命名：`UserQueryDTO`, `RoleResponseVO`, `MenuTreeService`。
 
 ### 代码注释 (Mandatory)
-- 必须在 Controller 接口、Service 复杂逻辑处编写清晰注释。
-- 注释需解释"为什么这么做"以及核心业务逻辑。
+
+#### @Schema 注解规范 (Strict)
+所有 DTO、VO、Query、Response 等数据传输对象**必须**使用 `@Schema` 注解，格式要求：
+
+**基本格式**：
+```java
+@Schema(description = "字段说明", example = "示例值")
+private String fieldName;
+```
+
+**规范要求**：
+- **description**：必填，清晰说明字段用途和业务含义
+- **example**：字段值有固定枚举或典型值时必填（如状态码、ID、关键词等）
+- 列表、对象类型字段可不填 example
+
+**示例**：
+```java
+@Data
+@Schema(description = "通用分页查询对象")
+public class PageQuery {
+
+    @Schema(description = "当前页码（从 1 开始）", example = "1")
+    private Integer pageNum = 1;
+
+    @Schema(description = "每页条数", example = "10")
+    private Integer pageSize = 10;
+
+    @Schema(description = "快捷搜索关键词（模糊匹配）", example = "admin")
+    private String keyword;
+
+    @Schema(description = "高级查询条件列表")
+    private List<QueryCondition> conditions;  // 列表类型无需 example
+}
+```
+
+**字段类型示例值参考**：
+| 字段类型 | example 示例 | 说明 |
+|---------|-------------|------|
+| Integer/Long | `"1"`, `"100"` | 数字使用字符串格式 |
+| String | `"admin"`, `"active"` | 典型业务值 |
+| Boolean | `"true"`, `"false"` | 布尔值使用字符串格式 |
+| LocalDateTime | `"2024-01-01T00:00:00"` | ISO 8601 格式 |
+| Enum | `"ACTIVE"`, `"ENABLED"` | 枚举常量 |
+| List/Object | 无需填写 | 复杂类型不填 example |
+
+#### 代码注释规范
+- 必须在 Controller 接口、Service 复杂逻辑处编写清晰注释
+- 注释需解释"为什么这么做"以及核心业务逻辑
+- 优先使用 `@Schema` 注解替代 JavaDoc，Swagger 文档会自动提取
 
 ### 对象转换
 - 强制使用 MapStruct。若遇到转换逻辑复杂，请在 `common/mapstruct/` 下定义转换器接口。
