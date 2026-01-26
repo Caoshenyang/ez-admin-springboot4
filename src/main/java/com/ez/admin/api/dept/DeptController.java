@@ -3,6 +3,7 @@ package com.ez.admin.api.dept;
 import com.ez.admin.common.model.R;
 import com.ez.admin.dto.dept.req.DeptCreateReq;
 import com.ez.admin.dto.dept.req.DeptUpdateReq;
+import com.ez.admin.dto.dept.vo.DeptTreeVO;
 import com.ez.admin.dto.dept.vo.DeptVO;
 import com.ez.admin.service.dept.DeptService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -62,8 +63,8 @@ public class DeptController {
 
     @GetMapping("/tree")
     @Operation(summary = "查询部门树", description = "查询完整的部门树形结构（不分页）")
-    public R<List<DeptVO>> getTree() {
-        List<DeptVO> tree = deptService.getDeptTree();
+    public R<List<DeptTreeVO>> getTree() {
+        List<DeptTreeVO> tree = deptService.getDeptTree();
         return R.success(tree);
     }
 }

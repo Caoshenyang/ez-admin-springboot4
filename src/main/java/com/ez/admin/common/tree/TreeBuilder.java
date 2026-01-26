@@ -107,7 +107,7 @@ public class TreeBuilder {
      * @param <T>      树形数据对象的类型
      * @return TreeBuilder 实例
      */
-    public static <T extends TreeNode> TreeBuilderConfig<T> of(List<T> dataList) {
+    public static <T extends TreeNode<T>> TreeBuilderConfig<T> of(List<T> dataList) {
         return new TreeBuilderConfig<>(dataList);
     }
 
@@ -187,7 +187,6 @@ public class TreeBuilder {
      * @param sorter 排序规则
      * @param <T>    节点类型
      */
-    @SuppressWarnings("unchecked")
     private static <T extends TreeNode<T>> void sortTree(List<T> nodes, Function<T, Integer> sorter) {
         if (nodes == null || nodes.isEmpty()) {
             return;
@@ -236,7 +235,6 @@ public class TreeBuilder {
     /**
      * 递归平铺
      */
-    @SuppressWarnings("unchecked")
     private static <T extends TreeNode<T>> void flatten(List<T> tree, List<T> result) {
         for (T node : tree) {
             result.add(node);
@@ -254,7 +252,6 @@ public class TreeBuilder {
      * @param <T>    节点类型
      * @return 过滤后的树形结构
      */
-    @SuppressWarnings("unchecked")
     public static <T extends TreeNode<T>> List<T> filterTree(List<T> tree, Predicate<T> filter) {
         if (tree == null || tree.isEmpty()) {
             return new ArrayList<>();
@@ -271,8 +268,7 @@ public class TreeBuilder {
     /**
      * 递归检查节点是否符合条件（或其子孙节点符合条件）
      */
-    @SuppressWarnings("unchecked")
-    private static <T extends TreeNode> boolean filterNode(T node, Predicate<T> filter) {
+    private static <T extends TreeNode<T>> boolean filterNode(T node, Predicate<T> filter) {
         // 当前节点符合条件
         if (filter.test(node)) {
             return true;
@@ -280,7 +276,7 @@ public class TreeBuilder {
 
         // 检查子孙节点
         if (node.hasChildren()) {
-            for (TreeNode<T> child : node.getChildren()) {
+            for (T child : node.getChildren()) {
                 if (filterNode(child, filter)) {
                     return true;
                 }
@@ -297,8 +293,7 @@ public class TreeBuilder {
      * @param action 对每个节点执行的操作
      * @param <T>    节点类型
      */
-    @SuppressWarnings("unchecked")
-    public static <T extends TreeNode> void forEach(List<T> tree, Consumer<T> action) {
+    public static <T extends TreeNode<T>> void forEach(List<T> tree, Consumer<T> action) {
         if (tree == null || tree.isEmpty()) {
             return;
         }
@@ -318,8 +313,7 @@ public class TreeBuilder {
      * @param <T>    节点类型
      * @return 第一个符合条件的节点，未找到返回 null
      */
-    @SuppressWarnings("unchecked")
-    public static <T extends TreeNode> T find(List<T> tree, Predicate<T> filter) {
+    public static <T extends TreeNode<T>> T find(List<T> tree, Predicate<T> filter) {
         if (tree == null || tree.isEmpty()) {
             return null;
         }
@@ -346,7 +340,7 @@ public class TreeBuilder {
      * @param <T>  节点类型
      * @return 节点总数
      */
-    public static <T extends TreeNode> int count(List<T> tree) {
+    public static <T extends TreeNode<T>> int count(List<T> tree) {
         if (tree == null || tree.isEmpty()) {
             return 0;
         }
@@ -368,7 +362,7 @@ public class TreeBuilder {
      * @param <T>  节点类型
      * @return 最大深度（根节点深度为 1）
      */
-    public static <T extends TreeNode> int getDepth(List<T> tree) {
+    public static <T extends TreeNode<T>> int getDepth(List<T> tree) {
         if (tree == null || tree.isEmpty()) {
             return 0;
         }
