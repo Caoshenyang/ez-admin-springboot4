@@ -52,7 +52,7 @@ sa-token:
   # token 风格（默认可取值：uuid、simple-uuid、random-32、random-64、random-128、tik）
   token-style: uuid
   # jwt秘钥（从环境变量读取，生产环境必须设置）
-  jwt-secret-key: ${SA_TOKEN_JWT_SECRET:}
+  jwt-secret-key: ${SA_TOKEN_JWT_SECRET:asdasdasifhueuiwyurfewbfjsdafjk}
 
 # EZ-ADMIN 配置
 ez:
