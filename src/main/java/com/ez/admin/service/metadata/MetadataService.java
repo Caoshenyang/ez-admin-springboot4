@@ -1,12 +1,12 @@
 package com.ez.admin.service.metadata;
 
-import com.ez.admin.common.condition.FieldConfig;
-import com.ez.admin.common.condition.QueryConditionSupport;
-import com.ez.admin.common.enums.Operator;
-import com.ez.admin.common.exception.ErrorCode;
-import com.ez.admin.common.exception.EzBusinessException;
-import com.ez.admin.common.metadata.FieldMetadata;
-import com.ez.admin.common.metadata.QueryMetadataVO;
+import com.ez.admin.common.data.metadata.condition.FieldConfig;
+import com.ez.admin.common.data.metadata.condition.QueryConditionSupport;
+import com.ez.admin.common.core.enums.Operator;
+import com.ez.admin.common.core.exception.ErrorCode;
+import com.ez.admin.common.core.exception.EzBusinessException;
+import com.ez.admin.dto.metadata.vo.FieldMetadataVO;
+import com.ez.admin.dto.metadata.vo.QueryMetadataVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -47,10 +47,10 @@ public class MetadataService {
             throw new EzBusinessException(ErrorCode.NOT_FOUND, "资源元数据未注册: " + resource);
         }
 
-        // 转换为 FieldMetadata 列表
-        List<FieldMetadata> fields = new ArrayList<>();
+        // 转换为 FieldMetadataVO 列表
+        List<FieldMetadataVO> fields = new ArrayList<>();
         for (FieldConfig<?> config : fieldConfigs.values()) {
-            fields.add(convertToFieldMetadata(config));
+            fields.add(convertToFieldMetadataVO(config));
         }
 
         // 从 QueryConditionSupport 获取资源描述
@@ -115,8 +115,8 @@ public class MetadataService {
      * @param config 字段配置
      * @return 字段元数据
      */
-    private FieldMetadata convertToFieldMetadata(FieldConfig<?> config) {
-        return FieldMetadata.builder()
+    private FieldMetadataVO convertToFieldMetadataVO(FieldConfig<?> config) {
+        return FieldMetadataVO.builder()
                 .field(config.getFieldCode())
                 .type(config.getType().name())
                 .description(config.getDescription())

@@ -1,8 +1,8 @@
 package com.ez.admin.service.auth;
 
 import cn.dev33.satoken.stp.StpUtil;
-import com.ez.admin.common.exception.ErrorCode;
-import com.ez.admin.common.exception.EzBusinessException;
+import com.ez.admin.common.core.exception.ErrorCode;
+import com.ez.admin.common.core.exception.EzBusinessException;
 import com.ez.admin.dto.auth.req.LoginReq;
 import com.ez.admin.dto.auth.vo.LoginVO;
 import com.ez.admin.modules.system.entity.SysUser;

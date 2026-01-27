@@ -1,8 +1,8 @@
 package com.ez.admin.service.install;
 
-import com.ez.admin.common.constant.SystemConstants;
-import com.ez.admin.common.exception.EzBusinessException;
-import com.ez.admin.common.exception.ErrorCode;
+import com.ez.admin.common.core.constant.SystemConstants;
+import com.ez.admin.common.core.exception.EzBusinessException;
+import com.ez.admin.common.core.exception.ErrorCode;
 import com.ez.admin.dto.install.req.InstallReq;
 import com.ez.admin.dto.install.vo.InstallStatusVO;
 import com.ez.admin.dto.install.vo.InstallVO;

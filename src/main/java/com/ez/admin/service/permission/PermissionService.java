@@ -1,11 +1,11 @@
 package com.ez.admin.service.permission;
 
-import com.ez.admin.common.cache.AdminCache;
+import com.ez.admin.common.infrastructure.cache.AdminCache;
 import com.ez.admin.dto.menu.vo.MenuPermissionVO;
 import com.ez.admin.dto.system.vo.SuperAdminPermissionSyncVO;
-import com.ez.admin.common.constant.RoleCode;
-import com.ez.admin.common.exception.EzBusinessException;
-import com.ez.admin.common.exception.ErrorCode;
+import com.ez.admin.common.core.constant.SystemConstants;
+import com.ez.admin.common.core.exception.EzBusinessException;
+import com.ez.admin.common.core.exception.ErrorCode;
 import com.ez.admin.modules.system.entity.SysMenu;
 import com.ez.admin.modules.system.entity.SysRole;
 import com.ez.admin.modules.system.entity.SysRoleMenuRelation;
@@ -64,7 +64,7 @@ public class PermissionService {
         log.debug("开始同步超级管理员权限...");
 
         // 1. 查询 SUPER_ADMIN 角色
-        SysRole superAdminRole = roleMapper.selectByRoleLabel(RoleCode.SUPER_ADMIN);
+        SysRole superAdminRole = roleMapper.selectByRoleLabel(SystemConstants.ROLE_LABEL_SUPER_ADMIN);
         if (superAdminRole == null) {
             throw new EzBusinessException(ErrorCode.ROLE_NOT_FOUND, "SUPER_ADMIN 角色不存在");
         }

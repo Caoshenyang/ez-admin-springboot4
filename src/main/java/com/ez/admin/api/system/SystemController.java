@@ -1,7 +1,7 @@
 package com.ez.admin.api.system;
 
-import com.ez.admin.common.annotation.OperationLog;
-import com.ez.admin.common.model.R;
+import com.ez.admin.common.model.annotation.OperationLog;
+import com.ez.admin.common.model.model.R;
 import com.ez.admin.dto.system.vo.SuperAdminPermissionSyncVO;
 import com.ez.admin.service.permission.PermissionService;
 import io.swagger.v3.oas.annotations.Operation;

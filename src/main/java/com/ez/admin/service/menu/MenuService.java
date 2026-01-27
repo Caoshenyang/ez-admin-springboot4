@@ -1,10 +1,10 @@
 package com.ez.admin.service.menu;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.ez.admin.common.exception.EzBusinessException;
-import com.ez.admin.common.exception.ErrorCode;
-import com.ez.admin.common.mapstruct.MenuConverter;
-import com.ez.admin.common.tree.TreeBuilder;
+import com.ez.admin.common.core.exception.EzBusinessException;
+import com.ez.admin.common.core.exception.ErrorCode;
+import com.ez.admin.common.data.mapstruct.MenuConverter;
+import com.ez.admin.common.data.tree.TreeBuilder;
 import com.ez.admin.dto.menu.req.MenuCreateReq;
 import com.ez.admin.dto.menu.req.MenuUpdateReq;
 import com.ez.admin.dto.menu.vo.MenuDetailVO;

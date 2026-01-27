@@ -1,6 +1,6 @@
 package com.ez.admin.api.install;
 
-import com.ez.admin.common.model.R;
+import com.ez.admin.common.model.model.R;
 import com.ez.admin.dto.install.req.InstallReq;
 import com.ez.admin.dto.install.vo.InstallStatusVO;
 import com.ez.admin.dto.install.vo.InstallVO;

@@ -1,7 +1,7 @@
 package com.ez.admin.api.metadata;
 
-import com.ez.admin.common.metadata.QueryMetadataVO;
-import com.ez.admin.common.model.R;
+import com.ez.admin.dto.metadata.vo.QueryMetadataVO;
+import com.ez.admin.common.model.model.R;
 import com.ez.admin.service.metadata.MetadataService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

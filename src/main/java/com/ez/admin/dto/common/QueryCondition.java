@@ -1,6 +1,6 @@
 package com.ez.admin.dto.common;
 
-import com.ez.admin.common.enums.Operator;
+import com.ez.admin.common.core.enums.Operator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

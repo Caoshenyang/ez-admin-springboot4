@@ -1,6 +1,6 @@
 package com.ez.admin.api.system;
 
-import com.ez.admin.common.model.R;
+import com.ez.admin.common.model.model.R;
 import com.ez.admin.dto.menu.req.MenuCreateReq;
 import com.ez.admin.dto.menu.req.MenuUpdateReq;
 import com.ez.admin.dto.menu.vo.MenuDetailVO;

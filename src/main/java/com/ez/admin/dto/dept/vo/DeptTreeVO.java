@@ -1,6 +1,6 @@
 package com.ez.admin.dto.dept.vo;
 
-import com.ez.admin.common.tree.TreeNode;
+import com.ez.admin.common.data.tree.TreeNode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

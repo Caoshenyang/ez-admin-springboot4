@@ -1,7 +1,7 @@
 package com.ez.admin.api.auth;
 
-import com.ez.admin.common.annotation.OperationLog;
-import com.ez.admin.common.model.R;
+import com.ez.admin.common.model.annotation.OperationLog;
+import com.ez.admin.common.model.model.R;
 import com.ez.admin.dto.auth.req.LoginReq;
 import com.ez.admin.dto.auth.vo.LoginVO;
 import com.ez.admin.service.auth.AuthService;

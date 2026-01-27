@@ -3,9 +3,9 @@ package com.ez.admin.modules.system.mapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ez.admin.common.condition.QueryConditionSupport;
-import com.ez.admin.common.constant.SystemConstants;
-import com.ez.admin.common.model.PageQuery;
+import com.ez.admin.common.data.metadata.condition.QueryConditionSupport;
+import com.ez.admin.common.core.constant.SystemConstants;
+import com.ez.admin.common.model.model.PageQuery;
 import com.ez.admin.modules.system.entity.SysDictType;
 import org.apache.ibatis.annotations.Mapper;
 

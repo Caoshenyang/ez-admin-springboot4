@@ -1,9 +1,9 @@
 package com.ez.admin.service.log;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ez.admin.common.mapstruct.OperationLogConverter;
-import com.ez.admin.common.model.PageQuery;
-import com.ez.admin.common.model.PageVO;
+import com.ez.admin.common.data.mapstruct.OperationLogConverter;
+import com.ez.admin.common.model.model.PageQuery;
+import com.ez.admin.common.model.model.PageVO;
 import com.ez.admin.dto.log.vo.OperationLogListVO;
 import com.ez.admin.modules.system.entity.SysOperationLog;
 import com.ez.admin.modules.system.mapper.SysOperationLogMapper;

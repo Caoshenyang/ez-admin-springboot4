@@ -1,8 +1,8 @@
 package com.ez.admin.api.system;
 
-import com.ez.admin.common.model.PageQuery;
-import com.ez.admin.common.model.PageVO;
-import com.ez.admin.common.model.R;
+import com.ez.admin.common.model.model.PageQuery;
+import com.ez.admin.common.model.model.PageVO;
+import com.ez.admin.common.model.model.R;
 import com.ez.admin.dto.dict.req.*;
 import com.ez.admin.dto.dict.vo.DictDataListVO;
 import com.ez.admin.dto.dict.vo.DictTypeDetailVO;

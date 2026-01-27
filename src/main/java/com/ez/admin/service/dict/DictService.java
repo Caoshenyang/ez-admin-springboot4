@@ -2,11 +2,11 @@ package com.ez.admin.service.dict;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ez.admin.common.exception.EzBusinessException;
-import com.ez.admin.common.exception.ErrorCode;
-import com.ez.admin.common.mapstruct.DictConverter;
-import com.ez.admin.common.model.PageQuery;
-import com.ez.admin.common.model.PageVO;
+import com.ez.admin.common.core.exception.EzBusinessException;
+import com.ez.admin.common.core.exception.ErrorCode;
+import com.ez.admin.common.data.mapstruct.DictConverter;
+import com.ez.admin.common.model.model.PageQuery;
+import com.ez.admin.common.model.model.PageVO;
 import com.ez.admin.dto.dict.req.*;
 import com.ez.admin.dto.dict.vo.DictDataListVO;
 import com.ez.admin.dto.dict.vo.DictTypeDetailVO;

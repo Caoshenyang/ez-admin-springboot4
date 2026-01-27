@@ -1,10 +1,10 @@
 package com.ez.admin.service.dept;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.ez.admin.common.exception.ErrorCode;
-import com.ez.admin.common.exception.EzBusinessException;
-import com.ez.admin.common.mapstruct.DeptConverter;
-import com.ez.admin.common.tree.TreeBuilder;
+import com.ez.admin.common.core.exception.ErrorCode;
+import com.ez.admin.common.core.exception.EzBusinessException;
+import com.ez.admin.common.data.mapstruct.DeptConverter;
+import com.ez.admin.common.data.tree.TreeBuilder;
 import com.ez.admin.dto.dept.req.DeptCreateReq;
 import com.ez.admin.dto.dept.req.DeptUpdateReq;
 import com.ez.admin.dto.dept.vo.DeptDetailVO;

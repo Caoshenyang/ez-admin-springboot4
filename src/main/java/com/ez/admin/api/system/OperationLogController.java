@@ -1,9 +1,9 @@
 package com.ez.admin.api.system;
 
-import com.ez.admin.common.annotation.OperationLog;
-import com.ez.admin.common.model.PageQuery;
-import com.ez.admin.common.model.PageVO;
-import com.ez.admin.common.model.R;
+import com.ez.admin.common.model.annotation.OperationLog;
+import com.ez.admin.common.model.model.PageQuery;
+import com.ez.admin.common.model.model.PageVO;
+import com.ez.admin.common.model.model.R;
 import com.ez.admin.dto.log.vo.OperationLogListVO;
 import com.ez.admin.service.log.OperationLogService;
 import io.swagger.v3.oas.annotations.Operation;

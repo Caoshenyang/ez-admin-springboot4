@@ -1,8 +1,8 @@
 package com.ez.admin.dto.user.metadata;
 
-import com.ez.admin.common.enums.FieldType;
-import com.ez.admin.common.enums.Operator;
-import com.ez.admin.common.metadata.QueryMetadataBuilder;
+import com.ez.admin.common.core.enums.FieldType;
+import com.ez.admin.common.core.enums.Operator;
+import com.ez.admin.common.data.metadata.metadata.QueryMetadataBuilder;
 import com.ez.admin.modules.system.entity.SysUser;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;

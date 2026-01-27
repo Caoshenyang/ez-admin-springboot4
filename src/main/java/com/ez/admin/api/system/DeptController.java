@@ -1,6 +1,6 @@
 package com.ez.admin.api.system;
 
-import com.ez.admin.common.model.R;
+import com.ez.admin.common.model.model.R;
 import com.ez.admin.dto.dept.req.DeptCreateReq;
 import com.ez.admin.dto.dept.req.DeptUpdateReq;
 import com.ez.admin.dto.dept.vo.DeptDetailVO;

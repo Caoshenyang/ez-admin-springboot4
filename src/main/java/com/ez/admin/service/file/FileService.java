@@ -1,7 +1,7 @@
 package com.ez.admin.service.file;
 
-import com.ez.admin.common.exception.EzBusinessException;
-import com.ez.admin.common.exception.ErrorCode;
+import com.ez.admin.common.core.exception.EzBusinessException;
+import com.ez.admin.common.core.exception.ErrorCode;
 import com.ez.admin.dto.file.vo.FileUploadVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
