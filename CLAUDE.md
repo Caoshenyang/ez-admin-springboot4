@@ -7,6 +7,7 @@
 3. **只管生成，用户校验**: 职责是输出高质量 Java 代码，调试由用户控制
 4. **包管理与依赖许可**: 严禁未经同意修改 `pom.xml` 或引入新依赖
 5. **禁止私自提交**: 严禁主动执行 `git commit`，只有用户明确要求时才执行
+6. **类型显式声明**: 禁止使用 `var` 关键字，必须明确声明变量类型
 
 ---
 
@@ -72,6 +73,10 @@ ez-admin-springboot4/
 | VO | `@Getter` + `@Builder` + `@Schema` |
 | Entity | `@Data` + `@TableName` |
 
+**【禁止】** 使用 `record` 关键字定义数据类。所有数据传输对象必须使用传统类 + Lombok 注解。
+
+**【禁止】** 使用 `var` 关键字声明变量。所有变量必须明确声明类型。
+
 **详细规范**: [doc/object-construction-spec.md](./doc/object-construction-spec.md)
 
 ### MapStruct
@@ -83,11 +88,25 @@ ez-admin-springboot4/
 
 ### MyBatis-Plus
 
-- 单表简单逻辑：使用 Wrapper
-- 多表复杂逻辑：使用 XML
-- 禁止使用 `@Select` 等注解编写 SQL
+- **单表与简单逻辑**：拥抱编程式（MyBatis-Plus Wrapper），利用其类型安全和极致效率
+- **多表与复杂逻辑**：回归 XML，利用其结构化能力、ResultMap 映射能力和 SQL 优化空间
+- **注解 SQL**：**全面禁用**。注解既缺乏编程的可维护性，又缺乏 XML 的结构化美感
 
-**详细规范**: [doc/mybatis-plus-guide.md](./doc/mybatis-plus-guide.md)
+- **【禁止】** 在 Service 层拼装超过 3 个条件的 QueryWrapper。此类逻辑必须下沉至 Mapper 层封装为方法
+- **【禁止】** 在项目中使用 `@Select`、`@Update` 等注解编写 SQL
+- **【强制】** 必须使用 `LambdaQueryWrapper`，严禁在代码中出现硬编码的数据库字段名
+- **【强制】** 多表联查 SQL 必须显式定义 ResultMap，严禁使用 Map 或 JSONObject 接收结果
+- **【建议】** SQL 关键字保持大写，提高 XML 代码的视觉可读性
+
+## 技术决策准则
+
+| 场景类型 | 推荐方案 | 实施方式 |
+|---------|---------|---------|
+| **基础 CRUD** | **MP 内置方法** | `insert`, `updateById`, `deleteById` 等 |
+| **单表动态筛选** | **编程式 (Wrapper)** | Mapper 中的 `default` 方法 + `LambdaQueryWrapper` |
+| **2-3 表简单联查** | **编程式 / XML** | 逻辑简单可选用 `default` 封装；涉及多字段映射选 XML |
+| **复杂关联/报表** | **XML** | 编写自定义 SQL，配置嵌套 `ResultMap` |
+| **高性能/极致优化** | **XML** | 需精确控制 SQL 执行计划或使用特定数据库函数 |
 
 ---
 

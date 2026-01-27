@@ -61,6 +61,14 @@ public class MenuUpdateReq {
     @Size(max = 200, message = "组件路径长度不能超过 200 个字符")
     private String componentPath;
 
+    @Schema(description = "后端API路由地址", example = "/api/user")
+    @Size(max = 255, message = "API路由地址长度不能超过 255 个字符")
+    private String apiRoute;
+
+    @Schema(description = "HTTP方法", example = "POST")
+    @Size(max = 20, message = "HTTP方法长度不能超过 20 个字符")
+    private String apiMethod;
+
     @Schema(description = "菜单状态【0 停用 1 正常】", example = "1")
     @NotNull(message = "菜单状态不能为空")
     private Integer status;

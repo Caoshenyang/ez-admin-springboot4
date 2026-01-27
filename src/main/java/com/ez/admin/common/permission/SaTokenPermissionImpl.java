@@ -1,37 +1,50 @@
 package com.ez.admin.common.permission;
 
 import cn.dev33.satoken.stp.StpInterface;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.ez.admin.modules.system.entity.SysRoleMenuRelation;
-import com.ez.admin.modules.system.mapper.SysRoleMenuRelationMapper;
-import com.ez.admin.modules.system.mapper.SysRoleMapper;
+import com.ez.admin.common.cache.AdminCache;
+import com.ez.admin.dto.menu.vo.MenuPermissionVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
- * Sa-Token 权限认证接口实现
+ * Sa-Token 权限认证接口实现（优化版）
  * <p>
  * 实现 StpInterface 接口，为 Sa-Token 提供用户的权限码和角色列表
  * </p>
+ * <p>
+ * 优化点：
+ * <ul>
+ *   <li>从缓存中读取权限和角色，避免每次查询数据库</li>
+ *   <li>缓存由 DataInitializer 在启动时预加载</li>
+ *   <li>数据变更时自动刷新缓存（通过 UserService、RoleService）</li>
+ * </ul>
+ * </p>
  *
  * @author ez-admin
- * @since 2026-01-26
+ * @since 2026-01-27
  */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class SaTokenPermissionImpl implements StpInterface {
 
-    private final SysRoleMenuRelationMapper roleMenuRelationMapper;
-    private final SysRoleMapper roleMapper;
+    private final AdminCache adminCache;
 
     /**
      * 返回指定账号所拥有的权限码集合
+     * <p>
+     * 权限码来源：
+     * <ol>
+     *   <li>获取用户的所有角色标识</li>
+     *   <li>根据角色标识从缓存获取对应的菜单权限</li>
+     *   <li>提取菜单权限中的权限标识（menuPerm）</li>
+     * </ol>
+     * </p>
      *
      * @param loginId   账号id（即 userId）
      * @param loginType 账号类型（多账号体系时使用，此处暂未使用）
@@ -39,36 +52,36 @@ public class SaTokenPermissionImpl implements StpInterface {
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        Long userId = Long.parseLong(loginId.toString());
-
-        // 1. 查询用户的所有角色
-        List<Long> roleIds = getUserRoleIds(userId);
-        if (roleIds.isEmpty()) {
-            return new ArrayList<>();
+        // 1. 获取用户的角色列表
+        List<String> roleLabels = getRoleList(loginId, loginType);
+        if (roleLabels.isEmpty()) {
+            log.debug("用户无角色，返回空权限列表：userId={}", loginId);
+            return Collections.emptyList();
         }
 
-        // 2. 查询这些角色的所有菜单
-        List<Long> menuIds = roleMenuRelationMapper.selectList(
-                        new LambdaQueryWrapper<SysRoleMenuRelation>()
-                                .in(SysRoleMenuRelation::getRoleId, roleIds))
-                .stream()
-                .map(SysRoleMenuRelation::getMenuId)
+        // 2. 根据角色列表从缓存获取菜单权限
+        List<MenuPermissionVO> menuPermissions = adminCache.getMenuByRoleLabels(roleLabels);
+        if (menuPermissions == null || menuPermissions.isEmpty()) {
+            log.debug("用户角色无权限，返回空权限列表：userId={}, roles={}", loginId, roleLabels);
+            return Collections.emptyList();
+        }
+
+        // 3. 提取权限标识
+        List<String> permissions = menuPermissions.stream()
+                .map(MenuPermissionVO::getMenuPerm)
+                .filter(StringUtils::hasText)
                 .distinct()
-                .collect(Collectors.toList());
+                .toList();
 
-        if (menuIds.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        // 3. 查询菜单的权限标识（menu_perm 字段）
-        List<String> permissions = roleMapper.selectMenuPermsByIds(menuIds);
-
-        log.debug("用户权限查询，用户ID：{}，权限数量：{}", userId, permissions.size());
+        log.debug("用户权限查询成功：userId={}, permissionsCount={}", loginId, permissions.size());
         return permissions;
     }
 
     /**
      * 返回指定账号所拥有的角色标识集合
+     * <p>
+     * 从缓存中获取用户的角色标识列表
+     * </p>
      *
      * @param loginId   账号id（即 userId）
      * @param loginType 账号类型
@@ -76,24 +89,46 @@ public class SaTokenPermissionImpl implements StpInterface {
      */
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
-        Long userId = Long.parseLong(loginId.toString());
+        if (loginId == null) {
+            log.warn("loginId 为空，返回空角色列表");
+            return Collections.emptyList();
+        }
 
-        // 查询用户的所有角色标识（role_label）
-        List<String> roleLabels = roleMapper.selectRoleLabelsByUserId(userId);
+        Long userId = parseUserId(loginId);
+        if (userId == null) {
+            log.warn("loginId 解析失败：{}", loginId);
+            return Collections.emptyList();
+        }
 
-        log.debug("用户角色查询，用户ID：{}，角色数量：{}", userId, roleLabels.size());
+        // 从缓存获取用户角色
+        List<String> roleLabels = adminCache.getUserRoles(userId);
+        log.debug("用户角色查询成功：userId={}, rolesCount={}", userId, roleLabels.size());
         return roleLabels;
     }
 
     /**
-     * 获取用户的角色ID列表（辅助方法）
+     * 解析用户ID
+     * <p>
+     * 支持类型：
+     * <ul>
+     *   <li>Long 类型</li>
+     *   <li>Integer 类型</li>
+     *   <li>String 类型（数字字符串）</li>
+     * </ul>
+     * </p>
      *
-     * @param userId 用户ID
-     * @return 角色ID列表
+     * @param loginId 登录ID
+     * @return 用户ID，解析失败返回 null
      */
-    private List<Long> getUserRoleIds(Long userId) {
-        // 这里需要注入 SysUserRoleRelationMapper，但由于循环依赖问题，
-        // 我们通过 RoleMapper 来查询
-        return roleMapper.selectRoleIdsByUserId(userId);
+    private Long parseUserId(Object loginId) {
+        try {
+            if (loginId instanceof Number number) {
+                return number.longValue();
+            }
+            return Long.parseLong(String.valueOf(loginId));
+        } catch (NumberFormatException e) {
+            log.error("用户ID解析失败：loginId={}", loginId, e);
+            return null;
+        }
     }
 }

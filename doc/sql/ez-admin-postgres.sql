@@ -123,6 +123,8 @@ CREATE TABLE ez_admin_sys_menu (
     route_path VARCHAR(255),
     route_name VARCHAR(255),
     component_path VARCHAR(255),
+    api_route VARCHAR(255),
+    api_method VARCHAR(20),
     status SMALLINT NOT NULL DEFAULT 0,
     create_by VARCHAR(30) DEFAULT '',
     create_time TIMESTAMP,
@@ -145,6 +147,8 @@ COMMENT ON COLUMN ez_admin_sys_menu.menu_perm IS '权限标识';
 COMMENT ON COLUMN ez_admin_sys_menu.route_path IS '路由地址';
 COMMENT ON COLUMN ez_admin_sys_menu.route_name IS '路由名称';
 COMMENT ON COLUMN ez_admin_sys_menu.component_path IS '组件路径';
+COMMENT ON COLUMN ez_admin_sys_menu.api_route IS '后端API路由地址';
+COMMENT ON COLUMN ez_admin_sys_menu.api_method IS 'HTTP方法【GET POST PUT DELETE PATCH】';
 COMMENT ON COLUMN ez_admin_sys_menu.status IS '菜单状态【0 停用 1 正常】';
 COMMENT ON COLUMN ez_admin_sys_menu.create_by IS '创建者';
 COMMENT ON COLUMN ez_admin_sys_menu.create_time IS '创建时间';
@@ -358,3 +362,16 @@ CREATE INDEX idx_operation_log_module ON ez_admin_sys_operation_log(module);
 -- CREATE SEQUENCE IF NOT EXISTS seq_user_id START 1;
 -- CREATE SEQUENCE IF NOT EXISTS seq_relation_id START 1;
 -- CREATE SEQUENCE IF NOT EXISTS seq_operation_log_id START 1;
+
+-- ============================================================================
+-- 数据库升级脚本（针对已有数据库）
+-- ============================================================================
+-- 为已有的 ez_admin_sys_menu 表添加 API 路由字段
+-- ALTER TABLE ez_admin_sys_menu ADD COLUMN IF NOT EXISTS api_route VARCHAR(255);
+-- COMMENT ON COLUMN ez_admin_sys_menu.api_route IS '后端API路由地址';
+--
+-- ALTER TABLE ez_admin_sys_menu ADD COLUMN IF NOT EXISTS api_method VARCHAR(20);
+-- COMMENT ON COLUMN ez_admin_sys_menu.api_method IS 'HTTP方法【GET POST PUT DELETE PATCH】';
+
+-- 为新增字段创建索引以提升查询性能
+-- CREATE INDEX IF NOT EXISTS idx_menu_api_route ON ez_admin_sys_menu(api_route, api_method);

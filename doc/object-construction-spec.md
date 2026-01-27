@@ -12,6 +12,63 @@
 | **VO** | `@Getter` + `@Builder` + `@Schema` | **3 个** | `Xxx.builder().field(value).build()` | 不可变性、MapStruct 支持 |
 | **Entity** | `@Data` + `@TableName` | 2 个 | `new Xxx()` + setter | MyBatis-Plus 反射需要 |
 
+### ⚠️ 禁止使用 record
+
+**【禁止】** 在项目中使用 `record` 关键字定义数据类，包括但不限于：
+- ❌ `public record XxxRecord(int field1, String field2) {}`
+- ❌ 内部 record 类
+- ❌ record 作为返回值类型
+
+**理由**：
+1. **不可扩展性**：record 无法添加额外字段和方法，不利于后续扩展
+2. **Lombok 兼容性**：项目已使用 Lombok，record 与 Lombok 注解无法共存
+3. **一致性原则**：统一使用传统类 + Lombok 注解，保持代码风格一致
+4. **MapStruct 支持**：传统类 + Builder 模式完全满足 MapStruct 需求
+
+**正确示例**：
+```java
+// ✅ 推荐 - 使用传统类 + Lombok
+@Getter
+@Builder
+@AllArgsConstructor
+@Schema(name = "XxxVO", description = "XXX响应对象")
+public class XxxVO {
+    private final int field1;
+    private final String field2;
+}
+```
+
+### ⚠️ 禁止使用 var
+
+**【禁止】** 在项目中使用 `var` 关键字声明变量，包括但不限于：
+- ❌ `var result = service.method();`
+- ❌ `var list = new ArrayList<String>();`
+- ❌ Lambda 表达式中的 `var it = list.iterator();`
+
+**理由**：
+1. **代码可读性**：明确类型声明让代码更易理解，无需上下文推断
+2. **团队协作**：显式类型降低代码阅读成本，提高团队协作效率
+3. **IDE 支持**：明确类型让 IDE 提供更准确的代码提示和重构支持
+4. **一致性原则**：统一使用显式类型声明，保持代码风格一致
+
+**正确示例**：
+```java
+// ✅ 推荐 - 显式类型声明
+List<SysUser> users = userMapper.selectList(wrapper);
+SuperAdminPermissionSyncResultVO result = service.syncPermissions();
+String username = user.getUsername();
+Iterator<FieldConfig<T>> it = fields.iterator();
+```
+
+**错误示例**：
+```java
+// ❌ 错误 - 使用 var
+var users = userMapper.selectList(wrapper);
+var result = service.syncPermissions();
+var username = user.getUsername();
+var it = fields.iterator();
+```
+
 ---
 
 ## 1. DTO (Req) - 请求对象

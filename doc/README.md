@@ -18,12 +18,13 @@
 | [树形结构处理指南](./tree-structure-guide.md) | TreeNode 和 TreeBuilder 的使用指南 |
 | [动态查询系统设计文档](./动态查询系统设计文档.md) | 元数据驱动的动态查询系统设计 |
 | [依赖关系说明](./依赖关系说明.md) | 项目依赖和模块关系说明 |
+| [超级管理员权限自动同步设计](./super-admin-permission-sync.md) | SUPER_ADMIN 权限自动同步机制设计 |
 
 ## 数据库文档
 
 | 文档 | 说明 |
 |------|------|
-| [PostgreSQL 建表脚本](./ez-admin-postgres.sql) | PostgreSQL 数据库初始化脚本 |
+| [PostgreSQL 建表脚本](sql/ez-admin-postgres.sql) | PostgreSQL 数据库初始化脚本 |
 
 ---
 
@@ -35,4 +36,5 @@
 
 ## 更新日志
 
+- 2026-01-27：新增超级管理员权限自动同步设计文档
 - 2026-01-26：新增 VO 命名规范、注解规范、对象构造规范等核心文档

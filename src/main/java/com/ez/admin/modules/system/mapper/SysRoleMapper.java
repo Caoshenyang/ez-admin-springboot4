@@ -133,4 +133,27 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
      * @return 权限标识列表
      */
     List<String> selectMenuPermsByIds(@Param("menuIds") List<Long> menuIds);
+
+    /**
+     * 根据 roleLabel 查询角色
+     *
+     * @param roleLabel 角色标识
+     * @return 角色实体，不存在则返回 null
+     */
+    default SysRole selectByRoleLabel(String roleLabel) {
+        return this.selectOne(new LambdaQueryWrapper<SysRole>()
+                .eq(SysRole::getRoleLabel, roleLabel)
+                .eq(SysRole::getIsDeleted, SystemConstants.NOT_DELETED));
+    }
+
+    /**
+     * 根据角色标识查询菜单权限列表
+     * <p>
+     * 用于权限缓存，当缓存未命中时从数据库加载角色的菜单权限
+     * </p>
+     *
+     * @param roleLabel 角色标识
+     * @return 菜单权限列表
+     */
+    List<com.ez.admin.dto.menu.vo.MenuPermissionVO> selectMenuPermissionsByRoleLabel(@Param("roleLabel") String roleLabel);
 }

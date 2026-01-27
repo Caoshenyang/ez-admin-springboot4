@@ -145,6 +145,21 @@ public class RedisCache {
     }
 
     /**
+     * 批量设置 Hash 缓存
+     * <p>
+     * 一次性设置多个 Hash 键值对，减少网络 IO 次数
+     * </p>
+     *
+     * @param key 键
+     * @param map Hash 键值对
+     */
+    public void hSetAll(String key, Map<String, Object> map) {
+        if (map != null && !map.isEmpty()) {
+            redisTemplate.opsForHash().putAll(key, map);
+        }
+    }
+
+    /**
      * 获取 Hash 缓存
      *
      * @param key     键

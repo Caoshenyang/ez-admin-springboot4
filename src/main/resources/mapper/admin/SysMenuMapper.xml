@@ -2,4 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ez.admin.modules.system.mapper.SysMenuMapper">
 
+    <!-- 根据API路由和HTTP方法查询权限码 -->
+    <select id="selectPermByRoute" resultType="java.lang.String">
+        SELECT menu_perm
+        FROM ez_admin_sys_menu
+        WHERE api_route = #{apiRoute}
+          AND api_method = #{apiMethod}
+          AND status = 1
+          AND is_deleted = 0
+        LIMIT 1
+    </select>
+
 </mapper>

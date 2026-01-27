@@ -2,6 +2,7 @@ package com.ez.admin.service.user;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ez.admin.common.cache.AdminCache;
 import com.ez.admin.common.constant.SystemConstants;
 import com.ez.admin.common.exception.EzBusinessException;
 import com.ez.admin.common.exception.ErrorCode;
@@ -47,10 +48,11 @@ public class UserService {
     private final SysUserMapper userMapper;
     private final SysRoleMapper roleMapper;
     private final SysUserRoleRelationMapper userRoleRelationMapper;
+    private final SysUserRoleRelationService userRoleRelationService;
     private final PasswordEncoder passwordEncoder;
     private final SysUserService sysUserService;
-    private final SysUserRoleRelationService sysUserRoleRelationService;
     private final UserConverter userConverter;
+    private final AdminCache adminCache;
 
     /**
      * 创建用户
@@ -253,11 +255,19 @@ public class UserService {
                         relation.setRoleId(roleId);
                         return relation;
                     })
-                    .collect(Collectors.toList());
+                    .toList();
 
-            // 批量插入
-            relations.forEach(userRoleRelationMapper::insert);
+            // 批量插入（使用 MyBatis-Plus IService.saveBatch，底层 JDBC Batch 优化）
+            userRoleRelationService.saveBatch(relations);
         }
+
+        // 刷新用户角色缓存
+        List<String> roleLabels = roleIds != null ? roleMapper.selectList(
+                        new LambdaQueryWrapper<SysRole>().in(SysRole::getRoleId, roleIds))
+                .stream()
+                .map(SysRole::getRoleLabel)
+                .toList() : List.of();
+        adminCache.cacheUserRoles(userId, roleLabels);
 
         log.info("用户分配角色成功，用户ID：{}，角色数量：{}", userId, roleIds != null ? roleIds.size() : 0);
     }
@@ -276,9 +286,4 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    // ==================== 私有方法 ====================
-
-    /**
-     * 构建用户实体
-     */
-    private SysUser buildUser(UserCreateReq request) {
+}

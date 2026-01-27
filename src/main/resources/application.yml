@@ -54,6 +54,10 @@ sa-token:
   # 是否输出操作日志
   is-log: false
 
+# EZ-ADMIN 配置
+ez:
+  admin:
+
 # 日志配置
 logging:
   level:

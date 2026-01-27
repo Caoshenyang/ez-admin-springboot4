@@ -75,6 +75,14 @@ public class SysMenu implements Serializable {
     @TableField("component_path")
     private String componentPath;
 
+    @TableField("api_route")
+    @Schema(description = "后端API路由地址")
+    private String apiRoute;
+
+    @TableField("api_method")
+    @Schema(description = "HTTP方法【GET POST PUT DELETE PATCH】")
+    private String apiMethod;
+
     @TableField("status")
     @Schema(description = "菜单状态【0 停用 1 正常】")
     private Integer status;

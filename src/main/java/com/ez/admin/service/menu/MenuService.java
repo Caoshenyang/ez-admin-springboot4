@@ -38,6 +38,7 @@ public class MenuService {
     private final SysMenuMapper menuMapper;
     private final SysMenuService sysMenuService;
     private final MenuConverter menuConverter;
+    private final com.ez.admin.service.permission.PermissionService permissionService;
 
     /**
      * 创建菜单
@@ -57,6 +58,15 @@ public class MenuService {
         // 2. 创建菜单
         SysMenu menu = buildMenu(request);
         menuMapper.insert(menu);
+
+        // 3. 刷新路由权限缓存（如果该菜单配置了 API 路由）
+        if (menu.getApiRoute() != null && !menu.getApiRoute().isEmpty()) {
+            permissionService.refreshRoutePermissions();
+            log.info("路由权限缓存已刷新（菜单创建）");
+        }
+
+        // 4. 同步超级管理员权限（自动分配给 SUPER_ADMIN）
+        permissionService.syncSuperAdminPermissions();
 
         log.info("创建菜单成功，菜单名称：{}", request.getMenuName());
     }
@@ -100,9 +110,21 @@ public class MenuService {
         menu.setRoutePath(request.getRoutePath());
         menu.setRouteName(request.getRouteName());
         menu.setComponentPath(request.getComponentPath());
+        menu.setApiRoute(request.getApiRoute());
+        menu.setApiMethod(request.getApiMethod());
         menu.setStatus(request.getStatus());
         menu.setDescription(request.getDescription());
         menuMapper.updateById(menu);
+
+        // 4. 刷新路由权限缓存（如果该菜单配置了 API 路由）
+        if (menu.getApiRoute() != null && !menu.getApiRoute().isEmpty()
+            || existMenu.getApiRoute() != null && !existMenu.getApiRoute().isEmpty()) {
+            permissionService.refreshRoutePermissions();
+            log.info("路由权限缓存已刷新（菜单更新）");
+        }
+
+        // 5. 同步超级管理员权限（自动分配给 SUPER_ADMIN）
+        permissionService.syncSuperAdminPermissions();
 
         log.info("更新菜单成功，菜单ID：{}", request.getMenuId());
     }
@@ -129,6 +151,15 @@ public class MenuService {
 
         // 3. 逻辑删除菜单
         sysMenuService.removeById(menuId);
+
+        // 4. 刷新路由权限缓存（如果该菜单配置了 API 路由）
+        if (menu.getApiRoute() != null && !menu.getApiRoute().isEmpty()) {
+            permissionService.refreshRoutePermissions();
+            log.info("路由权限缓存已刷新（菜单删除）");
+        }
+
+        // 5. 同步超级管理员权限（移除已删除的菜单权限）
+        permissionService.syncSuperAdminPermissions();
 
         log.info("删除菜单成功，菜单ID：{}", menuId);
     }
@@ -165,6 +196,20 @@ public class MenuService {
         return TreeBuilder.build(menuTreeVOs);
     }
 
+    /**
+     * 根据API路由和HTTP方法查询权限码
+     * <p>
+     * 用于路由拦截式鉴权，根据请求的路由和方法查找对应的权限码
+     * </p>
+     *
+     * @param apiRoute  API路由地址（如 /api/user）
+     * @param apiMethod HTTP方法（如 GET, POST, PUT, DELETE）
+     * @return 权限码字符串（如 system:user:list），如果未找到则返回 null
+     */
+    public String getPermByRoute(String apiRoute, String apiMethod) {
+        return menuMapper.selectPermByRoute(apiRoute, apiMethod);
+    }
+
     // ==================== 私有方法 ====================
 
     /**
@@ -182,6 +227,8 @@ public class MenuService {
         menu.setRoutePath(request.getRoutePath());
         menu.setRouteName(request.getRouteName());
         menu.setComponentPath(request.getComponentPath());
+        menu.setApiRoute(request.getApiRoute());
+        menu.setApiMethod(request.getApiMethod());
         menu.setStatus(request.getStatus());
         menu.setDescription(request.getDescription());
         return menu;

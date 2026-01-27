@@ -1,4 +1,4 @@
-package com.ez.admin.api.menu;
+package com.ez.admin.api.system;
 
 import com.ez.admin.common.model.R;
 import com.ez.admin.dto.menu.req.MenuCreateReq;
@@ -6,7 +6,6 @@ import com.ez.admin.dto.menu.req.MenuUpdateReq;
 import com.ez.admin.dto.menu.vo.MenuDetailVO;
 import com.ez.admin.dto.menu.vo.MenuTreeVO;
 import com.ez.admin.service.menu.MenuService;
-import com.ez.admin.common.permission.SaCheckPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -18,6 +17,9 @@ import java.util.List;
 
 /**
  * 菜单管理控制器
+ * <p>
+ * 权限说明：本控制器的权限通过路由拦截式鉴权实现，无需使用 @SaCheckPermission 注解
+ * </p>
  *
  * @author ez-admin
  * @since 2026-01-26
@@ -32,7 +34,6 @@ public class MenuController {
     private final MenuService menuService;
 
     @PostMapping
-    @SaCheckPermission("system:menu:create")
     @Operation(summary = "创建菜单", description = "创建新菜单（目录、菜单或按钮）")
     public R<Void> create(@Valid @RequestBody MenuCreateReq request) {
         log.info("创建菜单请求，菜单名称：{}", request.getMenuName());
@@ -41,7 +42,6 @@ public class MenuController {
     }
 
     @PutMapping
-    @SaCheckPermission("system:menu:update")
     @Operation(summary = "更新菜单", description = "更新菜单信息")
     public R<Void> update(@Valid @RequestBody MenuUpdateReq request) {
         log.info("更新菜单请求，菜单ID：{}", request.getMenuId());
@@ -50,7 +50,6 @@ public class MenuController {
     }
 
     @DeleteMapping("/{menuId}")
-    @SaCheckPermission("system:menu:delete")
     @Operation(summary = "删除菜单", description = "根据菜单ID删除菜单（逻辑删除）")
     public R<Void> delete(@PathVariable Long menuId) {
         log.info("删除菜单请求，菜单ID：{}", menuId);
@@ -59,7 +58,6 @@ public class MenuController {
     }
 
     @GetMapping("/{menuId}")
-    @SaCheckPermission("system:menu:query")
     @Operation(summary = "查询菜单详情", description = "根据菜单ID查询菜单完整信息")
     public R<MenuDetailVO> getById(@PathVariable Long menuId) {
         MenuDetailVO menu = menuService.getMenuById(menuId);
@@ -67,7 +65,6 @@ public class MenuController {
     }
 
     @GetMapping("/tree")
-    @SaCheckPermission("system:menu:query")
     @Operation(summary = "查询菜单树", description = "查询完整的菜单树形结构（不分页）")
     public R<List<MenuTreeVO>> getTree() {
         List<MenuTreeVO> tree = menuService.getMenuTree();

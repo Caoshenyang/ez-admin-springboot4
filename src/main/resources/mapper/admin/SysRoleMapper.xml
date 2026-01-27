@@ -36,4 +36,20 @@
           AND m.menu_perm != ''
     </select>
 
+    <!-- 根据角色标识查询菜单权限列表 -->
+    <select id="selectMenuPermissionsByRoleLabel" resultType="com.ez.admin.dto.menu.vo.MenuPermissionVO">
+        SELECT m.menu_id     AS menuId,
+               m.menu_perm   AS menuPerm,
+               m.menu_type   AS menuType,
+               r.role_id     AS roleId
+        FROM ez_admin_sys_role r
+                 INNER JOIN ez_admin_sys_role_menu_relation rm ON r.role_id = rm.role_id
+                 INNER JOIN ez_admin_sys_menu m ON rm.menu_id = m.menu_id
+        WHERE r.role_label = #{roleLabel}
+          AND r.is_deleted = 0
+          AND r.status = 1
+          AND m.is_deleted = 0
+          AND m.status = 1
+    </select>
+
 </mapper>

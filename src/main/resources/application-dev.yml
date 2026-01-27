@@ -5,7 +5,7 @@ spring:
     # PostgreSQL 数据库驱动类
     driver-class-name: org.postgresql.Driver
     # 数据库连接 URL（格式：jdbc:postgresql://主机:端口/数据库名）
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ez-admin}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ez-admin}?reWriteBatchedInserts=true
     # 数据库用户名
     username: ${DB_USERNAME:postgres}
     # 数据库密码

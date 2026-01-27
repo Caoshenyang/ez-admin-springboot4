@@ -1,10 +1,9 @@
-package com.ez.admin.api.user;
+package com.ez.admin.api.system;
 
 import com.ez.admin.common.annotation.OperationLog;
 import com.ez.admin.common.model.R;
 import com.ez.admin.common.model.PageQuery;
 import com.ez.admin.common.model.PageVO;
-import com.ez.admin.common.permission.SaCheckPermission;
 import com.ez.admin.dto.user.req.UserAssignRoleReq;
 import com.ez.admin.dto.user.req.UserCreateReq;
 import com.ez.admin.dto.user.req.UserUpdateReq;
@@ -22,6 +21,9 @@ import java.util.List;
 
 /**
  * 用户管理控制器
+ * <p>
+ * 权限说明：本控制器的权限通过路由拦截式鉴权实现，无需使用 @SaCheckPermission 注解
+ * </p>
  *
  * @author ez-admin
  * @since 2026-01-23
@@ -36,7 +38,6 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    @SaCheckPermission("system:user:create")
     @OperationLog(module = "用户管理", operation = "创建", description = "创建用户")
     @Operation(summary = "创建用户", description = "创建新用户，支持分配角色")
     public R<Void> create(@Valid @RequestBody UserCreateReq request) {
@@ -46,7 +47,6 @@ public class UserController {
     }
 
     @PutMapping
-    @SaCheckPermission("system:user:update")
     @OperationLog(module = "用户管理", operation = "更新", description = "更新用户信息")
     @Operation(summary = "更新用户", description = "更新用户信息，支持重新分配角色")
     public R<Void> update(@Valid @RequestBody UserUpdateReq request) {
@@ -56,7 +56,6 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    @SaCheckPermission("system:user:delete")
     @OperationLog(module = "用户管理", operation = "删除", description = "删除用户")
     @Operation(summary = "删除用户", description = "根据用户ID删除用户（逻辑删除）")
     public R<Void> delete(@PathVariable Long userId) {
@@ -66,7 +65,6 @@ public class UserController {
     }
 
     @DeleteMapping("/batch")
-    @SaCheckPermission("system:user:delete")
     @OperationLog(module = "用户管理", operation = "批量删除", description = "批量删除用户")
     @Operation(summary = "批量删除用户", description = "批量删除多个用户（逻辑删除）")
     public R<Void> batchDelete(@RequestBody List<Long> userIds) {
@@ -76,7 +74,6 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    @SaCheckPermission("system:user:query")
     @Operation(summary = "查询用户详情", description = "根据用户ID查询用户完整信息，包括角色列表")
     public R<UserDetailVO> getById(@PathVariable Long userId) {
         UserDetailVO user = userService.getUserById(userId);
@@ -84,7 +81,6 @@ public class UserController {
     }
 
     @PostMapping("/page")
-    @SaCheckPermission("system:user:query")
     @Operation(summary = "分页查询用户", description = "分页查询用户列表，支持多条件筛选和排序")
     public R<PageVO<UserListVO>> getPage(@RequestBody PageQuery query) {
         PageVO<UserListVO> page = userService.getUserPage(query);
@@ -92,7 +88,6 @@ public class UserController {
     }
 
     @PostMapping("/assign/roles")
-    @SaCheckPermission("system:user:assign")
     @Operation(summary = "分配角色", description = "为用户分配角色（覆盖式，传入的角色ID列表将替换原有角色）")
     public R<Void> assignRoles(@Valid @RequestBody UserAssignRoleReq request) {
         log.info("用户分配角色请求，用户ID：{}，角色数量：{}", request.getUserId(), request.getRoleIds().size());
@@ -101,7 +96,6 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/roles")
-    @SaCheckPermission("system:user:query")
     @Operation(summary = "获取用户角色", description = "获取用户已分配的角色ID列表")
     public R<List<Long>> getRoles(@PathVariable Long userId) {
         List<Long> roleIds = userService.getUserRoleIds(userId);

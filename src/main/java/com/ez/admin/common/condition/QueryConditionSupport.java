@@ -161,7 +161,7 @@ public final class QueryConditionSupport {
 
         // 应用 OR 条件：field1 LIKE %keyword% OR field2 LIKE %keyword%
         wrapper.and(w -> {
-            var it = keywordFields.iterator();
+            java.util.Iterator<FieldConfig<T>> it = keywordFields.iterator();
             w.like(it.next().getColumn(), keyword);
             it.forEachRemaining(f -> w.or().like(f.getColumn(), keyword));
         });

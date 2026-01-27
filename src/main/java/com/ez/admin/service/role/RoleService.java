@@ -46,6 +46,9 @@ public class RoleService {
     private final SysRoleDeptRelationMapper roleDeptRelationMapper;
     private final SysRoleService sysRoleService;
     private final RoleConverter roleConverter;
+    private final com.ez.admin.service.permission.PermissionService permissionService;
+    private final com.ez.admin.modules.system.service.SysRoleMenuRelationService roleMenuRelationService;
+    private final com.ez.admin.modules.system.service.SysRoleDeptRelationService roleDeptRelationService;
 
     /**
      * 创建角色
@@ -165,6 +168,9 @@ public class RoleService {
         roleDeptRelationMapper.delete(new LambdaQueryWrapper<SysRoleDeptRelation>()
                 .eq(SysRoleDeptRelation::getRoleId, roleId));
 
+        // 删除角色菜单权限缓存
+        permissionService.evictRoleMenuPermissions(role.getRoleLabel());
+
         log.info("删除角色成功，角色ID：{}", roleId);
     }
 
@@ -189,6 +195,16 @@ public class RoleService {
         // 批量删除角色部门关联
         roleDeptRelationMapper.delete(new LambdaQueryWrapper<SysRoleDeptRelation>()
                 .in(SysRoleDeptRelation::getRoleId, roleIds));
+
+        // 批量删除角色菜单权限缓存
+        List<String> roleLabels = roleMapper.selectList(
+                        new LambdaQueryWrapper<SysRole>().in(SysRole::getRoleId, roleIds))
+                .stream()
+                .map(SysRole::getRoleLabel)
+                .toList();
+        for (String roleLabel : roleLabels) {
+            permissionService.evictRoleMenuPermissions(roleLabel);
+        }
 
         log.info("批量删除角色成功，数量：{}", roleIds.size());
     }
@@ -265,10 +281,13 @@ public class RoleService {
                         relation.setMenuId(menuId);
                         return relation;
                     })
-                    .collect(Collectors.toList());
+                    .toList();
 
-            // 批量插入
-            relations.forEach(roleMenuRelationMapper::insert);
+            // 批量插入（使用 MyBatis-Plus IService.saveBatch，底层 JDBC Batch 优化）
+            roleMenuRelationService.saveBatch(relations);
+
+            // 刷新角色菜单权限缓存
+            permissionService.refreshRoleMenuPermissions(roleId);
         }
 
         log.info("角色分配菜单成功，角色ID：{}，菜单数量：{}", roleId, menuIds != null ? menuIds.size() : 0);
@@ -316,8 +335,8 @@ public class RoleService {
                     })
                     .collect(Collectors.toList());
 
-            // 批量插入
-            relations.forEach(roleDeptRelationMapper::insert);
+            // 批量插入（使用 MyBatis-Plus IService.saveBatch，底层 JDBC Batch 优化）
+            roleDeptRelationService.saveBatch(relations);
         }
 
         log.info("角色分配部门成功，角色ID：{}，部门数量：{}", roleId, deptIds != null ? deptIds.size() : 0);
