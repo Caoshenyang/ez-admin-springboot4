@@ -8,6 +8,7 @@ import com.ez.admin.common.data.mapstruct.RoleConverter;
 import com.ez.admin.common.model.model.PageQuery;
 import com.ez.admin.common.model.model.PageVO;
 import com.ez.admin.dto.role.req.RoleCreateReq;
+import com.ez.admin.dto.role.req.RoleStatusChangeReq;
 import com.ez.admin.dto.role.req.RoleUpdateReq;
 import com.ez.admin.dto.role.vo.RoleDetailVO;
 import com.ez.admin.dto.role.vo.RoleListVO;
@@ -370,5 +371,55 @@ public class RoleService {
         role.setStatus(request.getStatus());
         role.setDescription(request.getDescription());
         return role;
+    }
+
+    /**
+     * 切换角色状态
+     *
+     * @param request 状态切换请求
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void changeStatus(RoleStatusChangeReq request) {
+        // 1. 检查角色是否存在
+        SysRole role = roleMapper.selectById(request.getRoleId());
+        if (role == null) {
+            throw new EzBusinessException(ErrorCode.ROLE_NOT_FOUND);
+        }
+
+        // 2. 更新角色状态
+        SysRole updateRole = new SysRole();
+        updateRole.setRoleId(request.getRoleId());
+        updateRole.setStatus(request.getStatus());
+        roleMapper.updateById(updateRole);
+
+        // 3. 如果禁用角色，清除相关缓存
+        if (request.getStatus() == 0) {
+            permissionService.evictRoleMenuPermissions(role.getRoleLabel());
+        }
+
+        log.info("角色状态切换成功，角色ID：{}，状态：{}", request.getRoleId(), request.getStatus());
+    }
+
+    /**
+     * 批量分配菜单（多个角色分配相同菜单）
+     *
+     * @param roleIds 角色ID列表
+     * @param menuIds 菜单ID列表
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void batchAssignMenus(List<Long> roleIds, List<Long> menuIds) {
+        if (roleIds == null || roleIds.isEmpty()) {
+            throw new EzBusinessException(ErrorCode.VALIDATION_ERROR, "角色ID列表不能为空");
+        }
+        if (menuIds == null || menuIds.isEmpty()) {
+            throw new EzBusinessException(ErrorCode.VALIDATION_ERROR, "菜单ID列表不能为空");
+        }
+
+        // 批量为每个角色分配菜单
+        for (Long roleId : roleIds) {
+            assignMenus(roleId, menuIds);
+        }
+
+        log.info("批量分配菜单成功，角色数量：{}，菜单数量：{}", roleIds.size(), menuIds.size());
     }
 }

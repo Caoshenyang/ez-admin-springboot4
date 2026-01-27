@@ -5,6 +5,7 @@ import com.ez.admin.dto.menu.req.MenuCreateReq;
 import com.ez.admin.dto.menu.req.MenuUpdateReq;
 import com.ez.admin.dto.menu.vo.MenuDetailVO;
 import com.ez.admin.dto.menu.vo.MenuTreeVO;
+import com.ez.admin.dto.menu.vo.RoutePermissionVO;
 import com.ez.admin.service.menu.MenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -69,5 +70,12 @@ public class MenuController {
     public R<List<MenuTreeVO>> getTree() {
         List<MenuTreeVO> tree = menuService.getMenuTree();
         return R.success(tree);
+    }
+
+    @GetMapping("/routes")
+    @Operation(summary = "查询路由权限配置", description = "查询所有配置了 API 路由的菜单，用于权限管理和展示")
+    public R<List<RoutePermissionVO>> getRoutePermissions() {
+        List<RoutePermissionVO> routes = menuService.getRoutePermissions();
+        return R.success(routes);
     }
 }

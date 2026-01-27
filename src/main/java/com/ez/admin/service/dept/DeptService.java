@@ -161,18 +161,62 @@ public class DeptService {
     /**
      * 查询部门树
      *
+     * @param status 状态过滤（null=全部，0=停用，1=正常）
      * @return 部门树（完整的树形结构）
      */
-    public List<com.ez.admin.dto.dept.vo.DeptTreeVO> getDeptTree() {
+    public List<com.ez.admin.dto.dept.vo.DeptTreeVO> getDeptTree(Integer status) {
         // 1. 查询所有部门
-        List<SysDept> allDepts = deptMapper.selectList(new LambdaQueryWrapper<SysDept>()
-                .orderByAsc(SysDept::getDeptSort));
+        LambdaQueryWrapper<SysDept> wrapper = new LambdaQueryWrapper<SysDept>()
+                .orderByAsc(SysDept::getDeptSort);
+
+        // 如果指定了状态，添加状态过滤
+        if (status != null) {
+            wrapper.eq(SysDept::getStatus, status);
+        }
+
+        List<SysDept> allDepts = deptMapper.selectList(wrapper);
 
         // 2. 转换为 TreeVO
         List<com.ez.admin.dto.dept.vo.DeptTreeVO> deptTreeVOs = deptConverter.toTreeVOList(allDepts);
 
         // 3. 构建树形结构
         return TreeBuilder.build(deptTreeVOs);
+    }
+
+    /**
+     * 查询部门下的用户列表
+     *
+     * @param deptId 部门ID
+     * @return 用户列表
+     */
+    public List<com.ez.admin.dto.dept.vo.DeptUserVO> getDeptUsers(Long deptId) {
+        // 1. 检查部门是否存在
+        SysDept dept = deptMapper.selectById(deptId);
+        if (dept == null) {
+            throw new EzBusinessException(ErrorCode.DEPT_NOT_FOUND);
+        }
+
+        // 2. 查询部门下的所有用户
+        List<SysUser> users = userMapper.selectList(new LambdaQueryWrapper<SysUser>()
+                .eq(SysUser::getDeptId, deptId)
+                .orderByDesc(SysUser::getCreateTime));
+
+        // 3. 转换为 VO
+        return users.stream()
+                .map(user -> com.ez.admin.dto.dept.vo.DeptUserVO.builder()
+                        .userId(user.getUserId())
+                        .username(user.getUsername())
+                        .nickname(user.getNickname())
+                        .email(user.getEmail())
+                        .phoneNumber(user.getPhoneNumber())
+                        .gender(user.getGender())
+                        .avatar(user.getAvatar())
+                        .status(user.getStatus())
+                        .loginIp(user.getLoginIp())
+                        .loginDate(user.getLoginDate())
+                        .createTime(user.getCreateTime())
+                        .build())
+                .toList();
     }
 
     // ==================== 私有方法 ====================

@@ -5,6 +5,7 @@ import com.ez.admin.dto.dept.req.DeptCreateReq;
 import com.ez.admin.dto.dept.req.DeptUpdateReq;
 import com.ez.admin.dto.dept.vo.DeptDetailVO;
 import com.ez.admin.dto.dept.vo.DeptTreeVO;
+import com.ez.admin.dto.dept.vo.DeptUserVO;
 import com.ez.admin.service.dept.DeptService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -65,9 +66,16 @@ public class DeptController {
     }
 
     @GetMapping("/tree")
-    @Operation(summary = "查询部门树", description = "查询完整的部门树形结构（不分页）")
-    public R<List<DeptTreeVO>> getTree() {
-        List<DeptTreeVO> tree = deptService.getDeptTree();
+    @Operation(summary = "查询部门树", description = "查询完整的部门树形结构，支持按状态过滤")
+    public R<List<DeptTreeVO>> getTree(@RequestParam(required = false) Integer status) {
+        List<DeptTreeVO> tree = deptService.getDeptTree(status);
         return R.success(tree);
+    }
+
+    @GetMapping("/{deptId}/users")
+    @Operation(summary = "查询部门用户", description = "查询指定部门下的所有用户")
+    public R<List<DeptUserVO>> getDeptUsers(@PathVariable Long deptId) {
+        List<DeptUserVO> users = deptService.getDeptUsers(deptId);
+        return R.success(users);
     }
 }

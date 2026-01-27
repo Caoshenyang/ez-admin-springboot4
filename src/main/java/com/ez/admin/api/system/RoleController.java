@@ -6,7 +6,9 @@ import com.ez.admin.common.model.model.PageVO;
 import com.ez.admin.common.model.model.R;
 import com.ez.admin.dto.role.req.RoleAssignDeptReq;
 import com.ez.admin.dto.role.req.RoleAssignMenuReq;
+import com.ez.admin.dto.role.req.RoleBatchAssignMenuReq;
 import com.ez.admin.dto.role.req.RoleCreateReq;
+import com.ez.admin.dto.role.req.RoleStatusChangeReq;
 import com.ez.admin.dto.role.req.RoleUpdateReq;
 import com.ez.admin.dto.role.vo.RoleDetailVO;
 import com.ez.admin.dto.role.vo.RoleListVO;
@@ -122,5 +124,23 @@ public class RoleController {
     public R<List<Long>> getDepts(@PathVariable Long roleId) {
         List<Long> deptIds = roleService.getRoleDeptIds(roleId);
         return R.success(deptIds);
+    }
+
+    @PutMapping("/status")
+    @OperationLog(module = "角色管理", operation = "切换状态", description = "切换角色状态")
+    @Operation(summary = "切换角色状态", description = "切换指定角色的状态（启用/禁用）")
+    public R<Void> changeStatus(@Valid @RequestBody RoleStatusChangeReq request) {
+        log.info("切换角色状态请求，角色ID：{}，状态：{}", request.getRoleId(), request.getStatus());
+        roleService.changeStatus(request);
+        return R.success("状态切换成功");
+    }
+
+    @PostMapping("/batch/assign/menus")
+    @OperationLog(module = "角色管理", operation = "批量分配菜单", description = "批量分配菜单")
+    @Operation(summary = "批量分配菜单", description = "为多个角色批量分配相同的菜单权限")
+    public R<Void> batchAssignMenus(@Valid @RequestBody RoleBatchAssignMenuReq request) {
+        log.info("批量分配菜单请求，角色数量：{}，菜单数量：{}", request.getRoleIds().size(), request.getMenuIds().size());
+        roleService.batchAssignMenus(request.getRoleIds(), request.getMenuIds());
+        return R.success("批量分配成功");
     }
 }

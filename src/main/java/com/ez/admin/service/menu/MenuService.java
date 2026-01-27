@@ -9,6 +9,7 @@ import com.ez.admin.dto.menu.req.MenuCreateReq;
 import com.ez.admin.dto.menu.req.MenuUpdateReq;
 import com.ez.admin.dto.menu.vo.MenuDetailVO;
 import com.ez.admin.dto.menu.vo.MenuTreeVO;
+import com.ez.admin.dto.menu.vo.RoutePermissionVO;
 import com.ez.admin.modules.system.entity.SysMenu;
 import com.ez.admin.modules.system.mapper.SysMenuMapper;
 import com.ez.admin.modules.system.service.SysMenuService;
@@ -208,6 +209,37 @@ public class MenuService {
      */
     public String getPermByRoute(String apiRoute, String apiMethod) {
         return menuMapper.selectPermByRoute(apiRoute, apiMethod);
+    }
+
+    /**
+     * 查询所有路由权限配置
+     * <p>
+     * 返回所有配置了 API 路由的菜单，用于权限管理和展示
+     * </p>
+     *
+     * @return 路由权限配置列表
+     */
+    public List<RoutePermissionVO> getRoutePermissions() {
+        // 查询所有配置了 API 路由的菜单
+        List<SysMenu> menus = menuMapper.selectList(new LambdaQueryWrapper<SysMenu>()
+                .isNotNull(SysMenu::getApiRoute)
+                .ne(SysMenu::getApiRoute, "")
+                .orderByAsc(SysMenu::getMenuSort));
+
+        // 转换为 VO
+        return menus.stream()
+                .map(menu -> RoutePermissionVO.builder()
+                        .menuId(menu.getMenuId())
+                        .menuName(menu.getMenuName())
+                        .menuPerm(menu.getMenuPerm())
+                        .apiRoute(menu.getApiRoute())
+                        .apiMethod(menu.getApiMethod())
+                        .menuType(menu.getMenuType())
+                        .routePath(menu.getRoutePath())
+                        .routeName(menu.getRouteName())
+                        .componentPath(menu.getComponentPath())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     // ==================== 私有方法 ====================
