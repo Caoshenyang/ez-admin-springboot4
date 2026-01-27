@@ -5,6 +5,7 @@ import com.ez.admin.common.model.model.PageVO;
 import com.ez.admin.common.model.model.R;
 import com.ez.admin.dto.dict.req.*;
 import com.ez.admin.dto.dict.vo.DictDataListVO;
+import com.ez.admin.dto.dict.vo.DictDataDetailVO;
 import com.ez.admin.dto.dict.vo.DictTypeDetailVO;
 import com.ez.admin.dto.dict.vo.DictTypeListVO;
 import com.ez.admin.service.dict.DictService;
@@ -120,5 +121,28 @@ public class DictController {
     public R<List<DictDataListVO>> getDataListByDictType(@PathVariable String dictType) {
         List<DictDataListVO> list = dictService.getDictDataListByDictType(dictType);
         return R.success(list);
+    }
+
+    @DeleteMapping("/data/batch")
+    @Operation(summary = "批量删除字典数据", description = "批量删除多个字典数据")
+    public R<Void> batchDeleteData(@Valid @RequestBody DictDataBatchDeleteReq request) {
+        log.info("批量删除字典数据请求，数量：{}", request.getDictDataIds().size());
+        dictService.batchDeleteDictData(request.getDictDataIds());
+        return R.success("批量删除成功");
+    }
+
+    @PostMapping("/data/page")
+    @Operation(summary = "分页查询字典数据", description = "分页查询字典数据列表，支持多条件筛选")
+    public R<PageVO<DictDataDetailVO>> getDataPage(@RequestBody PageQuery query) {
+        PageVO<DictDataDetailVO> page = dictService.getDictDataPage(query);
+        return R.success(page);
+    }
+
+    @PutMapping("/type/status")
+    @Operation(summary = "切换字典类型状态", description = "切换指定字典类型的状态（启用/禁用）")
+    public R<Void> changeDictTypeStatus(@Valid @RequestBody DictTypeStatusChangeReq request) {
+        log.info("切换字典类型状态请求，字典ID：{}，状态：{}", request.getDictId(), request.getStatus());
+        dictService.changeDictTypeStatus(request);
+        return R.success("状态切换成功");
     }
 }

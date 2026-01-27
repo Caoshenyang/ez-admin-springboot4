@@ -3,7 +3,7 @@ package com.ez.admin.modules.system.mapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ez.admin.common.data.metadata.condition.QueryConditionSupport;
+import com.ez.admin.common.data.mapper.MapperHelper;
 import com.ez.admin.common.core.constant.SystemConstants;
 import com.ez.admin.common.model.model.PageQuery;
 import com.ez.admin.modules.system.entity.SysRole;
@@ -95,19 +95,7 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
      * @return 分页结果
      */
     default Page<SysRole> selectRolePage(Page<SysRole> page, PageQuery query) {
-        LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
-
-        if (query != null) {
-            // 1. 快捷模糊搜索：自动搜索标记为 keywordSearch=true 的字段
-            QueryConditionSupport.applyKeywordSearch(wrapper, query.getKeyword(), SysRole.class);
-
-            // 2. 高级查询：动态应用 conditions
-            if (query.getConditions() != null && !query.getConditions().isEmpty()) {
-                QueryConditionSupport.applyConditions(wrapper, query.getConditions(), SysRole.class);
-            }
-        }
-
-        return this.selectPage(page, wrapper);
+        return MapperHelper.selectPage(this, page, query, SysRole.class);
     }
 
     /**

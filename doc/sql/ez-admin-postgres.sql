@@ -351,6 +351,44 @@ CREATE INDEX idx_operation_log_create_time ON ez_admin_sys_operation_log(create_
 CREATE INDEX idx_operation_log_module ON ez_admin_sys_operation_log(module);
 
 -- ============================================================================
+-- 11. 系统配置表
+-- ============================================================================
+DROP TABLE IF EXISTS ez_admin_sys_config CASCADE;
+
+CREATE TABLE ez_admin_sys_config (
+    config_id BIGINT NOT NULL,
+    config_name VARCHAR(100) NOT NULL,
+    config_key VARCHAR(100) NOT NULL,
+    config_value VARCHAR(500) NOT NULL,
+    config_type VARCHAR(50) NOT NULL DEFAULT 'system',
+    is_system SMALLINT NOT NULL DEFAULT 0,
+    remark VARCHAR(500),
+    create_by VARCHAR(30) DEFAULT '',
+    create_time TIMESTAMP,
+    update_by VARCHAR(30) DEFAULT '',
+    update_time TIMESTAMP,
+    is_deleted SMALLINT NOT NULL DEFAULT 0,
+    CONSTRAINT pk_ez_admin_sys_config PRIMARY KEY (config_id)
+);
+
+COMMENT ON TABLE ez_admin_sys_config IS '系统配置表';
+COMMENT ON COLUMN ez_admin_sys_config.config_id IS '配置ID';
+COMMENT ON COLUMN ez_admin_sys_config.config_name IS '配置名称';
+COMMENT ON COLUMN ez_admin_sys_config.config_key IS '配置键值';
+COMMENT ON COLUMN ez_admin_sys_config.config_value IS '配置内容';
+COMMENT ON COLUMN ez_admin_sys_config.config_type IS '配置类型（system=系统配置，user=用户配置）';
+COMMENT ON COLUMN ez_admin_sys_config.is_system IS '是否系统内置（0=否，1=是）';
+COMMENT ON COLUMN ez_admin_sys_config.remark IS '备注';
+COMMENT ON COLUMN ez_admin_sys_config.create_by IS '创建者';
+COMMENT ON COLUMN ez_admin_sys_config.create_time IS '创建时间';
+COMMENT ON COLUMN ez_admin_sys_config.update_by IS '更新者';
+COMMENT ON COLUMN ez_admin_sys_config.update_time IS '更新时间';
+COMMENT ON COLUMN ez_admin_sys_config.is_deleted IS '是否删除【0 正常 1 已删除】';
+
+-- 为配置表创建索引以提升查询性能
+CREATE UNIQUE INDEX idx_config_key ON ez_admin_sys_config(config_key) WHERE is_deleted = 0;
+
+-- ============================================================================
 -- 初始化序列（可选，用于主键自增）
 -- ============================================================================
 -- 如果需要使用自增主键，可以创建序列
@@ -362,6 +400,7 @@ CREATE INDEX idx_operation_log_module ON ez_admin_sys_operation_log(module);
 -- CREATE SEQUENCE IF NOT EXISTS seq_user_id START 1;
 -- CREATE SEQUENCE IF NOT EXISTS seq_relation_id START 1;
 -- CREATE SEQUENCE IF NOT EXISTS seq_operation_log_id START 1;
+-- CREATE SEQUENCE IF NOT EXISTS seq_config_id START 1;
 
 -- ============================================================================
 -- 数据库升级脚本（针对已有数据库）

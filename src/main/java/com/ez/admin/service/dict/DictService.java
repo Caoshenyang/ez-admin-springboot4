@@ -8,7 +8,9 @@ import com.ez.admin.common.data.mapstruct.DictConverter;
 import com.ez.admin.common.model.model.PageQuery;
 import com.ez.admin.common.model.model.PageVO;
 import com.ez.admin.dto.dict.req.*;
+import com.ez.admin.dto.dict.req.DictTypeStatusChangeReq;
 import com.ez.admin.dto.dict.vo.DictDataListVO;
+import com.ez.admin.dto.dict.vo.DictDataDetailVO;
 import com.ez.admin.dto.dict.vo.DictTypeDetailVO;
 import com.ez.admin.dto.dict.vo.DictTypeListVO;
 import com.ez.admin.modules.system.entity.SysDictData;
@@ -264,6 +266,68 @@ public class DictService {
 
         // 2. 根据字典类型ID查询字典数据
         return getDictDataListByDictId(dictTypeEnum.getDictId());
+    }
+
+    /**
+     * 批量删除字典数据
+     *
+     * @param dictDataIds 字典数据ID列表
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void batchDeleteDictData(List<Long> dictDataIds) {
+        if (dictDataIds == null || dictDataIds.isEmpty()) {
+            throw new EzBusinessException(ErrorCode.VALIDATION_ERROR, "字典数据ID列表不能为空");
+        }
+
+        // 批量逻辑删除字典数据
+        sysDictDataService.removeByIds(dictDataIds);
+
+        log.info("批量删除字典数据成功，数量：{}", dictDataIds.size());
+    }
+
+    /**
+     * 分页查询字典数据
+     *
+     * @param query 分页查询请求
+     * @return 分页结果
+     */
+    public PageVO<DictDataDetailVO> getDictDataPage(PageQuery query) {
+        // 执行分页查询
+        Page<SysDictData> result = dictDataMapper.selectDictDataPage(query.toMpPage(), query);
+
+        return PageVO.of(result, dictData -> DictDataDetailVO.builder()
+                .dictDataId(dictData.getDictDataId())
+                .dictId(dictData.getDictId())
+                .dictLabel(dictData.getDictLabel())
+                .dictValue(dictData.getDictValue())
+                .dictSort(dictData.getDictSort())
+                .listClass(dictData.getListClass())
+                .isDefault(dictData.getIsDefault())
+                .status(dictData.getStatus())
+                .description(dictData.getDescription())
+                .build());
+    }
+
+    /**
+     * 切换字典类型状态
+     *
+     * @param request 状态切换请求
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void changeDictTypeStatus(DictTypeStatusChangeReq request) {
+        // 1. 检查字典类型是否存在
+        SysDictType dictType = dictTypeMapper.selectById(request.getDictId());
+        if (dictType == null) {
+            throw new EzBusinessException(ErrorCode.DICT_TYPE_NOT_FOUND);
+        }
+
+        // 2. 更新字典类型状态
+        SysDictType updateDictType = new SysDictType();
+        updateDictType.setDictId(request.getDictId());
+        updateDictType.setStatus(request.getStatus());
+        dictTypeMapper.updateById(updateDictType);
+
+        log.info("字典类型状态切换成功，字典ID：{}，状态：{}", request.getDictId(), request.getStatus());
     }
 
     // ==================== 私有方法 ====================

@@ -4,11 +4,13 @@ import com.ez.admin.common.model.annotation.OperationLog;
 import com.ez.admin.common.model.model.PageQuery;
 import com.ez.admin.common.model.model.PageVO;
 import com.ez.admin.common.model.model.R;
+import com.ez.admin.dto.log.req.OperationLogQueryReq;
 import com.ez.admin.dto.log.vo.OperationLogListVO;
 import com.ez.admin.service.log.OperationLogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +37,13 @@ public class OperationLogController {
     @Operation(summary = "分页查询操作日志", description = "分页查询操作日志列表，支持多条件筛选")
     public R<PageVO<OperationLogListVO>> getPage(@RequestBody PageQuery query) {
         PageVO<OperationLogListVO> page = operationLogService.getOperationLogPage(query);
+        return R.success(page);
+    }
+
+    @PostMapping("/query")
+    @Operation(summary = "条件查询操作日志", description = "支持多条件筛选的操作日志分页查询")
+    public R<PageVO<OperationLogListVO>> queryPage(@Valid @RequestBody OperationLogQueryReq request) {
+        PageVO<OperationLogListVO> page = operationLogService.getOperationLogPage(request);
         return R.success(page);
     }
 
