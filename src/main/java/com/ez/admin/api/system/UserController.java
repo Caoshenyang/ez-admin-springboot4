@@ -4,11 +4,16 @@ import com.ez.admin.common.annotation.OperationLog;
 import com.ez.admin.common.model.R;
 import com.ez.admin.common.model.PageQuery;
 import com.ez.admin.common.model.PageVO;
+import com.ez.admin.dto.file.vo.FileUploadVO;
 import com.ez.admin.dto.user.req.UserAssignRoleReq;
 import com.ez.admin.dto.user.req.UserCreateReq;
+import com.ez.admin.dto.user.req.UserPasswordChangeReq;
+import com.ez.admin.dto.user.req.UserProfileUpdateReq;
+import com.ez.admin.dto.user.req.UserStatusChangeReq;
 import com.ez.admin.dto.user.req.UserUpdateReq;
 import com.ez.admin.dto.user.vo.UserDetailVO;
 import com.ez.admin.dto.user.vo.UserListVO;
+import com.ez.admin.service.file.FileService;
 import com.ez.admin.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,6 +21,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import cn.dev33.satoken.stp.StpUtil;
 
 import java.util.List;
 
@@ -36,6 +44,8 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
+    private final FileService fileService;
 
     @PostMapping
     @OperationLog(module = "用户管理", operation = "创建", description = "创建用户")
@@ -100,5 +110,55 @@ public class UserController {
     public R<List<Long>> getRoles(@PathVariable Long userId) {
         List<Long> roleIds = userService.getUserRoleIds(userId);
         return R.success(roleIds);
+    }
+
+    @PostMapping("/{userId}/avatar")
+    @OperationLog(module = "用户管理", operation = "上传头像", description = "上传用户头像")
+    @Operation(summary = "上传用户头像", description = "为指定用户上传头像")
+    public R<String> uploadAvatar(@PathVariable Long userId, @RequestParam("file") MultipartFile file) {
+        log.info("上传用户头像请求，用户ID：{}", userId);
+        FileUploadVO uploadResult = fileService.uploadImage(file);
+        userService.uploadAvatar(userId, uploadResult.getUrl());
+        return R.success("头像上传成功", uploadResult.getUrl());
+    }
+
+    @PostMapping("/avatar")
+    @OperationLog(module = "用户管理", operation = "上传头像", description = "上传当前用户头像")
+    @Operation(summary = "上传当前用户头像", description = "为当前登录用户上传头像")
+    public R<String> uploadCurrentUserAvatar(@RequestParam("file") MultipartFile file) {
+        Long userId = StpUtil.getLoginIdAsLong();
+        log.info("上传当前用户头像请求，用户ID：{}", userId);
+        FileUploadVO uploadResult = fileService.uploadImage(file);
+        userService.uploadAvatar(userId, uploadResult.getUrl());
+        return R.success("头像上传成功", uploadResult.getUrl());
+    }
+
+    @PutMapping("/profile")
+    @OperationLog(module = "用户管理", operation = "修改个人信息", description = "修改当前用户个人信息")
+    @Operation(summary = "修改个人信息", description = "修改当前登录用户的个人信息")
+    public R<Void> updateProfile(@Valid @RequestBody UserProfileUpdateReq request) {
+        Long userId = StpUtil.getLoginIdAsLong();
+        log.info("修改个人信息请求，用户ID：{}", userId);
+        userService.updateProfile(userId, request);
+        return R.success("个人信息修改成功");
+    }
+
+    @PutMapping("/password")
+    @OperationLog(module = "用户管理", operation = "修改密码", description = "修改当前用户密码")
+    @Operation(summary = "修改密码", description = "修改当前登录用户的密码")
+    public R<Void> changePassword(@Valid @RequestBody UserPasswordChangeReq request) {
+        Long userId = StpUtil.getLoginIdAsLong();
+        log.info("修改密码请求，用户ID：{}", userId);
+        userService.changePassword(userId, request);
+        return R.success("密码修改成功，请重新登录");
+    }
+
+    @PutMapping("/status")
+    @OperationLog(module = "用户管理", operation = "切换状态", description = "切换用户状态")
+    @Operation(summary = "切换用户状态", description = "切换指定用户的状态（启用/禁用）")
+    public R<Void> changeStatus(@Valid @RequestBody UserStatusChangeReq request) {
+        log.info("切换用户状态请求，用户ID：{}，状态：{}", request.getUserId(), request.getStatus());
+        userService.changeStatus(request);
+        return R.success("状态切换成功");
     }
 }

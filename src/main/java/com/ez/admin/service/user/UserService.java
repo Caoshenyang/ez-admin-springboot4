@@ -1,5 +1,6 @@
 package com.ez.admin.service.user;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ez.admin.common.cache.AdminCache;
@@ -10,6 +11,9 @@ import com.ez.admin.common.mapstruct.UserConverter;
 import com.ez.admin.common.model.PageQuery;
 import com.ez.admin.common.model.PageVO;
 import com.ez.admin.dto.user.req.UserCreateReq;
+import com.ez.admin.dto.user.req.UserPasswordChangeReq;
+import com.ez.admin.dto.user.req.UserProfileUpdateReq;
+import com.ez.admin.dto.user.req.UserStatusChangeReq;
 import com.ez.admin.dto.user.req.UserUpdateReq;
 import com.ez.admin.dto.user.vo.UserDetailVO;
 import com.ez.admin.dto.user.vo.UserListVO;
@@ -284,6 +288,131 @@ public class UserService {
                 .stream()
                 .map(SysUserRoleRelation::getRoleId)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 上传用户头像
+     *
+     * @param userId 用户ID
+     * @param avatarUrl 头像URL
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void uploadAvatar(Long userId, String avatarUrl) {
+        // 1. 检查用户是否存在
+        SysUser user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new EzBusinessException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        // 2. 更新用户头像
+        SysUser updateUser = new SysUser();
+        updateUser.setUserId(userId);
+        updateUser.setAvatar(avatarUrl);
+        userMapper.updateById(updateUser);
+
+        log.info("用户头像上传成功，用户ID：{}，头像：{}", userId, avatarUrl);
+    }
+
+    /**
+     * 修改用户个人信息
+     *
+     * @param userId 用户ID
+     * @param request 个人信息修改请求
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void updateProfile(Long userId, UserProfileUpdateReq request) {
+        // 1. 检查用户是否存在
+        SysUser existUser = userMapper.selectById(userId);
+        if (existUser == null) {
+            throw new EzBusinessException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        // 2. 检查手机号是否被其他用户占用
+        if (StringUtils.hasText(request.getPhoneNumber()) &&
+                userMapper.existsByPhoneNumberExclude(request.getPhoneNumber(), userId)) {
+            throw new EzBusinessException(ErrorCode.USER_PHONE_ALREADY_EXISTS);
+        }
+
+        // 3. 检查邮箱是否被其他用户占用
+        if (StringUtils.hasText(request.getEmail()) &&
+                userMapper.existsByEmailExclude(request.getEmail(), userId)) {
+            throw new EzBusinessException(ErrorCode.USER_EMAIL_ALREADY_EXISTS);
+        }
+
+        // 4. 更新用户信息
+        SysUser user = new SysUser();
+        user.setUserId(userId);
+        user.setNickname(request.getNickname());
+        user.setEmail(request.getEmail());
+        user.setPhoneNumber(request.getPhoneNumber());
+        user.setGender(request.getGender());
+        user.setDescription(request.getDescription());
+        userMapper.updateById(user);
+
+        log.info("用户个人信息修改成功，用户ID：{}", userId);
+    }
+
+    /**
+     * 修改用户密码
+     *
+     * @param userId 用户ID
+     * @param request 密码修改请求
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void changePassword(Long userId, UserPasswordChangeReq request) {
+        // 1. 检查用户是否存在
+        SysUser user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new EzBusinessException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        // 2. 验证旧密码
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new EzBusinessException(ErrorCode.USER_PASSWORD_ERROR, "旧密码错误");
+        }
+
+        // 3. 检查新密码是否与旧密码相同
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+            throw new EzBusinessException(ErrorCode.VALIDATION_ERROR, "新密码不能与旧密码相同");
+        }
+
+        // 4. 更新密码
+        SysUser updateUser = new SysUser();
+        updateUser.setUserId(userId);
+        updateUser.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userMapper.updateById(updateUser);
+
+        // 5. 清除用户登录状态（强制重新登录）
+        StpUtil.logout(userId);
+
+        log.info("用户密码修改成功，用户ID：{}", userId);
+    }
+
+    /**
+     * 切换用户状态
+     *
+     * @param request 状态切换请求
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void changeStatus(UserStatusChangeReq request) {
+        // 1. 检查用户是否存在
+        SysUser user = userMapper.selectById(request.getUserId());
+        if (user == null) {
+            throw new EzBusinessException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        // 2. 更新用户状态
+        SysUser updateUser = new SysUser();
+        updateUser.setUserId(request.getUserId());
+        updateUser.setStatus(request.getStatus());
+        userMapper.updateById(updateUser);
+
+        // 3. 如果禁用用户，清除其登录状态
+        if (request.getStatus() == SystemConstants.STATUS_DISABLED) {
+            StpUtil.logout(request.getUserId());
+        }
+
+        log.info("用户状态切换成功，用户ID：{}，状态：{}", request.getUserId(), request.getStatus());
     }
 
 }
