@@ -1,9 +1,10 @@
 # EZ-ADMIN-SPRINGBOOT4
 
-![Version](https://img.shields.io/badge/version-0.0.1--blue)
+![Version](https://img.shields.io/badge/version-0.0.1-blue)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Java](https://img.shields.io/badge/Java-21-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0-brightgreen)
+![GitHub Stars](https://img.shields.io/github/stars/Caoshenyang/ez-admin-springboot4?style=social)
 
 > 一款基于 Spring Boot 4.x + JDK 21 的现代化轻量级后台管理系统
 
