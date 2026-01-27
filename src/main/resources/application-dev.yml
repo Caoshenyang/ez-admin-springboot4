@@ -65,3 +65,8 @@ logging:
     com.ez.admin.modules.**.mapper: DEBUG
     # Spring 框架日志
     org.springframework: INFO
+
+# Sa-Token 开发环境配置
+sa-token:
+  # 开发环境开启操作日志，便于调试
+  is-log: true

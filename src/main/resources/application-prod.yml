@@ -44,3 +44,8 @@ logging:
     # 其他框架日志
     org.apache: WARN
     org.hibernate: WARN
+
+# Sa-Token 生产环境配置
+sa-token:
+  # 生产环境关闭操作日志，避免日志过多
+  is-log: false
