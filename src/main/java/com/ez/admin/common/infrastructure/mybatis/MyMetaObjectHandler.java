@@ -50,12 +50,12 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         // 填充更新时间
         this.strictInsertFill(metaObject, "updateTime", LocalDateTime.class, LocalDateTime.now());
 
-        // 填充创建者（从当前登录用户获取，如果未登录则使用 system）
-        String createBy = getCurrentUserId();
-        this.strictInsertFill(metaObject, "createBy", String.class, createBy);
+        // 填充创建者（从 Sa-Token 获取当前登录用户ID，如果未登录则使用系统默认ID）
+        Long createBy = getCurrentUserId();
+        this.strictInsertFill(metaObject, "createBy", Long.class, createBy);
 
         // 填充更新者
-        this.strictInsertFill(metaObject, "updateBy", String.class, createBy);
+        this.strictInsertFill(metaObject, "updateBy", Long.class, createBy);
     }
 
     /**
@@ -73,26 +73,27 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         // 填充更新时间
         this.strictUpdateFill(metaObject, "updateTime", LocalDateTime.class, LocalDateTime.now());
 
-        // 填充更新者（从当前登录用户获取，如果未登录则使用 system）
-        String updateBy = getCurrentUserId();
-        this.strictUpdateFill(metaObject, "updateBy", String.class, updateBy);
+        // 填充更新者（从 Sa-Token 获取当前登录用户ID，如果未登录则使用系统默认ID）
+        Long updateBy = getCurrentUserId();
+        this.strictUpdateFill(metaObject, "updateBy", Long.class, updateBy);
     }
 
     /**
      * 获取当前登录用户ID
      * <p>
-     * 从 Sa-Token 中获取当前登录用户ID，如果未登录或获取失败，则返回系统默认值
+     * 从 Sa-Token 的 Session 中获取当前登录用户ID，无需查询数据库
+     * 如果未登录或获取失败，则返回系统默认ID（-1L）
      * </p>
      *
-     * @return 用户ID
+     * @return 用户ID（Long类型）
      */
-    private String getCurrentUserId() {
+    private Long getCurrentUserId() {
         try {
             Object loginId = StpUtil.getLoginIdDefaultNull();
-            return loginId != null ? String.valueOf(loginId) : SystemConstants.CREATOR_SYSTEM;
+            return loginId != null ? Long.valueOf(loginId.toString()) : SystemConstants.CREATOR_SYSTEM_ID;
         } catch (Exception e) {
-            log.warn("获取当前登录用户ID失败，使用默认值：{}", SystemConstants.CREATOR_SYSTEM, e);
-            return SystemConstants.CREATOR_SYSTEM;
+            log.warn("获取当前登录用户ID失败，使用默认值：{}", SystemConstants.CREATOR_SYSTEM_ID, e);
+            return SystemConstants.CREATOR_SYSTEM_ID;
         }
     }
 }

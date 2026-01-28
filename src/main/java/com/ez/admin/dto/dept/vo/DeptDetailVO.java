@@ -64,14 +64,14 @@ public class DeptDetailVO {
     @Schema(description = "描述信息")
     private String description;
 
-    @Schema(description = "创建者")
-    private String createBy;
+    @Schema(description = "创建者ID")
+    private Long createBy;
 
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
 
-    @Schema(description = "更新者")
-    private String updateBy;
+    @Schema(description = "更新者ID")
+    private Long updateBy;
 
     @Schema(description = "更新时间")
     private LocalDateTime updateTime;

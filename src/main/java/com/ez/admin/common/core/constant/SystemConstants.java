@@ -47,6 +47,7 @@ public final class SystemConstants {
      * 系统标识
      */
     public static final String CREATOR_SYSTEM = "system";
+    public static final Long CREATOR_SYSTEM_ID = -1L;
     public static final String DEFAULT_DESCRIPTION = "系统默认管理员账号";
 
     /**

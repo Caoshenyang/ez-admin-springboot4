@@ -1,6 +1,7 @@
 package com.ez.admin.common.framework.component;
 
 import com.ez.admin.dto.system.vo.SuperAdminPermissionSyncVO;
+import com.ez.admin.modules.system.mapper.SysUserMapper;
 import com.ez.admin.service.permission.PermissionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,12 +21,17 @@ import org.springframework.stereotype.Component;
  * </ol>
  * </p>
  * <p>
+ * <b>重要说明：</b>
+ * 如果系统未初始化（无用户），将跳过权限同步，仅记录警告日志，
+ * 不影响系统启动。用户可以通过 /install 接口完成系统初始化。
+ * </p>
+ * <p>
  * 使用 {@link ApplicationRunner} 确保在所有 Bean 初始化完成后执行，
  * 通过 {@link Order} 注解控制执行顺序（值为 1，最先执行）
  * </p>
  *
  * @author ez-admin
- * @since 2026-01-27
+ * @since 2026-01-28
  */
 @Slf4j
 @Component
@@ -34,15 +40,17 @@ import org.springframework.stereotype.Component;
 public class PermissionCacheInitializer implements ApplicationRunner {
 
     private final PermissionService permissionService;
+    private final SysUserMapper userMapper;
 
     /**
      * 应用启动时统一初始化权限缓存
      * <p>
      * 执行顺序：
      * <ol>
-     *   <li>同步超级管理员权限（确保数据库关联正确）</li>
-     *   <li>初始化角色菜单权限缓存（预热到 Redis）</li>
-     *   <li>初始化路由权限规则缓存（预热到 Redis）</li>
+     *   <li>检查系统是否已初始化</li>
+     *   <li>如果已初始化，同步超级管理员权限</li>
+     *   <li>初始化角色菜单权限缓存</li>
+     *   <li>初始化路由权限规则缓存</li>
      * </ol>
      * </p>
      *
@@ -53,6 +61,18 @@ public class PermissionCacheInitializer implements ApplicationRunner {
         log.info("========================================");
         log.info("开始初始化权限缓存数据...");
         log.info("========================================");
+
+        // 检查系统是否已初始化
+        boolean systemInitialized = checkSystemInitialized();
+
+        if (!systemInitialized) {
+            log.warn("⚠ 系统尚未初始化（无用户数据），跳过权限同步");
+            log.warn("⚠ 请访问 POST /install 接口完成系统初始化");
+            log.info("========================================");
+            log.info("权限缓存初始化完成（系统未初始化，已跳过）");
+            log.info("========================================");
+            return;
+        }
 
         try {
             // 1. 同步超级管理员权限
@@ -71,8 +91,19 @@ public class PermissionCacheInitializer implements ApplicationRunner {
             log.error("========================================");
             log.error("权限缓存初始化失败 ✗", e);
             log.error("========================================");
-            throw new RuntimeException("权限缓存初始化失败", e);
+            // 不再抛出异常，避免影响系统启动
+            log.warn("⚠ 权限缓存初始化失败，但不影响系统启动，可以手动刷新缓存");
         }
+    }
+
+    /**
+     * 检查系统是否已初始化
+     *
+     * @return true-已初始化，false-未初始化
+     */
+    private boolean checkSystemInitialized() {
+        Long userCount = userMapper.countActiveUsers();
+        return userCount != null && userCount > 0;
     }
 
     /**

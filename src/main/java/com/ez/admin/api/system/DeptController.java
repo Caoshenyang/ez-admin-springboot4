@@ -1,5 +1,6 @@
 package com.ez.admin.api.system;
 
+import com.ez.admin.common.model.annotation.OperationLog;
 import com.ez.admin.common.model.model.R;
 import com.ez.admin.dto.dept.req.DeptCreateReq;
 import com.ez.admin.dto.dept.req.DeptUpdateReq;
@@ -35,6 +36,7 @@ public class DeptController {
     private final DeptService deptService;
 
     @PostMapping
+    @OperationLog(module = "部门管理", operation = "创建", description = "创建部门")
     @Operation(summary = "创建部门", description = "创建新部门")
     public R<Void> create(@Valid @RequestBody DeptCreateReq request) {
         log.info("创建部门请求，部门名称：{}", request.getDeptName());
@@ -43,6 +45,7 @@ public class DeptController {
     }
 
     @PutMapping
+    @OperationLog(module = "部门管理", operation = "更新", description = "更新部门信息")
     @Operation(summary = "更新部门", description = "更新部门信息")
     public R<Void> update(@Valid @RequestBody DeptUpdateReq request) {
         log.info("更新部门请求，部门ID：{}", request.getDeptId());
@@ -51,6 +54,7 @@ public class DeptController {
     }
 
     @DeleteMapping("/{deptId}")
+    @OperationLog(module = "部门管理", operation = "删除", description = "删除部门")
     @Operation(summary = "删除部门", description = "根据部门ID删除部门（逻辑删除）")
     public R<Void> delete(@PathVariable Long deptId) {
         log.info("删除部门请求，部门ID：{}", deptId);

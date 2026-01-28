@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.*;
 /**
  * 系统安装控制器
  * <p>
- * 提供系统首次初始化相关接口，用于创建默认管理员账号
+ * 提供系统首次初始化相关接口，用于创建超级管理员账号
  * </p>
  *
  * @author ez-admin
- * @since 2026-01-23
+ * @since 2026-01-28
  */
 @Slf4j
 @RestController
@@ -39,9 +39,9 @@ public class InstallController {
     }
 
     @PostMapping
-    @Operation(summary = "初始化系统", description = "创建默认管理员账号和超级管理员角色")
+    @Operation(summary = "初始化系统", description = "创建超级管理员账号和角色")
     public R<InstallVO> install(@Valid @RequestBody InstallReq request) {
-        log.info("开始初始化系统，管理员用户名：{}", request.getUsername());
+        log.info("开始初始化系统，超级管理员用户名：{}", request.getUsername());
         InstallVO response = installService.installSystem(request);
         return R.success("系统初始化成功", response);
     }

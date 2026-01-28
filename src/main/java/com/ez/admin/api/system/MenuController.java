@@ -1,5 +1,6 @@
 package com.ez.admin.api.system;
 
+import com.ez.admin.common.model.annotation.OperationLog;
 import com.ez.admin.common.model.model.R;
 import com.ez.admin.dto.menu.req.MenuCreateReq;
 import com.ez.admin.dto.menu.req.MenuUpdateReq;
@@ -35,6 +36,7 @@ public class MenuController {
     private final MenuService menuService;
 
     @PostMapping
+    @OperationLog(module = "菜单管理", operation = "创建", description = "创建菜单")
     @Operation(summary = "创建菜单", description = "创建新菜单（目录、菜单或按钮）")
     public R<Void> create(@Valid @RequestBody MenuCreateReq request) {
         log.info("创建菜单请求，菜单名称：{}", request.getMenuName());
@@ -43,6 +45,7 @@ public class MenuController {
     }
 
     @PutMapping
+    @OperationLog(module = "菜单管理", operation = "更新", description = "更新菜单")
     @Operation(summary = "更新菜单", description = "更新菜单信息")
     public R<Void> update(@Valid @RequestBody MenuUpdateReq request) {
         log.info("更新菜单请求，菜单ID：{}", request.getMenuId());
@@ -51,6 +54,7 @@ public class MenuController {
     }
 
     @DeleteMapping("/{menuId}")
+    @OperationLog(module = "菜单管理", operation = "删除", description = "删除菜单")
     @Operation(summary = "删除菜单", description = "根据菜单ID删除菜单（逻辑删除）")
     public R<Void> delete(@PathVariable Long menuId) {
         log.info("删除菜单请求，菜单ID：{}", menuId);

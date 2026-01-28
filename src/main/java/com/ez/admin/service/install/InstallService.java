@@ -57,13 +57,12 @@ public class InstallService {
     }
 
     /**
-     * 初始化系统管理员
+     * 初始化超级管理员
      * <p>
      * 执行流程：
      * 1. 检查系统是否已初始化，如果已初始化则抛出异常
-     * 2. 创建超级管理员角色
-     * 3. 创建管理员用户
-     * 4. 建立用户-角色关联
+     * 2. 创建超级管理员角色（拥有全部数据权限）
+     * 3. 创建超级管理员用户并关联角色
      * </p>
      *
      * @param request 初始化请求
@@ -80,20 +79,17 @@ public class InstallService {
 
         try {
             // 2. 创建超级管理员角色
-            SysRole adminRole = createSuperAdminRole();
+            SysRole superAdminRole = createSuperAdminRole();
 
-            // 3. 创建管理员用户
-            SysUser adminUser = createAdminUser(request);
+            // 3. 创建超级管理员用户并关联角色
+            SysUser superAdminUser = createSuperAdminUser(request, superAdminRole.getRoleId());
 
-            // 4. 建立用户-角色关联
-            createUserRoleRelation(adminUser.getUserId(), adminRole.getRoleId());
-
-            log.info("系统初始化成功，管理员账号：{}，昵称：{}", request.getUsername(), request.getNickname());
+            log.info("系统初始化成功，超级管理员账号：{}，昵称：{}", request.getUsername(), request.getNickname());
 
             return InstallVO.builder()
-                    .userId(adminUser.getUserId())
-                    .username(adminUser.getUsername())
-                    .nickname(adminUser.getNickname())
+                    .userId(superAdminUser.getUserId())
+                    .username(superAdminUser.getUsername())
+                    .nickname(superAdminUser.getNickname())
                     .initTime(LocalDateTime.now())
                     .build();
 
@@ -105,52 +101,70 @@ public class InstallService {
 
     /**
      * 创建超级管理员角色
+     * <p>
+     * 角色特性：
+     * - 拥有全部数据权限（DATA_SCOPE_ALL）
+     * - 状态为正常
+     * - 排序为 1（最高优先级）
+     * </p>
      *
      * @return 角色实体
      */
     private SysRole createSuperAdminRole() {
-        SysRole adminRole = new SysRole();
-        adminRole.setRoleName(SystemConstants.ROLE_NAME_SUPER_ADMIN);
-        adminRole.setRoleLabel(SystemConstants.ROLE_LABEL_SUPER_ADMIN);
-        adminRole.setRoleSort(SystemConstants.ROLE_SORT_SUPER_ADMIN);
-        adminRole.setDataScope(SystemConstants.DATA_SCOPE_ALL);
-        adminRole.setStatus(SystemConstants.STATUS_NORMAL);
-        adminRole.setDescription(SystemConstants.ROLE_DESC_SUPER_ADMIN);
-        adminRole.setCreateBy(SystemConstants.CREATOR_SYSTEM);
-        adminRole.setCreateTime(LocalDateTime.now());
-        adminRole.setUpdateBy(SystemConstants.CREATOR_SYSTEM);
-        adminRole.setUpdateTime(LocalDateTime.now());
-        adminRole.setIsDeleted(SystemConstants.NOT_DELETED);
+        SysRole superAdminRole = new SysRole();
+        superAdminRole.setRoleName(SystemConstants.ROLE_NAME_SUPER_ADMIN);
+        superAdminRole.setRoleLabel(SystemConstants.ROLE_LABEL_SUPER_ADMIN);
+        superAdminRole.setRoleSort(SystemConstants.ROLE_SORT_SUPER_ADMIN);
+        superAdminRole.setDataScope(SystemConstants.DATA_SCOPE_ALL);
+        superAdminRole.setStatus(SystemConstants.STATUS_NORMAL);
+        superAdminRole.setDescription(SystemConstants.ROLE_DESC_SUPER_ADMIN);
+        superAdminRole.setCreateBy(SystemConstants.CREATOR_SYSTEM_ID);
+        superAdminRole.setCreateTime(LocalDateTime.now());
+        superAdminRole.setUpdateBy(SystemConstants.CREATOR_SYSTEM_ID);
+        superAdminRole.setUpdateTime(LocalDateTime.now());
+        superAdminRole.setIsDeleted(SystemConstants.NOT_DELETED);
 
-        roleMapper.insert(adminRole);
-        return adminRole;
+        roleMapper.insert(superAdminRole);
+        log.info("创建超级管理员角色成功，角色ID：{}", superAdminRole.getRoleId());
+
+        return superAdminRole;
     }
 
     /**
-     * 创建管理员用户
+     * 创建超级管理员用户
+     * <p>
+     * 用户特性：
+     * - 不设置部门和联系方式
+     * - 性别默认为保密
+     * - 状态为正常
+     * - 自动关联超级管理员角色
+     * </p>
      *
      * @param request 初始化请求
+     * @param roleId  超级管理员角色ID
      * @return 用户实体
      */
-    private SysUser createAdminUser(InstallReq request) {
-        SysUser adminUser = new SysUser();
-        adminUser.setUsername(request.getUsername());
-        adminUser.setPassword(passwordEncoder.encode(request.getPassword()));
-        adminUser.setNickname(request.getNickname());
-        adminUser.setEmail(request.getEmail());
-        adminUser.setPhoneNumber(request.getPhoneNumber());
-        adminUser.setGender(SystemConstants.GENDER_SECRET);
-        adminUser.setAvatar("");
-        adminUser.setStatus(SystemConstants.STATUS_NORMAL);
-        adminUser.setDescription(SystemConstants.DEFAULT_DESCRIPTION);
-        adminUser.setCreateBy(SystemConstants.CREATOR_SYSTEM);
-        adminUser.setCreateTime(LocalDateTime.now());
-        adminUser.setUpdateBy(SystemConstants.CREATOR_SYSTEM);
-        adminUser.setUpdateTime(LocalDateTime.now());
-        adminUser.setIsDeleted(SystemConstants.NOT_DELETED);
+    private SysUser createSuperAdminUser(InstallReq request, Long roleId) {
+        SysUser superAdminUser = new SysUser();
+        superAdminUser.setUsername(request.getUsername());
+        superAdminUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        superAdminUser.setNickname(request.getNickname());
+        superAdminUser.setGender(SystemConstants.GENDER_SECRET);
+        superAdminUser.setStatus(SystemConstants.STATUS_NORMAL);
+        superAdminUser.setDescription("系统超级管理员，拥有所有权限");
+        superAdminUser.setCreateBy(SystemConstants.CREATOR_SYSTEM_ID);
+        superAdminUser.setCreateTime(LocalDateTime.now());
+        superAdminUser.setUpdateBy(SystemConstants.CREATOR_SYSTEM_ID);
+        superAdminUser.setUpdateTime(LocalDateTime.now());
+        superAdminUser.setIsDeleted(SystemConstants.NOT_DELETED);
 
-        userMapper.insert(adminUser);
-        return adminUser;
+        userMapper.insert(superAdminUser);
+        log.info("创建超级管理员用户成功，用户ID：{}", superAdminUser.getUserId());
+
+        // 建立用户-角色关联
+        createUserRoleRelation(superAdminUser.getUserId(), roleId);
+
+        return superAdminUser;
     }
 
     /**
@@ -165,5 +179,6 @@ public class InstallService {
         relation.setRoleId(roleId);
 
         userRoleRelationMapper.insert(relation);
+        log.debug("建立用户-角色关联成功，用户ID：{}，角色ID：{}", userId, roleId);
     }
 }

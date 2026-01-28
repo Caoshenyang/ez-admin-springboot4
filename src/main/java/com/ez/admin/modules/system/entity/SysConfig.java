@@ -60,17 +60,17 @@ public class SysConfig implements Serializable {
     @Schema(description = "备注")
     private String remark;
 
-    @Schema(description = "创建者")
+    @Schema(description = "创建者ID")
     @TableField(value = "create_by", fill = FieldFill.INSERT)
-    private String createBy;
+    private Long createBy;
 
     @Schema(description = "创建时间")
     @TableField(value = "create_time", fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
-    @Schema(description = "更新者")
+    @Schema(description = "更新者ID")
     @TableField(value = "update_by", fill = FieldFill.INSERT_UPDATE)
-    private String updateBy;
+    private Long updateBy;
 
     @Schema(description = "更新时间")
     @TableField(value = "update_time", fill = FieldFill.INSERT_UPDATE)

@@ -59,13 +59,13 @@ public class SysDept implements Serializable {
     @Schema(description = "描述")
     private String description;
 
-    @Schema(description = "创建者")
+    @Schema(description = "创建者ID")
     @TableField(value = "create_by", fill = FieldFill.INSERT)
-    private String createBy;
+    private Long createBy;
 
-    @Schema(description = "更新者")
+    @Schema(description = "更新者ID")
     @TableField(value = "update_by", fill = FieldFill.INSERT_UPDATE)
-    private String updateBy;
+    private Long updateBy;
 
     @Schema(description = "创建时间")
     @TableField(value = "create_time", fill = FieldFill.INSERT)

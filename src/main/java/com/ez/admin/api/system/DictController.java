@@ -1,5 +1,6 @@
 package com.ez.admin.api.system;
 
+import com.ez.admin.common.model.annotation.OperationLog;
 import com.ez.admin.common.model.model.PageQuery;
 import com.ez.admin.common.model.model.PageVO;
 import com.ez.admin.common.model.model.R;
@@ -39,6 +40,7 @@ public class DictController {
     // ==================== 字典类型 ====================
 
     @PostMapping("/type")
+    @OperationLog(module = "字典管理", operation = "创建类型", description = "创建字典类型")
     @Operation(summary = "创建字典类型", description = "创建新的字典类型")
     public R<Void> createType(@Valid @RequestBody DictTypeCreateReq request) {
         log.info("创建字典类型请求，字典名称：{}", request.getDictName());
@@ -47,6 +49,7 @@ public class DictController {
     }
 
     @PutMapping("/type")
+    @OperationLog(module = "字典管理", operation = "更新类型", description = "更新字典类型")
     @Operation(summary = "更新字典类型", description = "更新字典类型信息")
     public R<Void> updateType(@Valid @RequestBody DictTypeUpdateReq request) {
         log.info("更新字典类型请求，字典ID：{}", request.getDictId());
@@ -55,6 +58,7 @@ public class DictController {
     }
 
     @DeleteMapping("/type/{dictId}")
+    @OperationLog(module = "字典管理", operation = "删除类型", description = "删除字典类型")
     @Operation(summary = "删除字典类型", description = "根据字典ID删除字典类型")
     public R<Void> deleteType(@PathVariable Long dictId) {
         log.info("删除字典类型请求，字典ID：{}", dictId);
@@ -86,6 +90,7 @@ public class DictController {
     // ==================== 字典数据 ====================
 
     @PostMapping("/data")
+    @OperationLog(module = "字典管理", operation = "创建数据", description = "创建字典数据")
     @Operation(summary = "创建字典数据", description = "创建新的字典数据")
     public R<Void> createData(@Valid @RequestBody DictDataCreateReq request) {
         log.info("创建字典数据请求，字典标签：{}", request.getDictLabel());
@@ -94,6 +99,7 @@ public class DictController {
     }
 
     @PutMapping("/data")
+    @OperationLog(module = "字典管理", operation = "更新数据", description = "更新字典数据")
     @Operation(summary = "更新字典数据", description = "更新字典数据信息")
     public R<Void> updateData(@Valid @RequestBody DictDataUpdateReq request) {
         log.info("更新字典数据请求，字典数据ID：{}", request.getDictDataId());
@@ -102,6 +108,7 @@ public class DictController {
     }
 
     @DeleteMapping("/data/{dictDataId}")
+    @OperationLog(module = "字典管理", operation = "删除数据", description = "删除字典数据")
     @Operation(summary = "删除字典数据", description = "根据字典数据ID删除字典数据")
     public R<Void> deleteData(@PathVariable Long dictDataId) {
         log.info("删除字典数据请求，字典数据ID：{}", dictDataId);
@@ -124,6 +131,7 @@ public class DictController {
     }
 
     @DeleteMapping("/data/batch")
+    @OperationLog(module = "字典管理", operation = "批量删除数据", description = "批量删除字典数据")
     @Operation(summary = "批量删除字典数据", description = "批量删除多个字典数据")
     public R<Void> batchDeleteData(@Valid @RequestBody DictDataBatchDeleteReq request) {
         log.info("批量删除字典数据请求，数量：{}", request.getDictDataIds().size());
@@ -139,6 +147,7 @@ public class DictController {
     }
 
     @PutMapping("/type/status")
+    @OperationLog(module = "字典管理", operation = "切换状态", description = "切换字典类型状态")
     @Operation(summary = "切换字典类型状态", description = "切换指定字典类型的状态（启用/禁用）")
     public R<Void> changeDictTypeStatus(@Valid @RequestBody DictTypeStatusChangeReq request) {
         log.info("切换字典类型状态请求，字典ID：{}，状态：{}", request.getDictId(), request.getStatus());
