@@ -3,6 +3,9 @@ package com.ez.admin.service.auth;
 import cn.dev33.satoken.stp.StpUtil;
 import com.ez.admin.common.core.exception.ErrorCode;
 import com.ez.admin.common.core.exception.EzBusinessException;
+import com.ez.admin.common.framework.datascope.DataScopeContext;
+import com.ez.admin.common.framework.datascope.DataScopeInfo;
+import com.ez.admin.common.framework.datascope.DataScopeService;
 import com.ez.admin.dto.auth.req.LoginReq;
 import com.ez.admin.dto.auth.vo.LoginVO;
 import com.ez.admin.modules.system.entity.SysUser;
@@ -25,6 +28,7 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final SysUserMapper userMapper;
+    private final DataScopeService dataScopeService;
 
     /**
      * 密码编码器（用于验证密码）
@@ -59,7 +63,17 @@ public class AuthService {
         // 5. 使用 Sa-Token 进行登录，生成 token
         StpUtil.login(user.getUserId());
 
-        // 6. 构造登录响应
+        // 6. 获取用户的数据权限信息
+        DataScopeInfo dataScopeInfo = dataScopeService.getDataScopeInfo(user);
+
+        // 7. 将数据权限信息存入 Sa-Token Session，供后续请求使用
+        StpUtil.getSession().set("dataScopeInfo", dataScopeInfo);
+        log.info("用户 {} 数据权限信息已存入 Session：{}", user.getUsername(), dataScopeInfo);
+
+        // 8. 设置到当前请求的上下文中
+        DataScopeContext.setDataScopeInfo(dataScopeInfo);
+
+        // 9. 构造登录响应
         LoginVO response = LoginVO.builder()
                 .token(StpUtil.getTokenValue())
                 .userId(user.getUserId())

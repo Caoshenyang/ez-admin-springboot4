@@ -237,7 +237,6 @@ mvn spring-boot:run
 |---------|------|
 | http://localhost:8080 | 应用地址 |
 | http://localhost:8080/swagger-ui.html | API 文档 |
-| http://localhost:8080/doc.html | Knife4j 文档 |
 
 **默认账号**：
 - 用户名：`admin`
@@ -531,7 +530,7 @@ mvn clean package -DskipTests
 ## 📮 联系方式
 
 - 作者：ez-admin
-- 邮箱：your-email@example.com
+- 邮箱：2417254000@qq.com
 - GitHub：[Caoshenyang](https://github.com/Caoshenyang)
 
 ---

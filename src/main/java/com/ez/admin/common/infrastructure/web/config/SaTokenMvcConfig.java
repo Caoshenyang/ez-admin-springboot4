@@ -4,6 +4,7 @@ import cn.dev33.satoken.context.SaHolder;
 import cn.dev33.satoken.interceptor.SaInterceptor;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
+import com.ez.admin.common.framework.datascope.DataScopeInterceptor;
 import com.ez.admin.common.infrastructure.cache.AdminCache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,9 +38,11 @@ import java.util.Map;
 public class SaTokenMvcConfig implements WebMvcConfigurer {
 
     private final AdminCache adminCache;
+    private final DataScopeInterceptor dataScopeInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // 1. Sa-Token 权限校验拦截器（必须第一个执行）
         registry.addInterceptor(new SaInterceptor(handler -> {
                     // 1. 获取当前请求路径和方法
                     String path = SaHolder.getRequest().getRequestPath();
@@ -80,6 +83,20 @@ public class SaTokenMvcConfig implements WebMvcConfigurer {
                         "/swagger-resources/**",    // Swagger 资源
                         "/v3/api-docs/**",          // OpenAPI 文档
                         "/error"                    // 错误页面
-                );
+                ).order(1); // 第一个执行
+
+        // 2. 数据权限拦截器（在 Sa-Token 拦截器之后执行）
+        // 从 Sa-Token Session 中恢复数据权限上下文到 ThreadLocal
+        registry.addInterceptor(dataScopeInterceptor)
+                .addPathPatterns("/api/**")
+                .excludePathPatterns(
+                        "/api/auth/login",          // 登录接口
+                        "/api/auth/logout",         // 登出接口
+                        "/api/install/**",          // 初始化接口
+                        "/doc/**",                  // Swagger 文档
+                        "/swagger-resources/**",    // Swagger 资源
+                        "/v3/api-docs/**",          // OpenAPI 文档
+                        "/error"                    // 错误页面
+                ).order(2); // 第二个执行
     }
 }
