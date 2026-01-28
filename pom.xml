@@ -12,7 +12,7 @@
 
     <groupId>com.ez.admin</groupId>
     <artifactId>ez-admin-springboot4</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-beta.1</version>
     <packaging>jar</packaging>
     <name>ez-admin-springboot4</name>
     <description>EZ Admin SpringBoot 4.x - 轻量级 RBAC 后台管理系统</description>

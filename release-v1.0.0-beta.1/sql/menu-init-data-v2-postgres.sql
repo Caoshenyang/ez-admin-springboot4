@@ -1,6 +1,7 @@
 -- ============================================================================
--- EZ-ADMIN 菜单数据初始化脚本
+-- EZ-ADMIN 菜单数据初始化脚本 V2.0
 -- 说明：初始化系统管理模块的菜单数据
+-- 更新：create_by 和 update_by 改为 BIGINT 类型，存储用户ID
 -- ============================================================================
 
 -- 清空现有菜单数据（可选，仅在开发环境使用）
@@ -13,8 +14,8 @@
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     1, -- 菜单ID
     '系统管理', -- 菜单名称
@@ -30,6 +31,8 @@ INSERT INTO ez_admin_sys_menu (
     NULL, -- API路由
     NULL, -- HTTP方法
     1, -- 菜单状态（0 停用 1 正常）
+    -1, -- 创建者ID（-1表示系统）
+    -1, -- 更新者ID
     CURRENT_TIMESTAMP, -- 创建时间
     CURRENT_TIMESTAMP, -- 更新时间
     0, -- 是否删除（0 正常 1 已删除）
@@ -44,8 +47,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     100,
     '用户管理',
@@ -61,6 +64,8 @@ INSERT INTO ez_admin_sys_menu (
     NULL,
     NULL,
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -72,8 +77,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     1001,
     '创建用户',
@@ -89,6 +94,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/user',
     'POST',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -99,8 +106,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     1002,
     '更新用户',
@@ -116,6 +123,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/user',
     'PUT',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -126,8 +135,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     1003,
     '删除用户',
@@ -143,6 +152,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/user',
     'DELETE',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -153,8 +164,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     1004,
     '查询用户',
@@ -170,6 +181,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/user',
     'GET',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -180,8 +193,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     1005,
     '分配角色',
@@ -197,6 +210,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/user/assign/roles',
     'POST',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -211,8 +226,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     200,
     '角色管理',
@@ -228,6 +243,8 @@ INSERT INTO ez_admin_sys_menu (
     NULL,
     NULL,
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -239,8 +256,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     2001,
     '创建角色',
@@ -256,6 +273,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/role',
     'POST',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -266,8 +285,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     2002,
     '更新角色',
@@ -283,6 +302,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/role',
     'PUT',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -293,8 +314,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     2003,
     '删除角色',
@@ -310,6 +331,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/role',
     'DELETE',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -320,8 +343,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     2004,
     '查询角色',
@@ -337,6 +360,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/role',
     'GET',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -347,8 +372,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     2005,
     '分配菜单',
@@ -364,6 +389,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/role/assign/menus',
     'POST',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -378,8 +405,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     300,
     '菜单管理',
@@ -395,6 +422,8 @@ INSERT INTO ez_admin_sys_menu (
     NULL,
     NULL,
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -406,8 +435,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     3001,
     '创建菜单',
@@ -423,6 +452,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/menu',
     'POST',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -433,8 +464,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     3002,
     '更新菜单',
@@ -450,6 +481,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/menu',
     'PUT',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -460,8 +493,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     3003,
     '删除菜单',
@@ -477,6 +510,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/menu',
     'DELETE',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -487,8 +522,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     3004,
     '查询菜单',
@@ -504,6 +539,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/menu',
     'GET',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -518,8 +555,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     400,
     '部门管理',
@@ -535,6 +572,8 @@ INSERT INTO ez_admin_sys_menu (
     NULL,
     NULL,
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -546,8 +585,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     4001,
     '创建部门',
@@ -563,6 +602,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/dept',
     'POST',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -573,8 +614,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     4002,
     '更新部门',
@@ -590,6 +631,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/dept',
     'PUT',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -600,8 +643,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     4003,
     '删除部门',
@@ -617,6 +660,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/dept',
     'DELETE',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -627,8 +672,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     4004,
     '查询部门',
@@ -644,6 +689,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/dept',
     'GET',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -658,8 +705,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     500,
     '字典管理',
@@ -675,6 +722,8 @@ INSERT INTO ez_admin_sys_menu (
     NULL,
     NULL,
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -686,8 +735,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     5001,
     '创建字典',
@@ -703,6 +752,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/dict/type',
     'POST',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -713,8 +764,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     5002,
     '更新字典',
@@ -730,6 +781,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/dict/type',
     'PUT',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -740,8 +793,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     5003,
     '删除字典',
@@ -757,6 +810,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/dict/type',
     'DELETE',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -767,8 +822,8 @@ INSERT INTO ez_admin_sys_menu (
 INSERT INTO ez_admin_sys_menu (
     menu_id, menu_name, menu_icon, menu_label, parent_id, menu_sort,
     menu_type, menu_perm, route_path, route_name, component_path,
-    api_route, api_method, status, create_time, update_time,
-    is_deleted, description
+    api_route, api_method, status, create_by, update_by,
+    create_time, update_time, is_deleted, description
 ) VALUES (
     5004,
     '查询字典',
@@ -784,6 +839,8 @@ INSERT INTO ez_admin_sys_menu (
     '/api/dict/type',
     'GET',
     1,
+    -1,
+    -1,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
     0,
@@ -821,3 +878,8 @@ INSERT INTO ez_admin_sys_menu (
 -- 3001-3999: 菜单管理按钮
 -- 4001-4999: 部门管理按钮
 -- 5001-5999: 字典管理按钮
+--
+-- 更新说明：
+-- - create_by 和 update_by 字段类型改为 BIGINT
+-- - 系统初始化数据使用 -1 作为创建者ID
+-- - 所有时间戳使用 CURRENT_TIMESTAMP 自动生成

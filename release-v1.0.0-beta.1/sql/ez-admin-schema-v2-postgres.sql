@@ -1,7 +1,13 @@
 -- ============================================================================
--- EZ-ADMIN PostgreSQL 数据库表结构设计
+-- EZ-ADMIN PostgreSQL 数据库表结构设计 V2.0
 -- 基于RBAC权限管理系统
 -- 数据库: PostgreSQL 15+
+--
+-- 更新说明：
+--   - create_by 和 update_by 字段类型从 VARCHAR 改为 BIGINT（存储用户ID）
+--   - 移除了默认值，由 MyMetaObjectHandler 自动填充
+--   - 所有审计字段统一使用 BIGINT 类型存储用户ID
+--
 -- 说明: 本脚本不包含外键约束，通过应用代码层控制关联关系
 -- ============================================================================
 
@@ -18,8 +24,8 @@ CREATE TABLE ez_admin_sys_dept (
     parent_id BIGINT NOT NULL DEFAULT 0,
     status SMALLINT NOT NULL DEFAULT 0,
     description VARCHAR(255),
-    create_by VARCHAR(30) NOT NULL DEFAULT '',
-    update_by VARCHAR(30) NOT NULL DEFAULT '',
+    create_by BIGINT,
+    update_by BIGINT,
     create_time TIMESTAMP NOT NULL,
     update_time TIMESTAMP NOT NULL,
     is_deleted SMALLINT NOT NULL DEFAULT 0,
@@ -34,8 +40,8 @@ COMMENT ON COLUMN ez_admin_sys_dept.ancestors IS '祖级路径，格式：/1/2/'
 COMMENT ON COLUMN ez_admin_sys_dept.parent_id IS '父级菜单ID';
 COMMENT ON COLUMN ez_admin_sys_dept.status IS '部门状态【0 停用 1 正常】';
 COMMENT ON COLUMN ez_admin_sys_dept.description IS '描述';
-COMMENT ON COLUMN ez_admin_sys_dept.create_by IS '创建者';
-COMMENT ON COLUMN ez_admin_sys_dept.update_by IS '更新者';
+COMMENT ON COLUMN ez_admin_sys_dept.create_by IS '创建者ID';
+COMMENT ON COLUMN ez_admin_sys_dept.update_by IS '更新者ID';
 COMMENT ON COLUMN ez_admin_sys_dept.create_time IS '创建时间';
 COMMENT ON COLUMN ez_admin_sys_dept.update_time IS '更新时间';
 COMMENT ON COLUMN ez_admin_sys_dept.is_deleted IS '是否删除【0 正常 1 已删除】';
@@ -50,9 +56,9 @@ CREATE TABLE ez_admin_sys_dict_type (
     dict_name VARCHAR(100) DEFAULT '',
     dict_type VARCHAR(100) DEFAULT '',
     status SMALLINT DEFAULT 1,
-    create_by VARCHAR(30) DEFAULT '',
+    create_by BIGINT,
     create_time TIMESTAMP,
-    update_by VARCHAR(30) DEFAULT '',
+    update_by BIGINT,
     update_time TIMESTAMP,
     description VARCHAR(500) DEFAULT '',
     CONSTRAINT pk_ez_admin_sys_dict_type PRIMARY KEY (dict_id)
@@ -63,9 +69,9 @@ COMMENT ON COLUMN ez_admin_sys_dict_type.dict_id IS '字典主键';
 COMMENT ON COLUMN ez_admin_sys_dict_type.dict_name IS '字典名称';
 COMMENT ON COLUMN ez_admin_sys_dict_type.dict_type IS '字典类型';
 COMMENT ON COLUMN ez_admin_sys_dict_type.status IS '状态【0 停用 1 正常】';
-COMMENT ON COLUMN ez_admin_sys_dict_type.create_by IS '创建者';
+COMMENT ON COLUMN ez_admin_sys_dict_type.create_by IS '创建者ID';
 COMMENT ON COLUMN ez_admin_sys_dict_type.create_time IS '创建时间';
-COMMENT ON COLUMN ez_admin_sys_dict_type.update_by IS '更新者';
+COMMENT ON COLUMN ez_admin_sys_dict_type.update_by IS '更新者ID';
 COMMENT ON COLUMN ez_admin_sys_dict_type.update_time IS '更新时间';
 COMMENT ON COLUMN ez_admin_sys_dict_type.description IS '描述信息';
 
@@ -83,9 +89,9 @@ CREATE TABLE ez_admin_sys_dict_data (
     list_class VARCHAR(100),
     is_default SMALLINT DEFAULT 0,
     status SMALLINT DEFAULT 1,
-    create_by VARCHAR(30) DEFAULT '',
+    create_by BIGINT,
     create_time TIMESTAMP,
-    update_by VARCHAR(30) DEFAULT '',
+    update_by BIGINT,
     update_time TIMESTAMP,
     description VARCHAR(500) DEFAULT '',
     CONSTRAINT pk_ez_admin_sys_dict_data PRIMARY KEY (dict_data_id)
@@ -100,9 +106,9 @@ COMMENT ON COLUMN ez_admin_sys_dict_data.dict_sort IS '字典排序';
 COMMENT ON COLUMN ez_admin_sys_dict_data.list_class IS '表格回显样式';
 COMMENT ON COLUMN ez_admin_sys_dict_data.is_default IS '是否默认【0 否 1 是】';
 COMMENT ON COLUMN ez_admin_sys_dict_data.status IS '状态【0 停用 1 正常】';
-COMMENT ON COLUMN ez_admin_sys_dict_data.create_by IS '创建者';
+COMMENT ON COLUMN ez_admin_sys_dict_data.create_by IS '创建者ID';
 COMMENT ON COLUMN ez_admin_sys_dict_data.create_time IS '创建时间';
-COMMENT ON COLUMN ez_admin_sys_dict_data.update_by IS '更新者';
+COMMENT ON COLUMN ez_admin_sys_dict_data.update_by IS '更新者ID';
 COMMENT ON COLUMN ez_admin_sys_dict_data.update_time IS '更新时间';
 COMMENT ON COLUMN ez_admin_sys_dict_data.description IS '描述信息';
 
@@ -126,9 +132,9 @@ CREATE TABLE ez_admin_sys_menu (
     api_route VARCHAR(255),
     api_method VARCHAR(20),
     status SMALLINT NOT NULL DEFAULT 0,
-    create_by VARCHAR(30) DEFAULT '',
+    create_by BIGINT,
     create_time TIMESTAMP,
-    update_by VARCHAR(30) DEFAULT '',
+    update_by BIGINT,
     update_time TIMESTAMP,
     description VARCHAR(500) DEFAULT '',
     is_deleted SMALLINT NOT NULL DEFAULT 0,
@@ -150,9 +156,9 @@ COMMENT ON COLUMN ez_admin_sys_menu.component_path IS '组件路径';
 COMMENT ON COLUMN ez_admin_sys_menu.api_route IS '后端API路由地址';
 COMMENT ON COLUMN ez_admin_sys_menu.api_method IS 'HTTP方法【GET POST PUT DELETE PATCH】';
 COMMENT ON COLUMN ez_admin_sys_menu.status IS '菜单状态【0 停用 1 正常】';
-COMMENT ON COLUMN ez_admin_sys_menu.create_by IS '创建者';
+COMMENT ON COLUMN ez_admin_sys_menu.create_by IS '创建者ID';
 COMMENT ON COLUMN ez_admin_sys_menu.create_time IS '创建时间';
-COMMENT ON COLUMN ez_admin_sys_menu.update_by IS '更新者';
+COMMENT ON COLUMN ez_admin_sys_menu.update_by IS '更新者ID';
 COMMENT ON COLUMN ez_admin_sys_menu.update_time IS '更新时间';
 COMMENT ON COLUMN ez_admin_sys_menu.description IS '描述信息';
 COMMENT ON COLUMN ez_admin_sys_menu.is_deleted IS '是否删除【0 正常 1 已删除】';
@@ -169,9 +175,9 @@ CREATE TABLE ez_admin_sys_role (
     role_sort INTEGER NOT NULL DEFAULT 999,
     data_scope SMALLINT NOT NULL DEFAULT 1,
     status SMALLINT NOT NULL DEFAULT 0,
-    create_by VARCHAR(30) DEFAULT '',
+    create_by BIGINT,
     create_time TIMESTAMP,
-    update_by VARCHAR(30) DEFAULT '',
+    update_by BIGINT,
     update_time TIMESTAMP,
     description VARCHAR(500) DEFAULT '',
     is_deleted SMALLINT NOT NULL DEFAULT 0,
@@ -185,9 +191,9 @@ COMMENT ON COLUMN ez_admin_sys_role.role_label IS '角色权限字符标识';
 COMMENT ON COLUMN ez_admin_sys_role.role_sort IS '排序';
 COMMENT ON COLUMN ez_admin_sys_role.data_scope IS '数据范围【1 仅本人数据权限 2 本部门数据权限 3 本部门及以下数据权限 4 自定义数据权限 5 全部数据权限】';
 COMMENT ON COLUMN ez_admin_sys_role.status IS '角色状态【0 停用 1 正常】';
-COMMENT ON COLUMN ez_admin_sys_role.create_by IS '创建者';
+COMMENT ON COLUMN ez_admin_sys_role.create_by IS '创建者ID';
 COMMENT ON COLUMN ez_admin_sys_role.create_time IS '创建时间';
-COMMENT ON COLUMN ez_admin_sys_role.update_by IS '更新者';
+COMMENT ON COLUMN ez_admin_sys_role.update_by IS '更新者ID';
 COMMENT ON COLUMN ez_admin_sys_role.update_time IS '更新时间';
 COMMENT ON COLUMN ez_admin_sys_role.description IS '描述信息';
 COMMENT ON COLUMN ez_admin_sys_role.is_deleted IS '是否删除【0 正常 1 已删除】';
@@ -252,9 +258,9 @@ CREATE TABLE ez_admin_sys_user (
     status SMALLINT NOT NULL DEFAULT 1,
     login_ip VARCHAR(128),
     login_date TIMESTAMP,
-    create_by VARCHAR(30) DEFAULT '',
+    create_by BIGINT,
     create_time TIMESTAMP,
-    update_by VARCHAR(30) DEFAULT '',
+    update_by BIGINT,
     update_time TIMESTAMP,
     description VARCHAR(500) DEFAULT '',
     is_deleted SMALLINT NOT NULL DEFAULT 0,
@@ -274,9 +280,9 @@ COMMENT ON COLUMN ez_admin_sys_user.avatar IS '用户头像';
 COMMENT ON COLUMN ez_admin_sys_user.status IS '用户状态【0 禁用 1 正常】';
 COMMENT ON COLUMN ez_admin_sys_user.login_ip IS '最后登录IP';
 COMMENT ON COLUMN ez_admin_sys_user.login_date IS '最后登录时间';
-COMMENT ON COLUMN ez_admin_sys_user.create_by IS '创建者';
+COMMENT ON COLUMN ez_admin_sys_user.create_by IS '创建者ID';
 COMMENT ON COLUMN ez_admin_sys_user.create_time IS '创建时间';
-COMMENT ON COLUMN ez_admin_sys_user.update_by IS '更新者';
+COMMENT ON COLUMN ez_admin_sys_user.update_by IS '更新者ID';
 COMMENT ON COLUMN ez_admin_sys_user.update_time IS '更新时间';
 COMMENT ON COLUMN ez_admin_sys_user.description IS '描述信息';
 COMMENT ON COLUMN ez_admin_sys_user.is_deleted IS '是否删除【0 正常 1 已删除】';
@@ -363,9 +369,9 @@ CREATE TABLE ez_admin_sys_config (
     config_type VARCHAR(50) NOT NULL DEFAULT 'system',
     is_system SMALLINT NOT NULL DEFAULT 0,
     remark VARCHAR(500),
-    create_by VARCHAR(30) DEFAULT '',
+    create_by BIGINT,
     create_time TIMESTAMP,
-    update_by VARCHAR(30) DEFAULT '',
+    update_by BIGINT,
     update_time TIMESTAMP,
     is_deleted SMALLINT NOT NULL DEFAULT 0,
     CONSTRAINT pk_ez_admin_sys_config PRIMARY KEY (config_id)
@@ -379,9 +385,9 @@ COMMENT ON COLUMN ez_admin_sys_config.config_value IS '配置内容';
 COMMENT ON COLUMN ez_admin_sys_config.config_type IS '配置类型（system=系统配置，user=用户配置）';
 COMMENT ON COLUMN ez_admin_sys_config.is_system IS '是否系统内置（0=否，1=是）';
 COMMENT ON COLUMN ez_admin_sys_config.remark IS '备注';
-COMMENT ON COLUMN ez_admin_sys_config.create_by IS '创建者';
+COMMENT ON COLUMN ez_admin_sys_config.create_by IS '创建者ID';
 COMMENT ON COLUMN ez_admin_sys_config.create_time IS '创建时间';
-COMMENT ON COLUMN ez_admin_sys_config.update_by IS '更新者';
+COMMENT ON COLUMN ez_admin_sys_config.update_by IS '更新者ID';
 COMMENT ON COLUMN ez_admin_sys_config.update_time IS '更新时间';
 COMMENT ON COLUMN ez_admin_sys_config.is_deleted IS '是否删除【0 正常 1 已删除】';
 
@@ -389,28 +395,14 @@ COMMENT ON COLUMN ez_admin_sys_config.is_deleted IS '是否删除【0 正常 1 �
 CREATE UNIQUE INDEX idx_config_key ON ez_admin_sys_config(config_key) WHERE is_deleted = 0;
 
 -- ============================================================================
--- 初始化序列（可选，用于主键自增）
+-- 为菜单表的 API 路由字段创建索引
 -- ============================================================================
--- 如果需要使用自增主键，可以创建序列
--- CREATE SEQUENCE IF NOT EXISTS seq_dept_id START 1;
--- CREATE SEQUENCE IF NOT EXISTS seq_dict_type_id START 1;
--- CREATE SEQUENCE IF NOT EXISTS seq_dict_data_id START 1;
--- CREATE SEQUENCE IF NOT EXISTS seq_menu_id START 1;
--- CREATE SEQUENCE IF NOT EXISTS seq_role_id START 1;
--- CREATE SEQUENCE IF NOT EXISTS seq_user_id START 1;
--- CREATE SEQUENCE IF NOT EXISTS seq_relation_id START 1;
--- CREATE SEQUENCE IF NOT EXISTS seq_operation_log_id START 1;
--- CREATE SEQUENCE IF NOT EXISTS seq_config_id START 1;
+CREATE INDEX idx_menu_api_route ON ez_admin_sys_menu(api_route, api_method);
 
 -- ============================================================================
--- 数据库升级脚本（针对已有数据库）
+-- 说明
 -- ============================================================================
--- 为已有的 ez_admin_sys_menu 表添加 API 路由字段
--- ALTER TABLE ez_admin_sys_menu ADD COLUMN IF NOT EXISTS api_route VARCHAR(255);
--- COMMENT ON COLUMN ez_admin_sys_menu.api_route IS '后端API路由地址';
---
--- ALTER TABLE ez_admin_sys_menu ADD COLUMN IF NOT EXISTS api_method VARCHAR(20);
--- COMMENT ON COLUMN ez_admin_sys_menu.api_method IS 'HTTP方法【GET POST PUT DELETE PATCH】';
-
--- 为新增字段创建索引以提升查询性能
--- CREATE INDEX IF NOT EXISTS idx_menu_api_route ON ez_admin_sys_menu(api_route, api_method);
+-- 1. 所有 create_by 和 update_by 字段已改为 BIGINT 类型，存储用户ID
+-- 2. 移除了默认值，由 MyMetaObjectHandler 自动填充
+-- 3. 系统默认用户ID为 -1
+-- 4. 未登录或获取失败时使用 -1 作为默认值
