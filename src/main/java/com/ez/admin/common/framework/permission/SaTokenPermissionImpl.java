@@ -2,7 +2,7 @@ package com.ez.admin.common.framework.permission;
 
 import cn.dev33.satoken.stp.StpInterface;
 import com.ez.admin.common.infrastructure.cache.AdminCache;
-import com.ez.admin.dto.menu.vo.MenuPermissionVO;
+import com.ez.admin.dto.system.menu.vo.MenuPermissionVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

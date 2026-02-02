@@ -10,6 +10,7 @@
 | [MapStruct 使用指南](./mapstruct-guide.md) | MapStruct 对象映射的最佳实践 |
 | [MyBatis-Plus 使用规范](./mybatis-plus-guide.md) | Wrapper vs XML 的技术决策准则 |
 | [错误码设计规范](./error-code-design.md) | 错误码结构、分类和速查表 |
+| [Cache Service 设计规范](./cache-service-spec.md) | 缓存服务命名规范、职责边界和实现模式 |
 
 ## 设计文档
 
@@ -36,5 +37,6 @@
 
 ## 更新日志
 
+- 2026-02-02：新增 Cache Service 设计规范
 - 2026-01-27：新增超级管理员权限自动同步设计文档
 - 2026-01-26：新增 VO 命名规范、注解规范、对象构造规范等核心文档

@@ -1,9 +1,9 @@
 package com.ez.admin.common.data.mapstruct;
 
 import com.ez.admin.dto.auth.vo.LoginVO;
-import com.ez.admin.dto.user.vo.RoleVO;
-import com.ez.admin.dto.user.vo.UserDetailVO;
-import com.ez.admin.dto.user.vo.UserListVO;
+import com.ez.admin.dto.system.user.vo.RoleVO;
+import com.ez.admin.dto.system.user.vo.UserDetailVO;
+import com.ez.admin.dto.system.user.vo.UserListVO;
 import com.ez.admin.modules.system.entity.SysRole;
 import com.ez.admin.modules.system.entity.SysUser;
 import org.mapstruct.Mapper;

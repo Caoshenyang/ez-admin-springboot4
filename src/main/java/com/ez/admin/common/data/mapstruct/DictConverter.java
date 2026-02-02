@@ -1,8 +1,8 @@
 package com.ez.admin.common.data.mapstruct;
 
-import com.ez.admin.dto.dict.vo.DictDataListVO;
-import com.ez.admin.dto.dict.vo.DictTypeDetailVO;
-import com.ez.admin.dto.dict.vo.DictTypeListVO;
+import com.ez.admin.dto.system.dict.vo.DictDataListVO;
+import com.ez.admin.dto.system.dict.vo.DictTypeDetailVO;
+import com.ez.admin.dto.system.dict.vo.DictTypeListVO;
 import com.ez.admin.modules.system.entity.SysDictData;
 import com.ez.admin.modules.system.entity.SysDictType;
 import org.mapstruct.Mapper;

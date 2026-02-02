@@ -5,9 +5,9 @@ import com.ez.admin.common.core.exception.ErrorCode;
 import com.ez.admin.common.core.exception.EzBusinessException;
 import com.ez.admin.common.data.mapstruct.DeptConverter;
 import com.ez.admin.common.data.tree.TreeBuilder;
-import com.ez.admin.dto.dept.req.DeptCreateReq;
-import com.ez.admin.dto.dept.req.DeptUpdateReq;
-import com.ez.admin.dto.dept.vo.DeptDetailVO;
+import com.ez.admin.dto.system.dept.req.DeptCreateReq;
+import com.ez.admin.dto.system.dept.req.DeptUpdateReq;
+import com.ez.admin.dto.system.dept.vo.DeptDetailVO;
 import com.ez.admin.modules.system.entity.SysDept;
 import com.ez.admin.modules.system.entity.SysUser;
 import com.ez.admin.modules.system.mapper.SysDeptMapper;
@@ -164,7 +164,7 @@ public class DeptService {
      * @param status 状态过滤（null=全部，0=停用，1=正常）
      * @return 部门树（完整的树形结构）
      */
-    public List<com.ez.admin.dto.dept.vo.DeptTreeVO> getDeptTree(Integer status) {
+    public List<com.ez.admin.dto.system.dept.vo.DeptTreeVO> getDeptTree(Integer status) {
         // 1. 查询所有部门
         LambdaQueryWrapper<SysDept> wrapper = new LambdaQueryWrapper<SysDept>()
                 .orderByAsc(SysDept::getDeptSort);
@@ -177,7 +177,7 @@ public class DeptService {
         List<SysDept> allDepts = deptMapper.selectList(wrapper);
 
         // 2. 转换为 TreeVO
-        List<com.ez.admin.dto.dept.vo.DeptTreeVO> deptTreeVOs = deptConverter.toTreeVOList(allDepts);
+        List<com.ez.admin.dto.system.dept.vo.DeptTreeVO> deptTreeVOs = deptConverter.toTreeVOList(allDepts);
 
         // 3. 构建树形结构
         return TreeBuilder.build(deptTreeVOs);
@@ -189,7 +189,7 @@ public class DeptService {
      * @param deptId 部门ID
      * @return 用户列表
      */
-    public List<com.ez.admin.dto.dept.vo.DeptUserVO> getDeptUsers(Long deptId) {
+    public List<com.ez.admin.dto.system.dept.vo.DeptUserVO> getDeptUsers(Long deptId) {
         // 1. 检查部门是否存在
         SysDept dept = deptMapper.selectById(deptId);
         if (dept == null) {
@@ -203,7 +203,7 @@ public class DeptService {
 
         // 3. 转换为 VO
         return users.stream()
-                .map(user -> com.ez.admin.dto.dept.vo.DeptUserVO.builder()
+                .map(user -> com.ez.admin.dto.system.dept.vo.DeptUserVO.builder()
                         .userId(user.getUserId())
                         .username(user.getUsername())
                         .nickname(user.getNickname())

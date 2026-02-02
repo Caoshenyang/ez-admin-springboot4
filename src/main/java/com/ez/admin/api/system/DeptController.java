@@ -2,11 +2,11 @@ package com.ez.admin.api.system;
 
 import com.ez.admin.common.model.annotation.OperationLog;
 import com.ez.admin.common.model.model.R;
-import com.ez.admin.dto.dept.req.DeptCreateReq;
-import com.ez.admin.dto.dept.req.DeptUpdateReq;
-import com.ez.admin.dto.dept.vo.DeptDetailVO;
-import com.ez.admin.dto.dept.vo.DeptTreeVO;
-import com.ez.admin.dto.dept.vo.DeptUserVO;
+import com.ez.admin.dto.system.dept.req.DeptCreateReq;
+import com.ez.admin.dto.system.dept.req.DeptUpdateReq;
+import com.ez.admin.dto.system.dept.vo.DeptDetailVO;
+import com.ez.admin.dto.system.dept.vo.DeptTreeVO;
+import com.ez.admin.dto.system.dept.vo.DeptUserVO;
 import com.ez.admin.service.dept.DeptService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

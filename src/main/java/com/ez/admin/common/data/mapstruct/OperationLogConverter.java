@@ -1,6 +1,6 @@
 package com.ez.admin.common.data.mapstruct;
 
-import com.ez.admin.dto.log.vo.OperationLogListVO;
+import com.ez.admin.dto.system.log.vo.OperationLogListVO;
 import com.ez.admin.modules.system.entity.SysOperationLog;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

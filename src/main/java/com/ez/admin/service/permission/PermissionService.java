@@ -1,7 +1,7 @@
 package com.ez.admin.service.permission;
 
 import com.ez.admin.common.infrastructure.cache.AdminCache;
-import com.ez.admin.dto.menu.vo.MenuPermissionVO;
+import com.ez.admin.dto.system.menu.vo.MenuPermissionVO;
 import com.ez.admin.dto.system.vo.SuperAdminPermissionSyncVO;
 import com.ez.admin.common.core.constant.SystemConstants;
 import com.ez.admin.common.core.exception.EzBusinessException;

@@ -2,11 +2,11 @@ package com.ez.admin.api.system;
 
 import com.ez.admin.common.model.annotation.OperationLog;
 import com.ez.admin.common.model.model.R;
-import com.ez.admin.dto.menu.req.MenuCreateReq;
-import com.ez.admin.dto.menu.req.MenuUpdateReq;
-import com.ez.admin.dto.menu.vo.MenuDetailVO;
-import com.ez.admin.dto.menu.vo.MenuTreeVO;
-import com.ez.admin.dto.menu.vo.RoutePermissionVO;
+import com.ez.admin.dto.system.menu.req.MenuCreateReq;
+import com.ez.admin.dto.system.menu.req.MenuUpdateReq;
+import com.ez.admin.dto.system.menu.vo.MenuDetailVO;
+import com.ez.admin.dto.system.menu.vo.MenuTreeVO;
+import com.ez.admin.dto.system.menu.vo.RoutePermissionVO;
 import com.ez.admin.service.menu.MenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

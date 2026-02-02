@@ -143,5 +143,5 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
      * @param roleLabel 角色标识
      * @return 菜单权限列表
      */
-    List<com.ez.admin.dto.menu.vo.MenuPermissionVO> selectMenuPermissionsByRoleLabel(@Param("roleLabel") String roleLabel);
+    List<com.ez.admin.dto.system.menu.vo.MenuPermissionVO> selectMenuPermissionsByRoleLabel(@Param("roleLabel") String roleLabel);
 }

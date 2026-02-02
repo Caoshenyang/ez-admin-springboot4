@@ -1,7 +1,7 @@
 package com.ez.admin.common.data.mapstruct;
 
-import com.ez.admin.dto.dept.vo.DeptDetailVO;
-import com.ez.admin.dto.dept.vo.DeptTreeVO;
+import com.ez.admin.dto.system.dept.vo.DeptDetailVO;
+import com.ez.admin.dto.system.dept.vo.DeptTreeVO;
 import com.ez.admin.modules.system.entity.SysDept;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

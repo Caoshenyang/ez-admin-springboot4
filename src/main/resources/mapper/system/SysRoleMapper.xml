@@ -37,7 +37,7 @@
     </select>
 
     <!-- 根据角色标识查询菜单权限列表 -->
-    <select id="selectMenuPermissionsByRoleLabel" resultType="com.ez.admin.dto.menu.vo.MenuPermissionVO">
+    <select id="selectMenuPermissionsByRoleLabel" resultType="com.ez.admin.dto.system.menu.vo.MenuPermissionVO">
         SELECT m.menu_id     AS menuId,
                m.menu_perm   AS menuPerm,
                m.menu_type   AS menuType,

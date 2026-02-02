@@ -1,9 +1,13 @@
 package com.ez.admin.common.core.exception;
 
+import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.exception.NotPermissionException;
+import cn.dev33.satoken.exception.NotRoleException;
 import com.ez.admin.common.core.exception.ErrorCode;
 import com.ez.admin.common.core.exception.EzBusinessException;
 import com.ez.admin.common.model.model.R;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -51,6 +55,72 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 处理 Sa-Token 未登录异常
+     * <p>
+     * 捕获 {@link NotLoginException}，当用户未登录或 token 无效时触发。
+     * 常见场景：
+     * <ul>
+     *   <li>Token 已过期</li>
+     *   <li>Token 被踢出</li>
+     *   <li>未提供 Token</li>
+     *   <li>Token 格式错误</li>
+     * </ul>
+     * </p>
+     *
+     * @param ex 未登录异常
+     * @return 统一错误响应，提示用户登录
+     */
+    @ExceptionHandler(NotLoginException.class)
+    public R<Void> handleNotLoginException(NotLoginException ex) {
+        String errorMessage = "登录已过期，请重新登录";
+
+        // 根据异常场景提供更友好的提示
+        String message = ex.getMessage();
+        if (message != null) {
+            if (message.contains("Token 已过期") || message.contains("token 已过期")) {
+                errorMessage = "登录已过期，请重新登录";
+            } else if (message.contains("Token 已被踢下线") || message.contains("token 已被踢下线")) {
+                errorMessage = "账号已在其他设备登录";
+            } else if (message.contains("未提供 Token") || message.contains("token 无效")) {
+                errorMessage = "请先登录";
+            }
+        }
+
+        log.warn("未登录异常: {}, 详细: {}", errorMessage, message);
+        return R.error(ErrorCode.UNAUTHORIZED.getCode(), errorMessage);
+    }
+
+    /**
+     * 处理 Sa-Token 角色验证异常
+     * <p>
+     * 捕获 {@link NotRoleException}，当用户角色不足时触发。
+     * </p>
+     *
+     * @param ex 角色验证异常
+     * @return 统一错误响应
+     */
+    @ExceptionHandler(NotRoleException.class)
+    public R<Void> handleNotRoleException(NotRoleException ex) {
+        log.warn("角色权限不足: 需要角色: {}", ex.getRole());
+        return R.error(ErrorCode.FORBIDDEN.getCode(), "角色权限不足");
+    }
+
+    /**
+     * 处理 Sa-Token 权限验证异常
+     * <p>
+     * 捕获 {@link NotPermissionException}，当用户权限不足时触发。
+     * </p>
+     *
+     * @param ex 权限验证异常
+     * @return 统一错误响应
+     */
+    @ExceptionHandler(NotPermissionException.class)
+    public R<Void> handleNotPermissionException(NotPermissionException ex) {
+        log.warn("操作权限不足: 需要权限: {}", ex.getPermission());
+        return R.error(ErrorCode.FORBIDDEN.getCode(), "操作权限不足");
+    }
+
+    /**
      * 处理请求参数校验异常（@Valid 注解触发）
      * <p>
      * 捕获 {@link MethodArgumentNotValidException}，通常在 Controller 方法参数使用
@@ -86,6 +156,41 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.joining("; "));
         log.warn("参数绑定失败: {}", errorMessage);
         return R.error(ErrorCode.VALIDATION_ERROR.getCode(), errorMessage);
+    }
+
+    /**
+     * 处理请求体读取异常
+     * <p>
+     * 捕获 {@link HttpMessageNotReadableException}，当请求体缺失或格式错误时触发。
+     * 常见场景：
+     * <ul>
+     *   <li>POST/PUT 请求缺少请求体</li>
+     *   <li>JSON 格式错误</li>
+     *   <li>请求体类型与目标类型不匹配</li>
+     * </ul>
+     * </p>
+     *
+     * @param ex HTTP 消息不可读异常
+     * @return 统一错误响应，提示请求体格式错误
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public R<Void> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        String errorMessage = "请求体格式错误或缺失";
+
+        // 解析具体错误原因，提供更友好的提示
+        String message = ex.getMessage();
+        if (message != null) {
+            if (message.contains("Required request body is missing")) {
+                errorMessage = "请求体不能为空";
+            } else if (message.contains("JSON parse error")) {
+                errorMessage = "JSON 格式错误，请检查语法";
+            } else if (message.contains("Invalid JSON")) {
+                errorMessage = "无效的 JSON 格式";
+            }
+        }
+
+        log.warn("请求体读取失败: {}, 详细信息: {}", errorMessage, message);
+        return R.error(ErrorCode.BAD_REQUEST.getCode(), errorMessage);
     }
 
     /**

@@ -3,6 +3,7 @@ package com.ez.admin.api.auth;
 import com.ez.admin.common.model.annotation.OperationLog;
 import com.ez.admin.common.model.model.R;
 import com.ez.admin.dto.auth.req.LoginReq;
+import com.ez.admin.dto.auth.vo.CurrentUserVO;
 import com.ez.admin.dto.auth.vo.LoginVO;
 import com.ez.admin.service.auth.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,5 +43,12 @@ public class AuthController {
     public R<String> logout() {
         authService.logout();
         return R.success("登出成功");
+    }
+
+    @GetMapping("/current")
+    @Operation(summary = "获取当前用户信息", description = "获取当前登录用户的完整信息，包括基本信息、角色、权限、菜单树")
+    public R<CurrentUserVO> getCurrentUser() {
+        CurrentUserVO currentUser = authService.getCurrentUser();
+        return R.success("获取成功", currentUser);
     }
 }
