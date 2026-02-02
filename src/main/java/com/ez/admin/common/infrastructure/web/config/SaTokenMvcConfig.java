@@ -5,7 +5,7 @@ import cn.dev33.satoken.interceptor.SaInterceptor;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
 import com.ez.admin.common.framework.datascope.DataScopeInterceptor;
-import com.ez.admin.common.infrastructure.cache.AdminCache;
+import com.ez.admin.service.cache.RoleCacheService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -37,7 +37,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SaTokenMvcConfig implements WebMvcConfigurer {
 
-    private final AdminCache adminCache;
+    private final RoleCacheService roleCacheService;
     private final DataScopeInterceptor dataScopeInterceptor;
 
     @Override
@@ -49,7 +49,7 @@ public class SaTokenMvcConfig implements WebMvcConfigurer {
                     String method = SaHolder.getRequest().getMethod();
 
                     // 2. 从 Redis 获取所有的权限配置规则（缓存中，性能极高）
-                    Map<String, String> routePermMap = adminCache.getRoutePermissionCache();
+                    Map<String, String> routePermMap = roleCacheService.getRoutePermissionCache();
 
                     // 3. 构建当前请求的路由键：METHOD:PATH，如 "POST:/api/user"
                     String currentRouteKey = method + ":" + path;

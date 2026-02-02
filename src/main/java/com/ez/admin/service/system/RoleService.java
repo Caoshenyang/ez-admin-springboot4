@@ -1,4 +1,4 @@
-package com.ez.admin.service.role;
+package com.ez.admin.service.system;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;

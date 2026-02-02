@@ -7,7 +7,7 @@ import com.ez.admin.dto.system.dept.req.DeptUpdateReq;
 import com.ez.admin.dto.system.dept.vo.DeptDetailVO;
 import com.ez.admin.dto.system.dept.vo.DeptTreeVO;
 import com.ez.admin.dto.system.dept.vo.DeptUserVO;
-import com.ez.admin.service.dept.DeptService;
+import com.ez.admin.service.system.DeptService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

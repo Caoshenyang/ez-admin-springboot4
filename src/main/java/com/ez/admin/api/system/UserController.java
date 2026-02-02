@@ -14,7 +14,7 @@ import com.ez.admin.dto.system.user.req.UserUpdateReq;
 import com.ez.admin.dto.system.user.vo.UserDetailVO;
 import com.ez.admin.dto.system.user.vo.UserListVO;
 import com.ez.admin.service.file.FileService;
-import com.ez.admin.service.user.UserService;
+import com.ez.admin.service.system.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

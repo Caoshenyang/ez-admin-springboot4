@@ -7,7 +7,7 @@ import com.ez.admin.dto.system.menu.req.MenuUpdateReq;
 import com.ez.admin.dto.system.menu.vo.MenuDetailVO;
 import com.ez.admin.dto.system.menu.vo.MenuTreeVO;
 import com.ez.admin.dto.system.menu.vo.RoutePermissionVO;
-import com.ez.admin.service.menu.MenuService;
+import com.ez.admin.service.system.MenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

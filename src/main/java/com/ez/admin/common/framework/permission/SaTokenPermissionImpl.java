@@ -1,8 +1,10 @@
 package com.ez.admin.common.framework.permission;
 
 import cn.dev33.satoken.stp.StpInterface;
-import com.ez.admin.common.infrastructure.cache.AdminCache;
 import com.ez.admin.dto.system.menu.vo.MenuPermissionVO;
+import com.ez.admin.dto.system.vo.RoleInfo;
+import com.ez.admin.service.cache.RoleCacheService;
+import com.ez.admin.service.cache.UserCacheService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -10,6 +12,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Sa-Token 权限认证接口实现（优化版）
@@ -33,7 +36,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SaTokenPermissionImpl implements StpInterface {
 
-    private final AdminCache adminCache;
+    private final UserCacheService userCacheService;
+    private final RoleCacheService roleCacheService;
 
     /**
      * 返回指定账号所拥有的权限码集合
@@ -60,14 +64,19 @@ public class SaTokenPermissionImpl implements StpInterface {
         }
 
         // 2. 根据角色列表从缓存获取菜单权限
-        List<MenuPermissionVO> menuPermissions = adminCache.getMenuByRoleLabels(roleLabels);
-        if (menuPermissions == null || menuPermissions.isEmpty()) {
+        List<MenuPermissionVO> allMenuPermissions = roleLabels.stream()
+                .map(roleCacheService::getRoleMenuPermissions)
+                .filter(permissions -> permissions != null && !permissions.isEmpty())
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+
+        if (allMenuPermissions.isEmpty()) {
             log.debug("用户角色无权限，返回空权限列表：userId={}, roles={}", loginId, roleLabels);
             return Collections.emptyList();
         }
 
         // 3. 提取权限标识
-        List<String> permissions = menuPermissions.stream()
+        List<String> permissions = allMenuPermissions.stream()
                 .map(MenuPermissionVO::getMenuPerm)
                 .filter(StringUtils::hasText)
                 .distinct()
@@ -101,7 +110,16 @@ public class SaTokenPermissionImpl implements StpInterface {
         }
 
         // 从缓存获取用户角色
-        List<String> roleLabels = adminCache.getUserRoles(userId);
+        List<RoleInfo> roleInfoList = userCacheService.getUserRoles(userId);
+        if (roleInfoList == null) {
+            log.debug("用户角色缓存为空：userId={}", userId);
+            return Collections.emptyList();
+        }
+
+        List<String> roleLabels = roleInfoList.stream()
+                .map(RoleInfo::getRoleLabel)
+                .collect(Collectors.toList());
+
         log.debug("用户角色查询成功：userId={}, rolesCount={}", userId, roleLabels.size());
         return roleLabels;
     }

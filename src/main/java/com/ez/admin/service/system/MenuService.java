@@ -1,4 +1,4 @@
-package com.ez.admin.service.menu;
+package com.ez.admin.service.system;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ez.admin.common.core.exception.EzBusinessException;

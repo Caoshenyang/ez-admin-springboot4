@@ -6,7 +6,7 @@ import com.ez.admin.common.model.model.PageVO;
 import com.ez.admin.common.model.model.R;
 import com.ez.admin.dto.system.log.req.OperationLogQueryReq;
 import com.ez.admin.dto.system.log.vo.OperationLogListVO;
-import com.ez.admin.service.log.OperationLogService;
+import com.ez.admin.service.system.OperationLogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

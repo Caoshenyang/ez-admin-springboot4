@@ -1,6 +1,5 @@
 package com.ez.admin.service.permission;
 
-import com.ez.admin.common.infrastructure.cache.AdminCache;
 import com.ez.admin.dto.system.menu.vo.MenuPermissionVO;
 import com.ez.admin.dto.system.vo.SuperAdminPermissionSyncVO;
 import com.ez.admin.common.core.constant.SystemConstants;
@@ -12,6 +11,8 @@ import com.ez.admin.modules.system.entity.SysRoleMenuRelation;
 import com.ez.admin.modules.system.mapper.SysMenuMapper;
 import com.ez.admin.modules.system.mapper.SysRoleMapper;
 import com.ez.admin.modules.system.mapper.SysRoleMenuRelationMapper;
+import com.ez.admin.service.cache.RoleCacheService;
+import com.ez.admin.service.cache.UserCacheService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PermissionService {
 
-    private final AdminCache adminCache;
+    private final RoleCacheService roleCacheService;
+    private final UserCacheService userCacheService;
     private final SysRoleMapper roleMapper;
     private final SysMenuMapper menuMapper;
     private final SysRoleMenuRelationMapper roleMenuRelationMapper;
@@ -99,7 +101,7 @@ public class PermissionService {
 
         // 4. 刷新缓存
         List<MenuPermissionVO> menuPermissions = convertToMenuPermissions(allMenus, superAdminRole.getRoleId());
-        adminCache.cacheRoleMenuPermissions(superAdminRole.getRoleLabel(), menuPermissions);
+        roleCacheService.saveRoleMenuPermissions(superAdminRole.getRoleLabel(), menuPermissions);
 
         log.info("超级管理员权限同步成功，角色ID：{}，菜单数量：{}", superAdminRole.getRoleId(), allMenus.size());
 
@@ -143,7 +145,7 @@ public class PermissionService {
         for (SysRole role : allRoles) {
             List<MenuPermissionVO> permissions = permissionMap.get(role.getRoleId());
             if (permissions != null && !permissions.isEmpty()) {
-                adminCache.cacheRoleMenuPermissions(role.getRoleLabel(), permissions);
+                roleCacheService.saveRoleMenuPermissions(role.getRoleLabel(), permissions);
                 cachedCount++;
             }
         }
@@ -230,12 +232,12 @@ public class PermissionService {
         List<MenuPermissionVO> permissions = permissionMap.get(roleId);
 
         if (permissions != null && !permissions.isEmpty()) {
-            adminCache.cacheRoleMenuPermissions(role.getRoleLabel(), permissions);
+            roleCacheService.saveRoleMenuPermissions(role.getRoleLabel(), permissions);
             log.info("角色菜单权限缓存刷新成功：roleId={}, roleLabel={}, permissions={}",
                     roleId, role.getRoleLabel(), permissions.size());
         } else {
             // 角色无权限时，清除缓存
-            adminCache.evictRoleMenuPermissions(role.getRoleLabel());
+            roleCacheService.evictRoleMenuPermissions(role.getRoleLabel());
             log.info("角色无权限，已清除缓存：roleId={}, roleLabel={}", roleId, role.getRoleLabel());
         }
     }
@@ -252,8 +254,18 @@ public class PermissionService {
      */
     public void refreshUserRoles(Long userId) {
         List<String> roleLabels = roleMapper.selectRoleLabelsByUserId(userId);
-        adminCache.cacheUserRoles(userId, roleLabels);
-        log.info("用户角色缓存刷新成功：userId={}, roles={}", userId, roleLabels.size());
+        List<SysRole> roles = roleMapper.selectList(
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<SysRole>()
+                        .in(SysRole::getRoleLabel, roleLabels));
+        List<com.ez.admin.dto.system.vo.RoleInfo> roleInfoList = roles.stream()
+                .map(role -> com.ez.admin.dto.system.vo.RoleInfo.builder()
+                        .roleId(role.getRoleId())
+                        .roleLabel(role.getRoleLabel())
+                        .roleName(role.getRoleName())
+                        .build())
+                .toList();
+        userCacheService.saveUserRoles(userId, roleInfoList);
+        log.info("用户角色缓存刷新成功：userId={}, roles={}", userId, roleInfoList.size());
     }
 
     /**
@@ -262,7 +274,7 @@ public class PermissionService {
      * @param userId 用户ID
      */
     public void evictUserRoles(Long userId) {
-        adminCache.evictUserRoles(userId);
+        userCacheService.deleteUserRoles(userId);
         log.debug("用户角色缓存已清除：userId={}", userId);
     }
 
@@ -272,7 +284,7 @@ public class PermissionService {
      * @param roleLabel 角色标识
      */
     public void evictRoleMenuPermissions(String roleLabel) {
-        adminCache.evictRoleMenuPermissions(roleLabel);
+        roleCacheService.evictRoleMenuPermissions(roleLabel);
         log.debug("角色菜单权限缓存已清除：roleLabel={}", roleLabel);
     }
 
@@ -306,8 +318,8 @@ public class PermissionService {
                 }
             }
 
-            // 3. 刷新到 Redis（通过 AdminCache）
-            adminCache.refreshRoutePermissionCache(routePermMap);
+            // 3. 刷新到 Redis（通过 RoleCacheService）
+            roleCacheService.refreshRoutePermissionCache(routePermMap);
 
             log.info("路由权限缓存刷新成功，共 {} 条规则", routePermMap.size());
             return routePermMap.size();

@@ -1,9 +1,8 @@
-package com.ez.admin.service.user;
+package com.ez.admin.service.system;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ez.admin.common.infrastructure.cache.AdminCache;
 import com.ez.admin.common.core.constant.SystemConstants;
 import com.ez.admin.common.core.exception.EzBusinessException;
 import com.ez.admin.common.core.exception.ErrorCode;
@@ -17,6 +16,7 @@ import com.ez.admin.dto.system.user.req.UserStatusChangeReq;
 import com.ez.admin.dto.system.user.req.UserUpdateReq;
 import com.ez.admin.dto.system.user.vo.UserDetailVO;
 import com.ez.admin.dto.system.user.vo.UserListVO;
+import com.ez.admin.dto.system.vo.RoleInfo;
 import com.ez.admin.modules.system.entity.SysRole;
 import com.ez.admin.modules.system.entity.SysUser;
 import com.ez.admin.modules.system.entity.SysUserRoleRelation;
@@ -25,6 +25,7 @@ import com.ez.admin.modules.system.mapper.SysUserRoleRelationMapper;
 import com.ez.admin.modules.system.mapper.SysUserMapper;
 import com.ez.admin.modules.system.service.SysUserRoleRelationService;
 import com.ez.admin.modules.system.service.SysUserService;
+import com.ez.admin.service.cache.UserCacheService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -56,7 +57,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final SysUserService sysUserService;
     private final UserConverter userConverter;
-    private final AdminCache adminCache;
+    private final UserCacheService userCacheService;
 
     /**
      * 创建用户
@@ -266,12 +267,16 @@ public class UserService {
         }
 
         // 刷新用户角色缓存
-        List<String> roleLabels = roleIds != null ? roleMapper.selectList(
+        List<RoleInfo> roleInfoList = roleIds != null ? roleMapper.selectList(
                         new LambdaQueryWrapper<SysRole>().in(SysRole::getRoleId, roleIds))
                 .stream()
-                .map(SysRole::getRoleLabel)
+                .map(role -> RoleInfo.builder()
+                        .roleId(role.getRoleId())
+                        .roleLabel(role.getRoleLabel())
+                        .roleName(role.getRoleName())
+                        .build())
                 .toList() : List.of();
-        adminCache.cacheUserRoles(userId, roleLabels);
+        userCacheService.saveUserRoles(userId, roleInfoList);
 
         log.info("用户分配角色成功，用户ID：{}，角色数量：{}", userId, roleIds != null ? roleIds.size() : 0);
     }

@@ -41,7 +41,7 @@ public int syncSuperAdminPermissions()
 - 详细的日志记录
 
 ### 2. MenuService 触发同步
-**路径**: `com.ez.admin.service.menu.MenuService`
+**路径**: `com.ez.admin.service.system.MenuService`
 
 **触发时机**:
 - ✅ 创建菜单后 (`createMenu`)

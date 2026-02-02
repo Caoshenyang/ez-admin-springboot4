@@ -9,7 +9,7 @@ import com.ez.admin.dto.system.dict.vo.DictDataListVO;
 import com.ez.admin.dto.system.dict.vo.DictDataDetailVO;
 import com.ez.admin.dto.system.dict.vo.DictTypeDetailVO;
 import com.ez.admin.dto.system.dict.vo.DictTypeListVO;
-import com.ez.admin.service.dict.DictService;
+import com.ez.admin.service.system.DictService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

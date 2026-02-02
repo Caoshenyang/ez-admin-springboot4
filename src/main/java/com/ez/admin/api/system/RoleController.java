@@ -12,7 +12,7 @@ import com.ez.admin.dto.system.role.req.RoleStatusChangeReq;
 import com.ez.admin.dto.system.role.req.RoleUpdateReq;
 import com.ez.admin.dto.system.role.vo.RoleDetailVO;
 import com.ez.admin.dto.system.role.vo.RoleListVO;
-import com.ez.admin.service.role.RoleService;
+import com.ez.admin.service.system.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

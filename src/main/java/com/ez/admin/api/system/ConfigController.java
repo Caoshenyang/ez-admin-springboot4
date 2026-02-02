@@ -8,7 +8,7 @@ import com.ez.admin.dto.system.config.req.ConfigCreateReq;
 import com.ez.admin.dto.system.config.req.ConfigUpdateReq;
 import com.ez.admin.dto.system.config.vo.ConfigDetailVO;
 import com.ez.admin.dto.system.config.vo.ConfigListVO;
-import com.ez.admin.service.config.ConfigService;
+import com.ez.admin.service.system.ConfigService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
