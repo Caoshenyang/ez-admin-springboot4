@@ -1,4 +1,4 @@
-package com.ez.admin.service.auth;
+package com.ez.admin.auth;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.ez.admin.common.core.exception.ErrorCode;
@@ -15,7 +15,7 @@ import com.ez.admin.modules.system.entity.SysUser;
 import com.ez.admin.modules.system.mapper.SysUserMapper;
 import com.ez.admin.modules.system.service.SysMenuService;
 import com.ez.admin.modules.system.service.SysUserRoleRelationService;
-import com.ez.admin.service.cache.UserCacheService;
+import com.ez.admin.cache.UserCacheService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;

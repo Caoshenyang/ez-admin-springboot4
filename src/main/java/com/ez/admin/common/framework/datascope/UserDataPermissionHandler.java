@@ -65,8 +65,6 @@ public class UserDataPermissionHandler implements MultiDataPermissionHandler {
      * </p>
      */
     private static final List<String> DATA_PERMISSION_TABLES = List.of(
-            // 测试订单表（用于验证数据权限功能）
-            "ez_admin_test_order"
             // 后续添加新表时，在此处注册表名
             // 例如："ez_admin_contract", "ez_admin_customer" 等
     );

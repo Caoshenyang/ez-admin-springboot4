@@ -1,4 +1,4 @@
-package com.ez.admin.service.cache;
+package com.ez.admin.cache;
 
 import com.ez.admin.common.infrastructure.redis.RedisCache;
 import com.ez.admin.dto.system.menu.vo.MenuPermissionVO;

@@ -5,7 +5,7 @@ import com.ez.admin.common.model.model.R;
 import com.ez.admin.dto.auth.req.LoginReq;
 import com.ez.admin.dto.auth.vo.CurrentUserVO;
 import com.ez.admin.dto.auth.vo.LoginVO;
-import com.ez.admin.service.auth.AuthService;
+import com.ez.admin.auth.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -45,7 +45,7 @@ public class AuthController {
         return R.success("登出成功");
     }
 
-    @GetMapping("/current")
+    @GetMapping("/user-info")
     @Operation(summary = "获取当前用户信息", description = "获取当前登录用户的完整信息，包括基本信息、角色、权限、菜单树")
     public R<CurrentUserVO> getCurrentUser() {
         CurrentUserVO currentUser = authService.getCurrentUser();

@@ -5,7 +5,7 @@ import cn.dev33.satoken.interceptor.SaInterceptor;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
 import com.ez.admin.common.framework.datascope.DataScopeInterceptor;
-import com.ez.admin.service.cache.RoleCacheService;
+import com.ez.admin.cache.RoleCacheService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;

@@ -6,7 +6,7 @@ import com.ez.admin.dto.role.req.RoleAssignMenuReq;
 import com.ez.admin.dto.role.req.RoleCreateReq;
 import com.ez.admin.dto.user.req.UserCreateReq;
 import com.ez.admin.dto.user.req.UserAssignRoleReq;
-import com.ez.admin.service.auth.AuthService;
+import com.ez.admin.auth.AuthService;
 import com.ez.admin.service.system.RoleService;
 import com.ez.admin.service.system.UserService;
 import org.junit.jupiter.api.BeforeEach;

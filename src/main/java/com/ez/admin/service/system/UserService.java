@@ -25,7 +25,7 @@ import com.ez.admin.modules.system.mapper.SysUserRoleRelationMapper;
 import com.ez.admin.modules.system.mapper.SysUserMapper;
 import com.ez.admin.modules.system.service.SysUserRoleRelationService;
 import com.ez.admin.modules.system.service.SysUserService;
-import com.ez.admin.service.cache.UserCacheService;
+import com.ez.admin.cache.UserCacheService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
